@@ -88,12 +88,12 @@ function FootWear({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
+      .collection('FootWear')
       .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('MenFootWear')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        menfootwear: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 
@@ -107,7 +107,7 @@ function FootWear({navigation}) {
     const listSelected = women.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + `${item.id} .` + item.value + '\n';
+      contentAlert = contentAlert + item.value + '\n';
     });
 
     console.log(contentAlert);
@@ -115,12 +115,12 @@ function FootWear({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
+      .collection('FootWear')
       .doc(auth().currentUser.uid)
-      .collection('WomenFashion')
+      .collection('WomenFootWear')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        womenfootwear: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 

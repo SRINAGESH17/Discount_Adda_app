@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   KeyboardAvoidingView,
   StyleSheet,
@@ -13,6 +13,8 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  ImageBackground,
+  Pressable,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
@@ -24,16 +26,13 @@ import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {Button, Headline, Title} from 'react-native-paper';
-import Task from '../../components/Task';
+
+import {useIsFocused} from '@react-navigation/native';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
 function EditDetails({navigation}) {
-  const [about, setAbout] = useState('');
   const [loading, setLoading] = useState(false);
-
-  const [task, setTask] = useState();
-  const [taskItems, setTaskItems] = useState([]);
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isVisible, setVisible] = useState(false);
@@ -42,13 +41,37 @@ function EditDetails({navigation}) {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
-  const toggleModal = () => {
+  const [userPost, setUserPosts] = useState([]);
+
+  const deleteImage = () => {
     setModalVisible(!isModalVisible);
   };
 
   const picture = () => {
     setVisible(!isVisible);
   };
+  const {uid} = auth().currentUser;
+  const isFocused = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      firestore()
+        .collection('mystore')
+        .doc(uid)
+        .collection('userPosts')
+        .orderBy('createdAt', 'asc')
+        .get()
+        .then(snapshot => {
+          let posts = snapshot.docs.map(doc => {
+            const data = doc.data();
+            const id = doc.id;
+
+            return {id, ...data};
+          });
+
+          setUserPosts(posts);
+        });
+    }
+  }, [isFocused]);
 
   const aboutsave = db => {
     setLoading(true);
@@ -66,26 +89,26 @@ function EditDetails({navigation}) {
     }, 1000);
   };
 
-  const category = async () => {
+  const aboutstorename = db => {
     setLoading(true);
+    Keyboard.dismiss();
     firestore()
-      .collection('mystore')
+      .collection('StoreName')
       .doc(auth().currentUser.uid)
-      .collection('mycategory')
-      .add({
-        task,
+      .set({
+        StoreName: db.storename,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-      .catch(() => alert('category   not updated'));
+      .catch(() => alert('about  not updated'));
     setTimeout(() => {
       setLoading(false);
-    }, 1500);
+    }, 1000);
   };
 
   const PickImage = () => {
     const options = {
-      maxWidth: 2000,
-      maxHeight: 2000,
+      maxWidth: 800,
+      maxHeight: 800,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -109,8 +132,8 @@ function EditDetails({navigation}) {
   const Camera = () => {
     const options = {
       title: 'Select Profile Pic',
-      maxWidth: 1000,
-      maxHeight: 1000,
+      maxWidth: 800,
+      maxHeight: 800,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -167,10 +190,7 @@ function EditDetails({navigation}) {
       setUploading(false);
       setImage(null);
 
-      Alert.alert(
-        'Photo uploaded!',
-        'Your photo has been uploaded to Firebase Cloud Storage!',
-      );
+      Alert.alert('Photo uploaded!', 'Your photo has been uploaded ');
 
       return url;
     } catch (e) {
@@ -193,10 +213,144 @@ function EditDetails({navigation}) {
       .catch(() => alert('profile pics not updated'));
   };
 
+  const deleteOption = postId => {
+    //function to make two option alert
+    Alert.alert(
+      //title
+      'Delete Image',
+      //body
+      'Are you sure you want to delete this image ?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => deletepost(postId),
+        },
+        {
+          text: 'No',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel',
+        },
+      ],
+      {cancelable: false},
+      //clicking out side of alert will not cancel
+    );
+  };
+
+  const deletepost = postId => {
+    console.log('post id: ', postId);
+    firestore()
+      .collection('mystore')
+      .doc(auth().currentUser.uid)
+      .collection('userPosts')
+      .doc(postId)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+          const postimg = documentSnapshot.data().imageurl;
+
+          console.log('postimg', postimg);
+          const storageRef = storage().refFromURL(postimg);
+          const imageRef = storage().ref(storageRef.fullPath);
+
+          console.log(imageRef);
+
+          imageRef
+            .delete()
+            .then(() => {
+              console.log('it has deleted successfully');
+              deleteFirestoreData(postId);
+            })
+            .catch(() => alert('delete  not updated'));
+        }
+      });
+  };
+
+  const deleteFirestoreData = postId => {
+    firestore()
+      .collection('mystore')
+      .doc(auth().currentUser.uid)
+      .collection('userPosts')
+      .doc(postId)
+      .delete()
+      .then(() => alert('Successfully deleted'))
+      .catch(() => alert('not deleted from firestore'));
+  };
+
   return (
     <View style={styles.container}>
-      <Headline>Please all the following details</Headline>
       <View style={{marginTop: 5}}>
+        {loading ? (
+          <View style={{alignItems: 'center'}}>
+            <Text style={{fontSize: 18}}>Details submitted</Text>
+            <LottieView
+              autoPlay
+              loop
+              source={require('../../assets/Animations/loading.json')}
+              autoSize
+            />
+          </View>
+        ) : (
+          <Formik
+            initialValues={{
+              storename: '',
+            }}
+            onSubmit={values => aboutstorename(values)}
+            validationSchema={yup.object().shape({
+              storename: yup
+                .string()
+                .min(4)
+                .required('Please, provide name of your shop!'),
+            })}>
+            {({
+              values,
+              handleChange,
+              errors,
+              setFieldTouched,
+              touched,
+              isValid,
+              handleSubmit,
+            }) => (
+              <View>
+                <Title>Add the Name of your shop</Title>
+                <TextInput
+                  placeholder="Name of the shop"
+                  numberOfLines={1}
+                  multiline={true}
+                  value={values.storename}
+                  onChangeText={handleChange('storename')}
+                  onBlur={() => setFieldTouched('storename')}
+                  style={{
+                    borderColor: '#ccc',
+                    width: windowWidth * 0.9,
+                    borderWidth: 1,
+                    textAlignVertical: 'top',
+                    color: '#000',
+                  }}
+                  placeholderTextColor="#aaa"
+                />
+                {touched.storename && errors.storename && (
+                  <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                    {errors.storename}
+                  </Text>
+                )}
+                <Button
+                  disabled={!isValid}
+                  onPress={handleSubmit}
+                  mode="contained"
+                  style={{
+                    backgroundColor: '#D02824',
+                    marginTop: 10,
+                    width: 150,
+                    marginBottom: 30,
+                  }}>
+                  Submit
+                </Button>
+              </View>
+            )}
+          </Formik>
+        )}
+      </View>
+      <View>
         {loading ? (
           <View style={{alignItems: 'center'}}>
             <Text style={{fontSize: 18}}>Details submitted</Text>
@@ -229,10 +383,9 @@ function EditDetails({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add about the Shop</Title>
-
+                <Title>Add details about the Shop</Title>
                 <TextInput
-                  placeholder="About the store"
+                  placeholder="About the shop"
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -243,8 +396,9 @@ function EditDetails({navigation}) {
                     width: windowWidth * 0.9,
                     borderWidth: 1,
                     textAlignVertical: 'top',
+                    color: '#000',
                   }}
-                  placeholderTextColor="#000000"
+                  placeholderTextColor="#aaa"
                 />
                 {touched.about && errors.about && (
                   <Text style={{fontSize: 12, color: '#FF0D10'}}>
@@ -314,12 +468,77 @@ function EditDetails({navigation}) {
           </TouchableOpacity>
         </View>
       </Modal>
-      <Title>Add picture of Shop</Title>
+      {/* deleting modal */}
+      <Modal
+        isVisible={isModalVisible}
+        animationOut="fadeOutDown"
+        animationIn="fadeInUp">
+        <View
+          style={[
+            styles.modalcontainer,
+            {
+              flex: 0.8,
+              width: windowWidth * 0.9,
+            },
+          ]}>
+          <Title>Press on Image to Delete</Title>
+          <View
+            style={{
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: windowHeight * 0.55,
+            }}>
+            <ScrollView horizontal={true}>
+              {userPost.length > 0 &&
+                userPost.map((item, index) => {
+                  return (
+                    <Pressable
+                      onPress={() => deleteOption(item.id)}
+                      key={index}
+                      style={{
+                        marginBottom: 20,
+                        borderWidth: 1,
+                        width: 300,
+                        height: 300,
+                        marginHorizontal: 8,
+                      }}>
+                      <Image
+                        style={{width: '100%', height: '100%'}}
+                        source={{uri: item.imageurl}}
+                      />
+                      {/* <Button
+                        onPress={() => console.log('delete')}
+                        mode="contained"
+                        style={{
+                          backgroundColor: '#D02824',
+                          marginTop: 10,
+                          width: 150,
+                          marginBottom: 30,
+                        }}>
+                        Delete
+                      </Button> */}
+                    </Pressable>
+                  );
+                })}
+            </ScrollView>
+          </View>
+          <TouchableOpacity onPress={deleteImage} style={styles.done}>
+            <Text style={{color: 'white'}}>Done</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      {/* Picture edit */}
+      <Title>Edit picture of Shop</Title>
       <View style={styles.box}>
         <TouchableOpacity
           onPress={picture}
           style={{backgroundColor: '#D02824', padding: 15, marginTop: 10}}>
-          <Text style={{color: 'white'}}>Click here </Text>
+          <Text style={{color: 'white'}}>Add Picture</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={deleteImage}
+          style={{backgroundColor: '#D02824', padding: 15, marginTop: 10}}>
+          <Text style={{color: 'white'}}>Delete Picture</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity
@@ -405,13 +624,14 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.92,
     borderColor: '#ccc',
     borderRadius: 5,
-    justifyContent: 'flex-start',
+    justifyContent: 'space-around',
     height: windowHeight * 0.13,
+    flexDirection: 'row',
   },
   done: {
     backgroundColor: '#D02824',
     padding: 10,
-    marginTop: 10,
+    marginTop: 30,
     width: 80,
     marginBottom: 20,
     alignItems: 'center',

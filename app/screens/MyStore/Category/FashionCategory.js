@@ -164,7 +164,7 @@ function FashionCategory({navigation}) {
     const listSelected = women.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + `${item.id} .` + item.value + '\n';
+      contentAlert = contentAlert + item.value + '\n';
     });
 
     console.log(contentAlert);
@@ -177,7 +177,7 @@ function FashionCategory({navigation}) {
       .collection('WomenFashion')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        womenfashion: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 
@@ -191,7 +191,7 @@ function FashionCategory({navigation}) {
     const listSelected = kids.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + `${item.id} .` + item.value + '\n';
+      contentAlert = contentAlert + item.value + '\n';
     });
 
     console.log(contentAlert);
@@ -204,7 +204,7 @@ function FashionCategory({navigation}) {
       .collection('Kids')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        kids: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 
@@ -218,7 +218,7 @@ function FashionCategory({navigation}) {
     const listSelected = beauty.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + `${item.id} .` + item.value + '\n';
+      contentAlert = contentAlert + item.value + '\n';
     });
 
     console.log(contentAlert);
@@ -231,7 +231,7 @@ function FashionCategory({navigation}) {
       .collection('Beauty')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        beauty: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 
@@ -346,7 +346,11 @@ function FashionCategory({navigation}) {
             ) : (
               <View>
                 {isLoading ? (
-                  <ActivityIndicator />
+                  <ActivityIndicator
+                    animating={true}
+                    color="#D02824"
+                    size="large"
+                  />
                 ) : (
                   <FlatList
                     data={women}
@@ -378,7 +382,11 @@ function FashionCategory({navigation}) {
             ) : (
               <View>
                 {isLoading ? (
-                  <ActivityIndicator />
+                  <ActivityIndicator
+                    animating={true}
+                    color="#D02824"
+                    size="large"
+                  />
                 ) : (
                   <FlatList
                     data={kids}

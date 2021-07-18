@@ -61,12 +61,10 @@ function MedicneCategory({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('Medical')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        medical: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 

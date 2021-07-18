@@ -8,6 +8,7 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -75,14 +76,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   txtproducts: {
-    backgroundColor: '#ddd',
-    width: 140,
+    justifyContent: 'center',
     fontSize: 15,
-    marginTop: 10,
-    marginEnd: 10,
-    marginStart: 10,
-    padding: 5,
     borderRadius: 4,
+    padding: 5,
   },
 });
 
@@ -113,26 +110,6 @@ const value = [
   },
 ];
 
-const products = [
-  {
-    item1: 'Grocery & Staple',
-    item2: 'Personal Care',
-  },
-  {
-    item1: 'BreakFast & Diary',
-    item2: 'Home',
-  },
-
-  {
-    item1: 'Toilets Cleaners',
-    item2: 'Kitchen',
-  },
-  {
-    item1: 'Washing clothes',
-    item2: 'Vegetables',
-  },
-];
-
 export default function Mystore({navigation}) {
   const [index, setIndex] = useState(0);
 
@@ -142,7 +119,20 @@ export default function Mystore({navigation}) {
   const [address, setAddress] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
-  const [userCategory, setCategory] = useState([]);
+  // Category states
+
+  //fashion category
+  const [menfashion, setmenfashion] = useState('');
+  const [womenfashion, setwomenfashion] = useState('');
+  const [kidfashion, setkidfashion] = useState('');
+  const [beauty, setbeauty] = useState('');
+  // foot wear
+  const [menfootwear, setmenfootwear] = useState('');
+  const [womenfootwear, setwomenfootwear] = useState('');
+  // home category
+  const [home, sethome] = useState('');
+  // medical category
+  const [medicine, setmedicine] = useState('');
 
   const [loading, setLoading] = useState(false);
 
@@ -168,9 +158,15 @@ export default function Mystore({navigation}) {
   const Slide = memo(function Slide({data}) {
     return (
       <>
-        <View style={styles.slide}>
+        <Pressable
+          onPress={() =>
+            navigation.navigate('ViewImage', {
+              url: data.imageurl,
+            })
+          }
+          style={styles.slide}>
           <Image source={{uri: data.imageurl}} style={styles.slideImage} />
-        </View>
+        </Pressable>
       </>
     );
   });
@@ -238,6 +234,29 @@ export default function Mystore({navigation}) {
 
   async function post() {
     firestore()
+      .collection('users')
+      .doc(uid)
+      .onSnapshot(documentSnapshot => {
+        const userData = documentSnapshot.data();
+        setContact(userData.contact);
+        setAddress(userData.address);
+      });
+    firestore()
+      .collection('StoreName')
+      .doc(uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setName('Add Name');
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setName(documentSnapshot.data().StoreName);
+        }
+      });
+
+    firestore()
       .collection('mystore')
       .doc(uid)
       .collection('userPosts')
@@ -246,34 +265,159 @@ export default function Mystore({navigation}) {
       .then(snapshot => {
         let posts = snapshot.docs.map(doc => {
           const data = doc.data();
-          const id = data.id;
+          const id = doc.id;
+
           return {id, ...data};
         });
+        // console.log('id of the post: ', posts);
         setUserPosts(posts);
       });
 
+    // category section
+
+    // fashion section
     firestore()
-      .collection('mystore')
-      .doc(uid)
       .collection('mycategory')
-      .orderBy('createdAt', 'asc')
+      .doc(auth().currentUser.uid)
+      .collection('Fashion')
+      .doc(auth().currentUser.uid)
+      .collection('MenFashion')
+      .doc(auth().currentUser.uid)
       .get()
-      .then(snapshot => {
-        let category = snapshot.docs.map(doc => {
-          const data = doc.data();
-          const id = data.id;
-          return {id, ...data};
-        });
-        setCategory(category);
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setmenfashion(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setmenfashion(documentSnapshot.data().menfashion);
+        }
       });
     firestore()
-      .collection('users')
-      .doc(uid)
-      .onSnapshot(documentSnapshot => {
-        const userData = documentSnapshot.data();
-        setName(userData.fname);
-        setContact(userData.contact);
-        setAddress(userData.address);
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Fashion')
+      .doc(auth().currentUser.uid)
+      .collection('WomenFashion')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setwomenfashion(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setwomenfashion(documentSnapshot.data().womenfashion);
+        }
+      });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Fashion')
+      .doc(auth().currentUser.uid)
+      .collection('MenFashion')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setkidfashion(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setkidfashion(documentSnapshot.data().kids);
+        }
+      });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Fashion')
+      .doc(auth().currentUser.uid)
+      .collection('Beauty')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setbeauty(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setbeauty(documentSnapshot.data().beauty);
+        }
+      });
+    // footWear section
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('FootWear')
+      .doc(auth().currentUser.uid)
+      .collection('MenFootWear')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setmenfootwear(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setmenfootwear(documentSnapshot.data().menfootwear);
+        }
+      });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('FootWear')
+      .doc(auth().currentUser.uid)
+      .collection('WomenFootWear')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setwomenfootwear(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setwomenfootwear(documentSnapshot.data().womenfootwear);
+        }
+      });
+    // home sectionTitle
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('HomeCategory')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          sethome(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          sethome(documentSnapshot.data().home);
+        }
+      });
+    // medical
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Medical')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        console.log('User exists: ', documentSnapshot.exists);
+        if (documentSnapshot.exists === false) {
+          setmedicine(null);
+        }
+        if (documentSnapshot.exists) {
+          console.log('User data: ', documentSnapshot.data());
+          setmedicine(documentSnapshot.data().medical);
+        }
       });
   }
 
@@ -306,6 +450,7 @@ export default function Mystore({navigation}) {
         showsHorizontalScrollIndicator={false}
         bounces={false}
         onScroll={onScroll}
+        keyExtractor={(item, index) => index.toString()}
       />
 
       <View style={styles.container}>
@@ -384,6 +529,7 @@ export default function Mystore({navigation}) {
             <FlatList
               data={value}
               nestedScrollEnabled
+              keyExtractor={(item, index) => index.toString()}
               renderItem={({item: data}) => {
                 return (
                   <View
@@ -404,24 +550,53 @@ export default function Mystore({navigation}) {
           <Text style={styles.txt}>TYPES OF PRODUCTS</Text>
           <View
             style={{
-              marginTop: 10,
               borderWidth: 1,
-              width: windowWidth * 0.92,
               borderColor: '#ccc',
               borderRadius: 5,
-              height: windowHeight * 0.185,
+              flexWrap: 'wrap',
+              flexDirection: 'row',
+              padding: 5,
             }}>
-            <FlatList
-              data={userCategory}
-              nestedScrollEnabled
-              renderItem={({item: data}) => {
-                return (
-                  <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-                    <Text style={styles.txtproducts}>{data.task}</Text>
-                  </View>
-                );
-              }}
-            />
+            {menfashion === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{menfashion}</Text>
+              </View>
+            )}
+            {womenfashion === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{womenfashion}</Text>
+              </View>
+            )}
+            {kidfashion === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{kidfashion}</Text>
+              </View>
+            )}
+            {beauty === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{beauty}</Text>
+              </View>
+            )}
+            {menfootwear === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{menfootwear}</Text>
+              </View>
+            )}
+            {womenfootwear === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{womenfootwear}</Text>
+              </View>
+            )}
+            {home === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{home}</Text>
+              </View>
+            )}
+            {medicine === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text>{medicine}</Text>
+              </View>
+            )}
           </View>
           <Text style={styles.txt}>ADDRESS</Text>
           <View

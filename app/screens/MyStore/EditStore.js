@@ -28,42 +28,35 @@ import Task from '../../components/Task';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
-function EditStore(props) {
-  const [about, setAbout] = useState('');
+function EditStore({navigation}) {
   const [loading, setLoading] = useState(false);
 
-  const [task, setTask] = useState();
-  const [taskItems, setTaskItems] = useState([]);
-
-  const [isModalVisible, setModalVisible] = useState(false);
   const [isVisible, setVisible] = useState(false);
 
+  const [category, setcategory] = useState(false);
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
-
-  const toggleModal = () => {
-    setModalVisible(!isModalVisible);
-  };
 
   const picture = () => {
     setVisible(!isVisible);
   };
 
-  const handleAddTask = () => {
+  const aboutstorename = db => {
+    setLoading(true);
     Keyboard.dismiss();
-    setTaskItems([...taskItems, task]);
-    console.log(task, taskItems);
-    console.log(taskItems.length);
-    setTask(null);
+    firestore()
+      .collection('StoreName')
+      .doc(auth().currentUser.uid)
+      .set({
+        StoreName: db.storename,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .catch(() => alert('about  not updated'));
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
   };
-
-  const completeTask = index => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy);
-  };
-
   const aboutsave = db => {
     setLoading(true);
     Keyboard.dismiss();
@@ -74,32 +67,17 @@ function EditStore(props) {
         About: db.about,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
+      .then(() => setcategory(true))
       .catch(() => alert('about  not updated'));
     setTimeout(() => {
       setLoading(false);
     }, 1000);
   };
 
-  const category = async () => {
-    setLoading(true);
-    firestore()
-      .collection('mystore')
-      .doc(auth().currentUser.uid)
-      .collection('mycategory')
-      .add({
-        task,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  };
-
   const PickImage = () => {
     const options = {
-      maxWidth: 2000,
-      maxHeight: 2000,
+      maxWidth: 800,
+      maxHeight: 800,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -123,8 +101,8 @@ function EditStore(props) {
   const Camera = () => {
     const options = {
       title: 'Select Profile Pic',
-      maxWidth: 2000,
-      maxHeight: 2000,
+      maxWidth: 800,
+      maxHeight: 800,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -224,6 +202,78 @@ function EditStore(props) {
         ) : (
           <Formik
             initialValues={{
+              storename: '',
+            }}
+            onSubmit={values => aboutstorename(values)}
+            validationSchema={yup.object().shape({
+              storename: yup
+                .string()
+                .min(4)
+                .required('Please, provide name of your shop!'),
+            })}>
+            {({
+              values,
+              handleChange,
+              errors,
+              setFieldTouched,
+              touched,
+              isValid,
+              handleSubmit,
+            }) => (
+              <View>
+                <Title>Add the Name of your shop</Title>
+                <TextInput
+                  placeholder="Name of the shop"
+                  numberOfLines={1}
+                  multiline={true}
+                  value={values.storename}
+                  onChangeText={handleChange('storename')}
+                  onBlur={() => setFieldTouched('storename')}
+                  style={{
+                    borderColor: '#ccc',
+                    width: windowWidth * 0.9,
+                    borderWidth: 1,
+                    textAlignVertical: 'top',
+                    color: '#000',
+                  }}
+                  placeholderTextColor="#aaa"
+                />
+                {touched.storename && errors.storename && (
+                  <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                    {errors.storename}
+                  </Text>
+                )}
+                <Button
+                  disabled={!isValid}
+                  onPress={handleSubmit}
+                  mode="contained"
+                  style={{
+                    backgroundColor: '#D02824',
+                    marginTop: 10,
+                    width: 150,
+                    marginBottom: 30,
+                  }}>
+                  Submit
+                </Button>
+              </View>
+            )}
+          </Formik>
+        )}
+      </View>
+      <View style={{marginTop: 5}}>
+        {loading ? (
+          <View style={{alignItems: 'center'}}>
+            <Text style={{fontSize: 18}}>Details submitted</Text>
+            <LottieView
+              autoPlay
+              loop
+              source={require('../../assets/Animations/loading.json')}
+              autoSize
+            />
+          </View>
+        ) : (
+          <Formik
+            initialValues={{
               about: '',
             }}
             onSubmit={values => aboutsave(values)}
@@ -243,10 +293,9 @@ function EditStore(props) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add about the Shop</Title>
-
+                <Title>Add details about the Shop</Title>
                 <TextInput
-                  placeholder="About the store"
+                  placeholder="About the shop"
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -257,8 +306,9 @@ function EditStore(props) {
                     width: windowWidth * 0.9,
                     borderWidth: 1,
                     textAlignVertical: 'top',
+                    color: '#000',
                   }}
-                  placeholderTextColor="#000000"
+                  placeholderTextColor="#aaa"
                 />
                 {touched.about && errors.about && (
                   <Text style={{fontSize: 12, color: '#FF0D10'}}>
@@ -282,52 +332,7 @@ function EditStore(props) {
           </Formik>
         )}
       </View>
-      {/* <Modal
-        isVisible={isModalVisible}
-        animationOut="fadeOutDown"
-        animationIn="fadeInUp">
-        <View style={styles.modalcontainer}>
-          <Text style={styles.sectionTitle}>Enter new Category</Text>
-          {loading ? (
-            <View style={{alignItems: 'center'}}>
-              <Text style={{fontSize: 18}}>Details submitted</Text>
-              <LottieView
-                autoPlay
-                loop
-                source={require('../../assets/Animations/loading.json')}
-                autoSize
-              />
-            </View>
-          ) : (
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.writeTaskWrapper}>
-              <TextInput
-                style={styles.input}
-                placeholder={'Write a Product'}
-                value={task}
-                onChangeText={text => setTask(text)}
-              />
-            </KeyboardAvoidingView>
-          )}
 
-          <TouchableOpacity
-            onPress={category}
-            style={[styles.done, {marginTop: 30}]}>
-            <Text style={{color: 'white'}}>Submit</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={toggleModal} style={styles.done}>
-            <Text style={{color: 'white'}}>Done</Text>
-          </TouchableOpacity>
-        </View>
-      </Modal>
-      <View style={styles.box}>
-        <TouchableOpacity
-          onPress={toggleModal}
-          style={{backgroundColor: '#D02824', padding: 15, marginTop: 10}}>
-          <Text style={{color: 'white'}}>Click here to enter products</Text>
-        </TouchableOpacity>
-      </View> */}
       {/* adding photo modal */}
       <Modal
         isVisible={isVisible}
@@ -381,6 +386,19 @@ function EditStore(props) {
           <Text style={{color: 'white'}}>Click here </Text>
         </TouchableOpacity>
       </View>
+      {category === true ? (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('Category')}
+          style={{
+            backgroundColor: '#D02824',
+            padding: 15,
+            marginTop: 100,
+            alignItems: 'center',
+            borderRadius: 20,
+          }}>
+          <Text style={{color: 'white'}}>Add Subcategory</Text>
+        </TouchableOpacity>
+      ) : null}
     </View>
   );
 }

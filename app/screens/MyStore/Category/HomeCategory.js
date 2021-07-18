@@ -62,12 +62,10 @@ function HomeCategory({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('HomeCategory')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        home: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 

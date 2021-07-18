@@ -20,6 +20,7 @@ import DrawerContent from './DrawerContent';
 import Settings from '../screens/Settings/Settings';
 import EditDetails from '../screens/MyStore/EditDetails';
 import AppTop from './AppTop';
+import ViewImage from '../screens/MyStore/ViewImage';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -168,6 +169,14 @@ const MainStack = ({navigation}) => (
       options={{
         headerShown: true,
         headerTitle: 'Categories',
+      }}
+    />
+    <Stack.Screen
+      name="ViewImage"
+      component={ViewImage}
+      options={{
+        headerShown: true,
+        headerTitle: '',
       }}
     />
     {/* Setting section */}
