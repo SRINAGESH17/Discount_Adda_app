@@ -18,7 +18,7 @@ import * as yup from 'yup';
 import {Formik} from 'formik';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import {useFocusEffect} from '@react-navigation/native';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 import {
   GoogleSignin,
   statusCodes,
@@ -58,24 +58,29 @@ function Register({navigation}) {
     }, []),
   );
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    const _getCurrentUserInfo = async () => {
-      try {
-        let info = await GoogleSignin.signInSilently();
-        // console.log('User Info --> ', info);
-        setImg(info.user.photo);
-        setemail(info.user.email);
-      } catch (error) {
-        if (error.code === statusCodes.SIGN_IN_REQUIRED) {
-          alert('User has not signed in yet');
-          console.log('User has not signed in yet');
-        } else {
-          alert("Unable to get user's info");
-          console.log("Unable to get user's info");
+    if (isFocused) {
+      const CurrentUserInfo = async () => {
+        try {
+          let info = await GoogleSignin.signInSilently();
+          // console.log('User Info --> ', info);
+          setImg(info.user.photo);
+          setemail(info.user.email);
+        } catch (error) {
+          if (error.code === statusCodes.SIGN_IN_REQUIRED) {
+            alert('User has not signed in yet');
+            console.log('User has not signed in yet');
+          } else {
+            alert("Unable to get user's info");
+            console.log("Unable to get user's info");
+          }
         }
-      }
-    };
-    _getCurrentUserInfo();
+      };
+      CurrentUserInfo();
+    }
+
     console.log('Register SCreen');
   }, []);
 

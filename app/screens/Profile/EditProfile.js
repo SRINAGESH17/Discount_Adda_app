@@ -121,10 +121,7 @@ function EditProfile({navigation}) {
       setUploading(false);
       setImage(null);
 
-      Alert.alert(
-        'Photo uploaded!',
-        'Your photo has been uploaded to Firebase Cloud Storage!',
-      );
+      Alert.alert('Photo uploaded!', 'Your photo has been uploaded !');
 
       return url;
     } catch (e) {

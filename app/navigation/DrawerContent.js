@@ -23,11 +23,19 @@ function DrawerContent(props) {
       .collection('users')
       .doc(uid)
       .onSnapshot(documentSnapshot => {
-        const userData = documentSnapshot.data();
-        setName(userData.fname);
-        setLast(userData.lname);
+        if (documentSnapshot.exists === false) {
+          null;
+        }
+        console.log('User exists: ', documentSnapshot.exists);
 
-        setImg(userData.userImg);
+        if (documentSnapshot.exists === true) {
+          // console.log('User data: ', documentSnapshot.data());
+          const userData = documentSnapshot.data();
+          setName(userData.fname);
+          setLast(userData.lname);
+
+          setImg(userData.userImg);
+        }
       });
 
     // Stop listening for updates when no longer required

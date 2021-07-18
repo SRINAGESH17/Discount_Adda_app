@@ -13,6 +13,7 @@ import {
   ActivityIndicator,
   Alert,
   Image,
+  BackHandler,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
@@ -24,7 +25,7 @@ import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {Button, Headline, Title} from 'react-native-paper';
-import Task from '../../components/Task';
+import {useFocusEffect, useIsFocused} from '@react-navigation/native';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
@@ -37,6 +38,30 @@ function EditStore({navigation}) {
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const onBackPress = () => {
+        Alert.alert('Hold on!', 'Are you sure you want to go Home page?', [
+          {
+            text: 'Cancel',
+            onPress: () => null,
+            style: 'cancel',
+          },
+          {text: 'YES', onPress: () => navigation.navigate('Home')},
+        ]);
+        return true;
+      };
+
+      // Add Event Listener for hardwareBackPress
+      const backHandler = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress,
+      );
+
+      return () => backHandler.remove();
+    }, []),
+  );
 
   const picture = () => {
     setVisible(!isVisible);
@@ -187,7 +212,7 @@ function EditStore({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Headline>Please all the following details</Headline>
+      <Headline>Please all the following Details</Headline>
       <View style={{marginTop: 5}}>
         {loading ? (
           <View style={{alignItems: 'center'}}>

@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import {useIsFocused} from '@react-navigation/native';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -19,9 +20,10 @@ const windowHeight = Dimensions.get('window').height;
 function MerchantHome({navigation}) {
   const [name, setName] = useState('');
   const {uid} = auth().currentUser;
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    function info() {
+    if (isFocused) {
       firestore()
         .collection('users')
         .doc(uid)
@@ -32,14 +34,12 @@ function MerchantHome({navigation}) {
           }
           console.log('User exists: ', documentSnapshot.exists);
 
-          if (documentSnapshot.exists) {
+          if (documentSnapshot.exists === true) {
             // console.log('User data: ', documentSnapshot.data());
             setName(documentSnapshot.data().fname);
           }
         });
     }
-
-    info();
   }, []);
 
   return (
