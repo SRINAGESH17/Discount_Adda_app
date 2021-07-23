@@ -75,6 +75,7 @@ function EditStore({navigation}) {
       .doc(auth().currentUser.uid)
       .set({
         StoreName: db.storename,
+        storetype: db.storetype,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .catch(() => alert('about  not updated'));
@@ -98,7 +99,6 @@ function EditStore({navigation}) {
       setLoading(false);
     }, 1000);
   };
-
   const PickImage = () => {
     const options = {
       maxWidth: 800,
@@ -148,6 +148,7 @@ function EditStore({navigation}) {
       }
     });
   };
+
   const uploadImage = async () => {
     const {uri} = image;
 
@@ -228,12 +229,19 @@ function EditStore({navigation}) {
           <Formik
             initialValues={{
               storename: '',
+              storetype: '',
             }}
             onSubmit={values => aboutstorename(values)}
             validationSchema={yup.object().shape({
               storename: yup
                 .string()
                 .min(4)
+                .max(10)
+                .required('Please, provide name of your shop!'),
+              storetype: yup
+                .string()
+                .min(4)
+                .max(8)
                 .required('Please, provide name of your shop!'),
             })}>
             {({
@@ -246,28 +254,50 @@ function EditStore({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add the Name of your shop</Title>
-                <TextInput
-                  placeholder="Name of the shop"
-                  numberOfLines={1}
-                  multiline={true}
-                  value={values.storename}
-                  onChangeText={handleChange('storename')}
-                  onBlur={() => setFieldTouched('storename')}
-                  style={{
-                    borderColor: '#ccc',
-                    width: windowWidth * 0.9,
-                    borderWidth: 1,
-                    textAlignVertical: 'top',
-                    color: '#000',
-                  }}
-                  placeholderTextColor="#aaa"
-                />
-                {touched.storename && errors.storename && (
-                  <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                    {errors.storename}
-                  </Text>
-                )}
+                <Text>Add Details of your shop</Text>
+                <View flexDirection="row">
+                  <TextInput
+                    placeholder="Name of the shop"
+                    multiline={true}
+                    value={values.storename}
+                    onChangeText={handleChange('storename')}
+                    onBlur={() => setFieldTouched('storename')}
+                    style={{
+                      borderColor: '#ccc',
+                      width: windowWidth * 0.4,
+                      borderWidth: 1,
+                      textAlignVertical: 'top',
+                      color: '#000',
+                      marginEnd: 10,
+                    }}
+                    placeholderTextColor="#aaa"
+                  />
+                  {touched.storename && errors.storename && (
+                    <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                      {errors.storename}
+                    </Text>
+                  )}
+                  <TextInput
+                    placeholder="Eg. Grocery,Clothes,Medical"
+                    multiline={true}
+                    value={values.storetype}
+                    onChangeText={handleChange('storetype')}
+                    onBlur={() => setFieldTouched('storetype')}
+                    style={{
+                      borderColor: '#ccc',
+                      width: windowWidth * 0.5,
+                      borderWidth: 1,
+                      textAlignVertical: 'top',
+                      color: '#000',
+                    }}
+                    placeholderTextColor="#aaa"
+                  />
+                  {touched.storetype && errors.storetype && (
+                    <Text style={{fontSize: 12, color: '#FF0D10'}}>
+                      {errors.storetype}
+                    </Text>
+                  )}
+                </View>
                 <Button
                   disabled={!isValid}
                   onPress={handleSubmit}
@@ -276,7 +306,7 @@ function EditStore({navigation}) {
                     backgroundColor: '#D02824',
                     marginTop: 10,
                     width: 150,
-                    marginBottom: 30,
+                    marginBottom: 10,
                   }}>
                   Submit
                 </Button>

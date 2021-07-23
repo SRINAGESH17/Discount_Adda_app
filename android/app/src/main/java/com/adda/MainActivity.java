@@ -1,4 +1,4 @@
-package com.adda;
+package com.discountadda;
 
 import com.facebook.react.ReactActivity;
 import android.os.Bundle;

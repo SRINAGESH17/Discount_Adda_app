@@ -77,9 +77,10 @@ const styles = StyleSheet.create({
   },
   txtproducts: {
     justifyContent: 'center',
-    fontSize: 15,
     borderRadius: 4,
-    padding: 5,
+  },
+  textCategory: {
+    fontSize: 15,
   },
 });
 
@@ -117,6 +118,8 @@ export default function Mystore({navigation}) {
   const [about, setAbout] = useState('');
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
+
+  const [storetype, setstoretype] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
   // Category states
@@ -253,6 +256,7 @@ export default function Mystore({navigation}) {
         if (documentSnapshot.exists) {
           console.log('User data: ', documentSnapshot.data());
           setName(documentSnapshot.data().StoreName);
+          setstoretype(documentSnapshot.data().storetype);
         }
       });
 
@@ -476,7 +480,7 @@ export default function Mystore({navigation}) {
           {/* Grocery Store */}
 
           <View style={{marginTop: 10}}>
-            <Text>Grocery Store</Text>
+            <Text>{storetype} Store</Text>
             <View flexDirection="row">
               <Text>Vashi</Text>
               <Text style={{marginStart: 20, color: '#008B3E'}}>Open now</Text>
@@ -559,42 +563,42 @@ export default function Mystore({navigation}) {
             }}>
             {menfashion === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{menfashion}</Text>
+                <Text style={styles.textCategory}>{menfashion}</Text>
               </View>
             )}
             {womenfashion === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{womenfashion}</Text>
+                <Text style={styles.textCategory}>{womenfashion}</Text>
               </View>
             )}
             {kidfashion === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{kidfashion}</Text>
+                <Text style={styles.textCategory}>{kidfashion}</Text>
               </View>
             )}
             {beauty === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{beauty}</Text>
+                <Text style={styles.textCategory}>{beauty}</Text>
               </View>
             )}
             {menfootwear === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{menfootwear}</Text>
+                <Text style={styles.textCategory}>{menfootwear}</Text>
               </View>
             )}
             {womenfootwear === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{womenfootwear}</Text>
+                <Text style={styles.textCategory}>{womenfootwear}</Text>
               </View>
             )}
             {home === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{home}</Text>
+                <Text style={styles.textCategory}>{home}</Text>
               </View>
             )}
             {medicine === null ? null : (
               <View style={styles.txtproducts}>
-                <Text>{medicine}</Text>
+                <Text style={styles.textCategory}>{medicine}</Text>
               </View>
             )}
           </View>

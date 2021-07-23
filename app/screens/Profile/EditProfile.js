@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   SafeAreaView,
@@ -32,7 +32,9 @@ function EditProfile({navigation}) {
 
   // const [address, setAddress] = useState('');
   // const [date, setdate] = useState('2016-05-15');
-
+  // useEffect(() => {
+  //   auth().signInAnonymously();
+  // });
   const [loading, setLoading] = useState(false);
 
   const PickImage = () => {
@@ -62,8 +64,8 @@ function EditProfile({navigation}) {
   const Camera = () => {
     const options = {
       title: 'Select Profile Pic',
-      maxWidth: 2000,
-      maxHeight: 2000,
+      maxWidth: 500,
+      maxHeight: 500,
       saveToPhotos: true,
       storageOptions: {
         skipBackup: true,

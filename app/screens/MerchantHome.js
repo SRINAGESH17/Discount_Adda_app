@@ -32,6 +32,7 @@ function MerchantHome({navigation}) {
           if (documentSnapshot.exists === false) {
             navigation.navigate('register');
           }
+
           console.log('User exists: ', documentSnapshot.exists);
 
           if (documentSnapshot.exists === true) {

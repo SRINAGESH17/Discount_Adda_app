@@ -4,8 +4,6 @@ import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-import CheckBox from '@react-native-community/checkbox';
-
 function FashionCategory({navigation}) {
   const [women, setWomen] = useState([]);
   const [kids, setkids] = useState([]);
@@ -251,7 +249,6 @@ function FashionCategory({navigation}) {
           value={item.selected}
           status={item.selected ? 'checked' : 'unchecked'}
           onPress={() => onChangeValue(item, index)}
-          style={{}}
         />
       </View>
     );
@@ -325,7 +322,7 @@ function FashionCategory({navigation}) {
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button title="submit" onPress={submit} />
+              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>
@@ -359,7 +356,7 @@ function FashionCategory({navigation}) {
                   />
                 )}
 
-                <Button title="submit" onPress={submitWomen} />
+                <Button color="#D02824" title="submit" onPress={submitWomen} />
               </View>
             )}
           </List.Accordion>
@@ -395,7 +392,7 @@ function FashionCategory({navigation}) {
                   />
                 )}
 
-                <Button title="submit" onPress={submitkids} />
+                <Button color="#D02824" title="submit" onPress={submitkids} />
               </View>
             )}
           </List.Accordion>
@@ -417,7 +414,11 @@ function FashionCategory({navigation}) {
             ) : (
               <View>
                 {isLoading ? (
-                  <ActivityIndicator />
+                  <ActivityIndicator
+                    animating={true}
+                    color="#D02824"
+                    size="large"
+                  />
                 ) : (
                   <FlatList
                     data={beauty}
@@ -426,7 +427,7 @@ function FashionCategory({navigation}) {
                   />
                 )}
 
-                <Button title="submit" onPress={submitBeauty} />
+                <Button color="#D02824" title="submit" onPress={submitBeauty} />
               </View>
             )}
           </List.Accordion>

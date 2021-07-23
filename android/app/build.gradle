@@ -132,7 +132,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.adda"
+        applicationId "com.discountadda"
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
@@ -211,7 +211,7 @@ dependencies {
     implementation project(':react-native-camera')
     implementation project(path: ':@react-native-picker_picker')
     implementation project(':lottie-react-native')
-    implementation project(':react-native-community-checkbox')
+   
     addUnimodulesDependencies()
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

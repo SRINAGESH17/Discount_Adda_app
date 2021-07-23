@@ -4,8 +4,6 @@ import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-import CheckBox from '@react-native-community/checkbox';
-
 function MedicneCategory({navigation}) {
   const [data, setdata] = useState([]);
 
@@ -121,7 +119,7 @@ function MedicneCategory({navigation}) {
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button title="submit" onPress={submit} />
+              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>

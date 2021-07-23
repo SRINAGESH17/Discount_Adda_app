@@ -4,8 +4,6 @@ import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-import CheckBox from '@react-native-community/checkbox';
-
 function FootWear({navigation}) {
   const [women, setWomen] = useState([]);
   const [data, setdata] = useState([]);
@@ -189,7 +187,7 @@ function FootWear({navigation}) {
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button title="submit" onPress={submit} />
+              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>
@@ -219,7 +217,7 @@ function FootWear({navigation}) {
                   />
                 )}
 
-                <Button title="submit" onPress={submitWomen} />
+                <Button color="#D02824" title="submit" onPress={submitWomen} />
               </View>
             )}
           </List.Accordion>

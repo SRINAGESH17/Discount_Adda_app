@@ -25,11 +25,13 @@ function AuthNavigation() {
         setIsFirstLaunch(false);
       }
     });
-
     GoogleSignin.configure({
+      scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
       webClientId:
-        '294701684118-n1nr024q0lh00i5dtgjpu6at1s035kc6.apps.googleusercontent.com',
+        '432625471246-v0t28iarr07k24amatg4v2r51cbpqmfe.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
     });
+
     console.log('authnavigation');
   }, []);
 

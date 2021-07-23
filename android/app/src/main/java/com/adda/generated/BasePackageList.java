@@ -1,4 +1,4 @@
-package com.adda.generated;
+package com.discountadda.generated;
 
 import java.util.Arrays;
 import java.util.List;

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DiscountsAdda</string>
+    <string name="app_name">DiscountsAdda-Merchant</string>
     <string moduleConfig="true" name="CodePushDeploymentKey">WkMf3XQ06v8bcVwnaUtQbQQfzqzHmi7YRX2S5</string>
     <string name="facebook_app_id">483643552740876</string>
 </resources>

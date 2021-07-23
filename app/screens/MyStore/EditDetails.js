@@ -20,12 +20,13 @@ import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
-import * as ImagePicker from 'react-native-image-picker';
+
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {Button, Headline, Title} from 'react-native-paper';
+import * as ImagePicker from 'react-native-image-picker';
 
 import {useIsFocused} from '@react-navigation/native';
 
@@ -104,7 +105,7 @@ function EditDetails({navigation}) {
       setLoading(false);
     }, 1000);
   };
-
+  //  image save
   const PickImage = () => {
     const options = {
       maxWidth: 800,
@@ -154,6 +155,7 @@ function EditDetails({navigation}) {
       }
     });
   };
+
   const uploadImage = async () => {
     const {uri} = image;
 
@@ -299,6 +301,7 @@ function EditDetails({navigation}) {
               storename: yup
                 .string()
                 .min(4)
+                .max(10)
                 .required('Please, provide name of your shop!'),
             })}>
             {({
@@ -550,7 +553,7 @@ function EditDetails({navigation}) {
           alignItems: 'center',
           borderRadius: 20,
         }}>
-        <Text style={{color: 'white'}}>Add Subcategory</Text>
+        <Text style={{color: 'white'}}>Add Categories</Text>
       </TouchableOpacity>
     </View>
   );

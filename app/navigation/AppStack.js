@@ -38,14 +38,18 @@ const MainStack = ({navigation}) => (
               flexDirection: 'row',
               alignItems: 'center',
               marginStart: 10,
+              justifyContent: 'center',
             }}>
             <TouchableOpacity onPress={() => navigation.openDrawer()}>
               <Image
                 source={require('../assets/menu.png')}
-                style={{width: 25, height: 25}}
+                style={{width: 25, height: 25, marginEnd: 10}}
               />
             </TouchableOpacity>
-            <Image source={require('../assets/discounticon.png')} />
+            <Image
+              source={require('../assets/discounticon.png')}
+              style={{width: 50, height: 50}}
+            />
           </View>
         ),
         headerTitle: ' ',
@@ -144,7 +148,7 @@ const MainStack = ({navigation}) => (
       component={Mystore}
       options={{
         headerShown: false,
-        headerTitle: 'Profile',
+        headerTitle: '',
       }}
     />
     <Stack.Screen
@@ -160,7 +164,7 @@ const MainStack = ({navigation}) => (
       component={EditDetails}
       options={{
         headerShown: true,
-        headerTitle: 'Edit Details',
+        headerTitle: 'Edit Shop Details',
       }}
     />
     <Stack.Screen
@@ -169,6 +173,16 @@ const MainStack = ({navigation}) => (
       options={{
         headerShown: true,
         headerTitle: 'Categories',
+        headerRight: () => (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Mystore')}
+            style={{marginEnd: 10}}>
+            <Image
+              source={require('../assets/home.png')}
+              style={{width: 30, height: 35}}
+            />
+          </TouchableOpacity>
+        ),
       }}
     />
     <Stack.Screen

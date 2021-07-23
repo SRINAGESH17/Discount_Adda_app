@@ -47,7 +47,6 @@ function SignUp({navigation}) {
     <SafeAreaView style={styles.scrollView}>
       <View
         style={{
-          backgroundColor: '#EAEBEC',
           width: windowWidth / 2.2,
           height: windowHeight / 4.5,
           justifyContent: 'center',
@@ -56,18 +55,18 @@ function SignUp({navigation}) {
           marginTop: 30,
         }}>
         <Image
-          style={{width: windowWidth / 2.5, height: windowHeight / 6}}
+          style={{width: windowWidth / 2.4, height: windowHeight / 4.5}}
           source={require('../../assets/Logo.png')}
         />
       </View>
 
       <View style={{marginTop: 30, marginBottom: 80}}>
-        <Text style={styles.txt}>Welcome to DiscountAdda</Text>
+        <Text style={styles.txt}>Welcome to DiscountsAdda-Merchant</Text>
         {/* <Text style={styles.txt}>DiscountAdda</Text> */}
       </View>
 
       <SocialButton
-        buttonTitle="signup with Google"
+        buttonTitle="Login /Signup with Google"
         src={require('../../assets/google.png')}
         color="#707070"
         backgroundColor="#EAEBEC"
