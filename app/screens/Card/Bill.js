@@ -6,15 +6,23 @@ import {
   SafeAreaView,
   TextInput,
   Dimensions,
+  Alert,
+  Pressable,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import FormButton from '../../components/FormButton';
+import Modal from 'react-native-modal';
+import FormInput from '../../components/FormInput';
 
 const windowHeight = Dimensions.get('window').height;
 
 function Bill(props) {
   const [discount, setDiscount] = useState();
   const [amount, setAmount] = useState('');
+  const [isModalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Order Purchase</Text>
@@ -26,8 +34,40 @@ function Bill(props) {
           <Picker.Item label="25 %" value="25" />
           <Picker.Item label="50 %" value="50" />
           <Picker.Item label="70 %" value="70" />
+          <Picker.Item
+            label="Add Discount"
+            value={() => setModalVisible(true)}
+          />
         </Picker>
       </View>
+      <Modal
+        isVisible={isModalVisible}
+        animationOut="fadeOutDown"
+        animationIn="fadeInUp">
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>Add Discount here</Text>
+            <FormInput
+              style={{
+                backgroundColor: 'white',
+                marginTop: -8,
+                marginBottom: 10,
+                color: '#000',
+              }}
+              value={discount}
+              onChangeText={number => setDiscount(number)}
+              placeholderText="Enter your Discount value"
+              keyboardType="numeric"
+              maxLength={2}
+            />
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={toggleModal}>
+              <Text style={styles.textStyle}>Close </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
       <Text>
         Enter the total amount of the purchase{'\n'}done by the customer
       </Text>
@@ -65,11 +105,12 @@ function Bill(props) {
         </Text>
       </View>
       <View style={{marginTop: 20}}>
-        <FormButton
+        {/* <FormButton
           buttonTitle={`Pay ${
             amount - (amount * discount) / 100
           } to the Merchant`}
-        />
+        /> */}
+        <FormButton buttonTitle="Submit" />
       </View>
     </SafeAreaView>
   );
@@ -121,6 +162,47 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     backgroundColor: 'black',
     marginTop: 20,
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 22,
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  textStyle: {
+    color: 'white',
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 

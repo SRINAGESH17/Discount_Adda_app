@@ -12,7 +12,9 @@ import {
   ActivityIndicator,
   Button,
 } from 'react-native';
-import * as ImagePicker from 'react-native-image-picker';
+// import * as ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
+
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
@@ -30,77 +32,99 @@ function EditProfile({navigation}) {
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
-  // const [address, setAddress] = useState('');
-  // const [date, setdate] = useState('2016-05-15');
-  // useEffect(() => {
-  //   auth().signInAnonymously();
-  // });
   const [loading, setLoading] = useState(false);
 
-  const PickImage = () => {
-    const options = {
-      maxWidth: 500,
-      maxHeight: 500,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        setImage(source);
-      }
+  //cmaera options
+  // const PickImage = () => {
+  //   const options = {
+  //     maxWidth: 500,
+  //     maxHeight: 500,
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: 'images',
+  //     },
+  //   };
+  //   ImagePicker.launchImageLibrary(options, response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //     } else {
+  //       const source = {uri: response.assets[0].uri};
+  //       // const source = {uri: 'data:image/jpeg;base64,' + response.data};
+  //       console.log('source', source);
+  //       setImage(source);
+  //     }
+  //   });
+  // };
+  // const Camera = () => {
+  //   const options = {
+  //     title: 'Select Profile Pic',
+  //     maxWidth: 500,
+  //     maxHeight: 500,
+  //     saveToPhotos: true,
+  //     storageOptions: {
+  //       skipBackup: true,
+  //       path: 'images',
+  //     },
+  //   };
+  //   ImagePicker.launchCamera(options, response => {
+  //     if (response.didCancel) {
+  //       console.log('User cancelled image picker');
+  //     } else if (response.error) {
+  //       console.log('ImagePicker Error: ', response.error);
+  //     } else if (response.customButton) {
+  //       console.log('User tapped custom button: ', response.customButton);
+  //     } else {
+  //       const source = {uri: response.assets[0].uri};
+  //       // const source = {uri: 'data:image/jpeg;base64,' + response.data};
+  //       console.log('source', source);
+  //       const info = response.assets;
+  //       console.log('info of image', info);
+  //       setImage(source);
+  //     }
+  //   });
+  // };
+
+  const Camera = () => {
+    ImagePicker.openCamera({
+      compressImageMaxWidth: 300,
+      compressImageMaxHeight: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
     });
   };
-  const Camera = () => {
-    const options = {
-      title: 'Select Profile Pic',
-      maxWidth: 500,
-      maxHeight: 500,
-      saveToPhotos: true,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchCamera(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        const info = response.assets;
-        console.log('info of image', info);
-        setImage(source);
-      }
+
+  const PickImage = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
     });
   };
   const uploadImage = async () => {
-    const {uri} = image;
+    const uri = image;
 
     const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    // const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
     console.log('filename', filename);
-    console.log('uploadUri', uploadUri);
+    // console.log('uploadUri', uploadUri);
     setUploading(true);
     setTransferred(0);
 
     const storageRef = storage().ref(`profile/${auth().currentUser.uid}`);
-    const task = storageRef.putFile(uploadUri);
+    const task = storageRef.putFile(uri);
 
     const taskProgress = snapshot => {
       setTransferred(
@@ -194,7 +218,7 @@ function EditProfile({navigation}) {
 
           <View style={styles.imageContainer}>
             {image !== null ? (
-              <Image source={{uri: image.uri}} style={styles.imageBox} />
+              <Image source={{uri: image}} style={styles.imageBox} />
             ) : null}
             {uploading ? (
               <View style={styles.progressBarContainer}>

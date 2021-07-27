@@ -26,7 +26,8 @@ import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
 import {Formik} from 'formik';
 import {Button, Headline, Title} from 'react-native-paper';
-import * as ImagePicker from 'react-native-image-picker';
+// import * as ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
 
 import {useIsFocused} from '@react-navigation/native';
 
@@ -106,70 +107,48 @@ function EditDetails({navigation}) {
     }, 1000);
   };
   //  image save
-  const PickImage = () => {
-    const options = {
-      maxWidth: 800,
-      maxHeight: 800,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        setImage(source);
-      }
-    });
-  };
   const Camera = () => {
-    const options = {
-      title: 'Select Profile Pic',
-      maxWidth: 800,
-      maxHeight: 800,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchCamera(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        setImage(source);
-      }
+    ImagePicker.openCamera({
+      compressImageMaxWidth: 300,
+      compressImageMaxHeight: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
     });
   };
+
+  const PickImage = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+    });
+  };
+
+  // upload to firebase
 
   const uploadImage = async () => {
-    const {uri} = image;
+    const uri = image;
 
     const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    // const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
     console.log('filename', filename);
-    console.log('uploadUri', uploadUri);
+    // console.log('uploadUri', uploadUri);
     setUploading(true);
     setTransferred(0);
 
     const storageRef = storage().ref(
       `post/${auth().currentUser.uid}/${filename}`,
     );
-    const tasks = storageRef.putFile(uploadUri);
+    const tasks = storageRef.putFile(uri);
 
     const taskProgress = snapshot => {
       setTransferred(
@@ -386,7 +365,7 @@ function EditDetails({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add details about the Shop</Title>
+                <Title>Add details about the business</Title>
                 <TextInput
                   placeholder="About the shop"
                   numberOfLines={3}
@@ -451,7 +430,7 @@ function EditDetails({navigation}) {
 
             <View style={styles.imageContainer}>
               {image !== null ? (
-                <Image source={{uri: image.uri}} style={styles.imageBox} />
+                <Image source={{uri: image}} style={styles.imageBox} />
               ) : null}
               {uploading ? (
                 <View style={styles.progressBarContainer}>

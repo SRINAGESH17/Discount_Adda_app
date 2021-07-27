@@ -19,7 +19,9 @@ import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
-import * as ImagePicker from 'react-native-image-picker';
+// import * as ImagePicker from 'react-native-image-picker';
+import ImagePicker from 'react-native-image-crop-picker';
+
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
@@ -99,70 +101,48 @@ function EditStore({navigation}) {
       setLoading(false);
     }, 1000);
   };
-  const PickImage = () => {
-    const options = {
-      maxWidth: 800,
-      maxHeight: 800,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchImageLibrary(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        setImage(source);
-      }
-    });
-  };
+
+  //  camera and picker
   const Camera = () => {
-    const options = {
-      title: 'Select Profile Pic',
-      maxWidth: 800,
-      maxHeight: 800,
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
-    ImagePicker.launchCamera(options, response => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.assets[0].uri};
-        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-        console.log('source', source);
-        setImage(source);
-      }
+    ImagePicker.openCamera({
+      compressImageMaxWidth: 300,
+      compressImageMaxHeight: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
     });
   };
 
+  const PickImage = () => {
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropping: true,
+      compressImageQuality: 0.7,
+    }).then(image => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+    });
+  };
+  // upload image
   const uploadImage = async () => {
-    const {uri} = image;
+    const uri = image;
 
     const filename = uri.substring(uri.lastIndexOf('/') + 1);
-    const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
+    // const uploadUri = Platform.OS === 'ios' ? uri.replace('file://', '') : uri;
     console.log('filename', filename);
-    console.log('uploadUri', uploadUri);
+    // console.log('uploadUri', uploadUri);
     setUploading(true);
     setTransferred(0);
 
     const storageRef = storage().ref(
       `post/${auth().currentUser.uid}/${filename}`,
     );
-    const tasks = storageRef.putFile(uploadUri);
+    const tasks = storageRef.putFile(uri);
 
     const taskProgress = snapshot => {
       setTransferred(
@@ -254,7 +234,7 @@ function EditStore({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Text>Add Details of your shop</Text>
+                <Text>Add Details of your business</Text>
                 <View flexDirection="row">
                   <TextInput
                     placeholder="Name of the shop"
@@ -413,7 +393,7 @@ function EditStore({navigation}) {
 
             <View style={styles.imageContainer}>
               {image !== null ? (
-                <Image source={{uri: image.uri}} style={styles.imageBox} />
+                <Image source={{uri: image}} style={styles.imageBox} />
               ) : null}
               {uploading ? (
                 <View style={styles.progressBarContainer}>
