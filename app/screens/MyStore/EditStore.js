@@ -193,7 +193,7 @@ function EditStore({navigation}) {
 
   return (
     <View style={styles.container}>
-      <Headline>Please all the following Details</Headline>
+      <Headline>Please add the following Details</Headline>
       <View style={{marginTop: 5}}>
         {loading ? (
           <View style={{alignItems: 'center'}}>
@@ -217,12 +217,12 @@ function EditStore({navigation}) {
                 .string()
                 .min(4)
                 .max(10)
-                .required('Please, provide name of your shop!'),
+                .required('Please, provide name of your business!'),
               storetype: yup
                 .string()
                 .min(4)
                 .max(8)
-                .required('Please, provide name of your shop!'),
+                .required('Please, provide name of your business!'),
             })}>
             {({
               values,
@@ -237,7 +237,7 @@ function EditStore({navigation}) {
                 <Text>Add Details of your business</Text>
                 <View flexDirection="row">
                   <TextInput
-                    placeholder="Name of the shop"
+                    placeholder="Name of the business"
                     multiline={true}
                     value={values.storename}
                     onChangeText={handleChange('storename')}
@@ -316,7 +316,7 @@ function EditStore({navigation}) {
               about: yup
                 .string()
                 .min(10)
-                .required('Please, provide details about your shop!'),
+                .required('Please, provide details about your business!'),
             })}>
             {({
               values,
@@ -328,9 +328,9 @@ function EditStore({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add details about the Shop</Title>
+                <Title>Add details about the business</Title>
                 <TextInput
-                  placeholder="About the shop"
+                  placeholder="About the business"
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -409,11 +409,11 @@ function EditStore({navigation}) {
             </View>
           </View>
           <TouchableOpacity onPress={picture} style={styles.done}>
-            <Text style={{color: 'white'}}>Done</Text>
+            <Text style={{color: 'white'}}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
-      <Title>Add picture of Shop</Title>
+      <Title>Add picture of business</Title>
       <View style={styles.box}>
         <TouchableOpacity
           onPress={picture}

@@ -164,7 +164,7 @@ const MainStack = ({navigation}) => (
       component={EditDetails}
       options={{
         headerShown: true,
-        headerTitle: 'Edit Shop Details',
+        headerTitle: 'Edit business Details',
       }}
     />
     <Stack.Screen

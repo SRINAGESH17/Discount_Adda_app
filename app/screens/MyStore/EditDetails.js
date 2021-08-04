@@ -281,7 +281,7 @@ function EditDetails({navigation}) {
                 .string()
                 .min(4)
                 .max(10)
-                .required('Please, provide name of your shop!'),
+                .required('Please, provide name of your business!'),
             })}>
             {({
               values,
@@ -293,9 +293,9 @@ function EditDetails({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add the Name of your shop</Title>
+                <Title>Add the Name of your business</Title>
                 <TextInput
-                  placeholder="Name of the shop"
+                  placeholder="Name of the business"
                   numberOfLines={1}
                   multiline={true}
                   value={values.storename}
@@ -353,7 +353,7 @@ function EditDetails({navigation}) {
               about: yup
                 .string()
                 .min(10)
-                .required('Please, provide details about your shop!'),
+                .required('Please, provide details about your business!'),
             })}>
             {({
               values,
@@ -367,7 +367,7 @@ function EditDetails({navigation}) {
               <View>
                 <Title>Add details about the business</Title>
                 <TextInput
-                  placeholder="About the shop"
+                  placeholder="About the business"
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -446,7 +446,7 @@ function EditDetails({navigation}) {
             </View>
           </View>
           <TouchableOpacity onPress={picture} style={styles.done}>
-            <Text style={{color: 'white'}}>Done</Text>
+            <Text style={{color: 'white'}}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -505,12 +505,12 @@ function EditDetails({navigation}) {
             </ScrollView>
           </View>
           <TouchableOpacity onPress={deleteImage} style={styles.done}>
-            <Text style={{color: 'white'}}>Done</Text>
+            <Text style={{color: 'white'}}>Close</Text>
           </TouchableOpacity>
         </View>
       </Modal>
       {/* Picture edit */}
-      <Title>Edit picture of Shop</Title>
+      <Title>Edit picture of business</Title>
       <View style={styles.box}>
         <TouchableOpacity
           onPress={picture}

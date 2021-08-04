@@ -106,6 +106,8 @@ function Register({navigation}) {
     }, 2000);
     // console.log(db.contact, db.name, db.last, db.email);
   };
+  const phoneRegExp =
+    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
@@ -135,9 +137,7 @@ function Register({navigation}) {
             address: yup.string().required('Please, provide address!'),
             contact: yup
               .string()
-              .min(10)
-              .max(10, 'Contact no. should not excced 10 digits.')
-              .required(),
+              .matches(phoneRegExp, 'Phone number is not valid'),
           })}>
           {({
             values,
@@ -204,6 +204,7 @@ function Register({navigation}) {
                 onBlur={() => setFieldTouched('contact')}
                 placeholderText="Enter your Phone Number here"
                 keyboardType="phone-pad"
+                maxLength="10"
               />
               {touched.contact && errors.contact && (
                 <Text style={{fontSize: 12, color: '#FF0D10'}}>

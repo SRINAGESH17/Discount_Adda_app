@@ -154,7 +154,7 @@ function Profile({navigation}) {
           </View>
         )}
 
-        <FormButton buttonTitle="log out" onPress={() => logout()} />
+        <FormButton buttonTitle="Logout" onPress={() => logout()} />
       </ScrollView>
     </>
   );

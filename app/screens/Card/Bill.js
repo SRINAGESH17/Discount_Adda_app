@@ -30,7 +30,7 @@ function Bill(props) {
         <Picker
           selectedValue={discount}
           onValueChange={(itemValue, itemIndex) => setDiscount(itemValue)}>
-          <Picker.Item label="Discount List" value="Discount" />
+          <Picker.Item label="Add Discount" value="Discount" />
           <Picker.Item label="25 %" value="25" />
           <Picker.Item label="50 %" value="50" />
           <Picker.Item label="70 %" value="70" />
@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#D02824',
   },
   textStyle: {
     color: 'white',

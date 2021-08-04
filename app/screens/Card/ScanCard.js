@@ -78,7 +78,7 @@ function ScanCard({navigation}) {
                 />
                 <TouchableOpacity
                   style={{
-                    backgroundColor: 'skyblue',
+                    backgroundColor: '#D02824',
                     alignItems: 'center',
                     padding: 8,
                     borderRadius: 10,
