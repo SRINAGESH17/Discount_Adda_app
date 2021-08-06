@@ -210,7 +210,7 @@ dependencies {
     implementation project(':react-native-camera')
     implementation project(path: ':@react-native-picker_picker')
     implementation project(':lottie-react-native')
-   
+    implementation project(':react-native-community-netinfo')
     addUnimodulesDependencies()
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

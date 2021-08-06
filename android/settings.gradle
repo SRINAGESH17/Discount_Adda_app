@@ -14,4 +14,5 @@ project(':@react-native-picker_picker').projectDir = new File(rootProject.projec
 include ':lottie-react-native'
 project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/src/android')
 apply from: '../node_modules/react-native-unimodules/gradle.groovy'; includeUnimodulesProjects()
-
+include ':react-native-community-netinfo'
+project(':react-native-community-netinfo').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/netinfo/android')

@@ -56,24 +56,28 @@ function EditDetails({navigation}) {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
-      firestore()
-        .collection('mystore')
-        .doc(uid)
-        .collection('userPosts')
-        .orderBy('createdAt', 'asc')
-        .get()
-        .then(snapshot => {
-          let posts = snapshot.docs.map(doc => {
-            const data = doc.data();
-            const id = doc.id;
-
-            return {id, ...data};
-          });
-
-          setUserPosts(posts);
-        });
+      BusinessPic();
     }
   }, [isFocused]);
+
+  const BusinessPic = () => {
+    firestore()
+      .collection('mystore')
+      .doc(uid)
+      .collection('userPosts')
+      .orderBy('createdAt', 'asc')
+      .get()
+      .then(snapshot => {
+        let posts = snapshot.docs.map(doc => {
+          const data = doc.data();
+          const id = doc.id;
+
+          return {id, ...data};
+        });
+
+        setUserPosts(posts);
+      });
+  };
 
   const aboutsave = db => {
     setLoading(true);
@@ -254,6 +258,7 @@ function EditDetails({navigation}) {
       .doc(postId)
       .delete()
       .then(() => alert('Successfully deleted'))
+      .then(() => BusinessPic())
       .catch(() => alert('not deleted from firestore'));
   };
 
@@ -630,7 +635,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     width: 150,
     height: 50,
-    backgroundColor: '#8ac6d1',
+    backgroundColor: '#D02824',
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 5,

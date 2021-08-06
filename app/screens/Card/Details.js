@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -8,8 +8,27 @@ import {
   ScrollView,
 } from 'react-native';
 import FormButton from '../../components/FormButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Details({navigation}) {
+  const [Name, setName] = useState('');
+  const [last, setlast] = useState('');
+  const [Email, setEmail] = useState('');
+  const [contact, setContact] = useState('');
+
+  const [date, setDate] = useState('');
+
+  useEffect(() => {
+    Info();
+  }, []);
+  const Info = async () => {
+    setName(await AsyncStorage.getItem('first'));
+    setlast(await AsyncStorage.getItem('last'));
+    setEmail(await AsyncStorage.getItem('mail'));
+    setContact(await AsyncStorage.getItem('contact'));
+
+    setDate(await AsyncStorage.getItem('date'));
+  };
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Card details</Text>
@@ -18,11 +37,13 @@ function Details({navigation}) {
           style={styles.image}
           source={require('../../assets/abhav.jpg')}
         />
-        <Text style={styles.imgtxt}>USER SINCE 'MAY-2021'</Text>
+        <Text style={styles.imgtxt}>USER SINCE {date}</Text>
       </View>
 
       <Text style={styles.name}>User Name</Text>
-      <TextInput placeholder="User Name" />
+      <Text style={{marginTop: 10}}>
+        {Name} {last}
+      </Text>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
       </View>
@@ -32,14 +53,13 @@ function Details({navigation}) {
         <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
       </View>
       <Text style={styles.name}>Mobile Number</Text>
-      <Text style={styles.name}>+ 91 - ******2345</Text>
+      <Text style={styles.name}>+ 91 - {contact}</Text>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
       </View>
       <Text style={styles.name}>Card Expiry</Text>
-      <Text style={styles.name}>
-        08{'  '} May {'  '} 2018
-      </Text>
+
+      <Text style={styles.name}>9 Nov 2021</Text>
       <View style={{flexDirection: 'row', alignItems: 'center'}}>
         <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
       </View>

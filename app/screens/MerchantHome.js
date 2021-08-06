@@ -13,6 +13,8 @@ import {
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import {useIsFocused} from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useNetInfo} from '@react-native-community/netinfo';
 
 const windowWidth = Dimensions.get('window').width;
 const windowHeight = Dimensions.get('window').height;
@@ -22,13 +24,15 @@ function MerchantHome({navigation}) {
   const {uid} = auth().currentUser;
   const isFocused = useIsFocused();
 
+  const netInfo = useNetInfo();
+
   useEffect(() => {
     if (isFocused) {
       firestore()
         .collection('users')
         .doc(uid)
         .get()
-        .then(documentSnapshot => {
+        .then(async function (documentSnapshot) {
           if (documentSnapshot.exists === false) {
             navigation.navigate('register');
           }
@@ -38,6 +42,31 @@ function MerchantHome({navigation}) {
           if (documentSnapshot.exists === true) {
             // console.log('User data: ', documentSnapshot.data());
             setName(documentSnapshot.data().fname);
+            try {
+              await AsyncStorage.setItem(
+                'first',
+                documentSnapshot.data().fname,
+              );
+              await AsyncStorage.setItem('last', documentSnapshot.data().lname);
+              await AsyncStorage.setItem('mail', documentSnapshot.data().email);
+              await AsyncStorage.setItem(
+                'contact',
+                documentSnapshot.data().contact,
+              );
+
+              await AsyncStorage.setItem(
+                'date',
+                JSON.stringify(
+                  new Date(documentSnapshot.data().createdAt.toDate())
+                    .toDateString()
+                    .split(' ')
+                    .slice(1)
+                    .join(' '),
+                ),
+              );
+            } catch (e) {
+              alert(e);
+            }
           }
         });
     }

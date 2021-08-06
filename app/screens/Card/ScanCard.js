@@ -84,7 +84,7 @@ function ScanCard({navigation}) {
                     borderRadius: 10,
                   }}
                   onPress={() => navigation.navigate('Details')}>
-                  <Text>Next</Text>
+                  <Text style={{color: 'white'}}>Next</Text>
                 </TouchableOpacity>
               </View>
             </View>

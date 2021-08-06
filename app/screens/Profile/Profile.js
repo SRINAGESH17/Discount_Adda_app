@@ -30,6 +30,7 @@ function Profile({navigation}) {
   const {uid} = auth().currentUser;
 
   const [date, setdate] = useState('');
+  const [joindate, setjoindate] = useState();
 
   const [loading, setLoading] = useState(true);
 
@@ -53,23 +54,30 @@ function Profile({navigation}) {
         setContact(userData.contact);
         setImg(userData.userImg);
         setdate(userData.dob);
+        setjoindate(
+          new Date(userData.createdAt.toDate())
+            .toDateString()
+            .split(' ')
+            .slice(1)
+            .join(' '),
+        );
       });
 
-    // Stop listening for updates when no longer required
     setLoading(false);
+    storeData();
     return () => subscriber();
   }, []);
 
-  // const storeData = async () => {
-  //   try {
-  //     await AsyncStorage.setItem('first', name);
-  //     await AsyncStorage.setItem('last', last);
-  //     await AsyncStorage.setItem('address', address);
-  //     await AsyncStorage.setItem('dob', date);
-  //   } catch (e) {
-  //     alert(e);
-  //   }
-  // };
+  const storeData = async () => {
+    try {
+      await AsyncStorage.setItem('first', name);
+      await AsyncStorage.setItem('last', last);
+      await AsyncStorage.setItem('mail', mail);
+      await AsyncStorage.setItem('contact', contact);
+    } catch (e) {
+      alert(e);
+    }
+  };
 
   const {logout} = useContext(AuthContext);
   return (
@@ -93,7 +101,13 @@ function Profile({navigation}) {
             right: 10,
           }}>
           <Image source={require('../../assets/editprofile.png')} />
-          <Text style={{color: '#fff', marginEnd: 10, marginStart: 10}}>
+          <Text
+            style={{
+              color: '#fff',
+              marginEnd: 10,
+              marginStart: 10,
+              fontSize: 16,
+            }}>
             Edit
           </Text>
         </TouchableOpacity>
@@ -117,7 +131,7 @@ function Profile({navigation}) {
               {img === null ? null : (
                 <Image style={styles.image} source={{uri: img}} />
               )}
-              <Text style={styles.imgtxt}>USER SINCE 'MAY-2021'</Text>
+              <Text style={styles.imgtxt}>USER SINCE {joindate}</Text>
             </View>
             <View>
               <View style={{flexDirection: 'row'}}>

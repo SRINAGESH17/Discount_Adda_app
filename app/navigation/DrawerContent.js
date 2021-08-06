@@ -97,7 +97,7 @@ function DrawerContent(props) {
                 props.navigation.navigate('Profile');
               }}
             />
-            <DrawerItem
+            {/* <DrawerItem
               icon={() => (
                 <Image
                   source={require('../assets/settings.png')}
@@ -108,7 +108,7 @@ function DrawerContent(props) {
               onPress={() => {
                 props.navigation.navigate('Settings');
               }}
-            />
+            /> */}
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>

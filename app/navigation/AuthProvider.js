@@ -24,15 +24,14 @@ export const AuthProvider = ({children, navigation}) => {
         },
         googleLogin: async () => {
           try {
-            // Get the users ID token
-            const {idToken} = await GoogleSignin.signIn();
+            await GoogleSignin.hasPlayServices();
+            const {accessToken, idToken} = await GoogleSignin.signIn();
 
-            // Create a Google credential with the token
-            const googleCredential =
-              auth.GoogleAuthProvider.credential(idToken);
-
-            // Sign-in the user with the credential
-            return auth().signInWithCredential(googleCredential);
+            const credential = auth.GoogleAuthProvider.credential(
+              idToken,
+              accessToken,
+            );
+            await auth().signInWithCredential(credential);
           } catch (error) {
             console.log(error);
           }
@@ -84,9 +83,11 @@ export const AuthProvider = ({children, navigation}) => {
         },
         logout: async () => {
           try {
-            await auth().signOut();
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
+            auth().signOut();
+
+            // setuserInfo([]);
           } catch (error) {
             console.log(error);
           }
