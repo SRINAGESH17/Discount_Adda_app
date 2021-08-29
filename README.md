@@ -20,6 +20,10 @@
 
 > Shopkeepers can create account and upload images.
 
+## Google Play Store link
+
+> https://play.google.com/store/apps/details?id=com.discountadda
+
 ## Images of App
 
 ![Home Scrren UI](https://github.com/AbhavThakur/Discount_Adda_app/blob/master/img4.png)
