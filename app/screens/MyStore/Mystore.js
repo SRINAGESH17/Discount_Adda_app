@@ -28,16 +28,16 @@ const styles = StyleSheet.create({
     height: windowHeight * 0.4,
   },
   slideTitle: {
-    fontSize: 24,
     position: 'absolute',
-    color: '#000',
     top: windowHeight * 0.01,
-    right: windowWidth * 0.3,
+    right: windowWidth * 0.2,
+    width: windowWidth * 0.6,
+    height: windowHeight * 0.05,
+    alignItems: 'center',
   },
   slideSubtitle: {
     position: 'relative',
     left: windowWidth * 0.85,
-    top: windowHeight * 0.01,
   },
   back: {
     position: 'absolute',
@@ -432,12 +432,15 @@ export default function Mystore({navigation}) {
           onPress={() => navigation.navigate('EditDetails')}>
           <Image source={require('../../assets/edit.png')} />
         </TouchableOpacity>
-        <Text style={styles.slideTitle}>{name} Stores</Text>
+
         <TouchableOpacity
           style={styles.back}
           onPress={() => navigation.navigate('Home')}>
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
+        <View style={styles.slideTitle}>
+          <Text style={{fontSize: 19, color: '#000'}}>{name} Stores</Text>
+        </View>
         {userPost.length === 0 ? (
           <View>
             <Text>Please upload the images</Text>

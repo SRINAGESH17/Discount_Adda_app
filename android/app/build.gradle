@@ -136,8 +136,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 7 // do not use decimal number here
+        versionName "Beta"
         multiDexEnabled true
     }
     splits {
@@ -206,7 +206,6 @@ dependencies {
     implementation platform('com.google.firebase:firebase-bom:28.1.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'androidx.multidex:multidex:2.0.1'
-   
     implementation project(':react-native-camera')
     implementation project(path: ':@react-native-picker_picker')
     implementation project(':lottie-react-native')

@@ -36,12 +36,7 @@ function Profile({navigation}) {
 
   useEffect(() => {
     setLoading(true);
-    // async function subscriber() {
-    //   const userinfo = await firestore().collection('users').doc(uid).get();
-    //   const userData = userinfo.data();
-    //   // console.log('value of user', userData);
 
-    // }
     const subscriber = firestore()
       .collection('users')
       .doc(uid)
@@ -64,20 +59,9 @@ function Profile({navigation}) {
       });
 
     setLoading(false);
-    storeData();
+
     return () => subscriber();
   }, []);
-
-  const storeData = async () => {
-    try {
-      await AsyncStorage.setItem('first', name);
-      await AsyncStorage.setItem('last', last);
-      await AsyncStorage.setItem('mail', mail);
-      await AsyncStorage.setItem('contact', contact);
-    } catch (e) {
-      alert(e);
-    }
-  };
 
   const {logout} = useContext(AuthContext);
   return (

@@ -52,7 +52,8 @@ const Settings = ({navigation}) => {
 
       for (let item of response) {
         // console.log(item)
-        let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+        // let address = `${item.name}, ${item.street}, ${item.postalCode}, ${item.city}`;
+        let address = `${item.city}`;
 
         setDisplayCurrentAddress(address);
       }
@@ -61,9 +62,9 @@ const Settings = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.contentContainer}>
+      {/* <View style={styles.contentContainer}>
         <Text style={styles.title}>Your Current address</Text>
-      </View>
+      </View> */}
       <Text style={styles.text}>{displayCurrentAddress}</Text>
     </View>
   );
@@ -74,7 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    paddingTop: 130,
+    justifyContent: 'center',
   },
   contentContainer: {
     alignItems: 'center',
@@ -92,7 +93,7 @@ const styles = StyleSheet.create({
     color: '#FD0139',
   },
   text: {
-    fontSize: 20,
+    fontSize: 15,
     fontWeight: '400',
     color: '#000',
   },

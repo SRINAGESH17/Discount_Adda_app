@@ -34,60 +34,6 @@ function EditProfile({navigation}) {
 
   const [loading, setLoading] = useState(false);
 
-  //cmaera options
-  // const PickImage = () => {
-  //   const options = {
-  //     maxWidth: 500,
-  //     maxHeight: 500,
-  //     storageOptions: {
-  //       skipBackup: true,
-  //       path: 'images',
-  //     },
-  //   };
-  //   ImagePicker.launchImageLibrary(options, response => {
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.error) {
-  //       console.log('ImagePicker Error: ', response.error);
-  //     } else if (response.customButton) {
-  //       console.log('User tapped custom button: ', response.customButton);
-  //     } else {
-  //       const source = {uri: response.assets[0].uri};
-  //       // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-  //       console.log('source', source);
-  //       setImage(source);
-  //     }
-  //   });
-  // };
-  // const Camera = () => {
-  //   const options = {
-  //     title: 'Select Profile Pic',
-  //     maxWidth: 500,
-  //     maxHeight: 500,
-  //     saveToPhotos: true,
-  //     storageOptions: {
-  //       skipBackup: true,
-  //       path: 'images',
-  //     },
-  //   };
-  //   ImagePicker.launchCamera(options, response => {
-  //     if (response.didCancel) {
-  //       console.log('User cancelled image picker');
-  //     } else if (response.error) {
-  //       console.log('ImagePicker Error: ', response.error);
-  //     } else if (response.customButton) {
-  //       console.log('User tapped custom button: ', response.customButton);
-  //     } else {
-  //       const source = {uri: response.assets[0].uri};
-  //       // const source = {uri: 'data:image/jpeg;base64,' + response.data};
-  //       console.log('source', source);
-  //       const info = response.assets;
-  //       console.log('info of image', info);
-  //       setImage(source);
-  //     }
-  //   });
-  // };
-
   const Camera = () => {
     ImagePicker.openCamera({
       compressImageMaxWidth: 300,

@@ -216,12 +216,10 @@ function EditStore({navigation}) {
               storename: yup
                 .string()
                 .min(4)
-                .max(10)
                 .required('Please, provide name of your business!'),
               storetype: yup
                 .string()
                 .min(4)
-                .max(8)
                 .required('Please, provide name of your business!'),
             })}>
             {({

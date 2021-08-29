@@ -82,7 +82,6 @@ function MedicneCategory({navigation}) {
           value={item.selected}
           status={item.selected ? 'checked' : 'unchecked'}
           onPress={() => onChangeValue(item, index)}
-          style={{}}
         />
       </View>
     );

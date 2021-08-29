@@ -137,7 +137,10 @@ function Register({navigation}) {
             address: yup.string().required('Please, provide address!'),
             contact: yup
               .string()
-              .matches(phoneRegExp, 'Phone number is not valid'),
+              .required()
+              .matches(/^[0-9]+$/, 'Must be only digits')
+              .min(10, 'Must be exactly 10 digits')
+              .max(10, 'Must be exactly 10 digits'),
           })}>
           {({
             values,
@@ -204,7 +207,6 @@ function Register({navigation}) {
                 onBlur={() => setFieldTouched('contact')}
                 placeholderText="Enter your Phone Number here"
                 keyboardType="phone-pad"
-                maxLength="10"
               />
               {touched.contact && errors.contact && (
                 <Text style={{fontSize: 12, color: '#FF0D10'}}>

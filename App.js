@@ -10,12 +10,15 @@ const CODE_PUSH_Options = {
 const App = () => {
   useEffect(() => {
     RNBootSplash.hide({duration: 2000});
-    codePush.sync(
-      {installMode: codePush.InstallMode.IMMEDIATE},
-      syncwithCodePush,
-      null,
-    );
   }, []);
+  // useEffect(() => {
+  //   RNBootSplash.hide({duration: 2000});
+  //   codePush.sync(
+  //     {installMode: codePush.InstallMode.IMMEDIATE},
+  //     syncwithCodePush,
+  //     null,
+  //   );
+  // }, []);
 
   const syncwithCodePush = status => {
     console.log(status);
@@ -24,5 +27,5 @@ const App = () => {
   return <Providers />;
 };
 
-export default codePush(CODE_PUSH_Options)(App);
-// export default App;
+// export default codePush(CODE_PUSH_Options)(App);
+export default App;

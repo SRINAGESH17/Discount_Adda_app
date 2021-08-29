@@ -52,7 +52,8 @@ const MainStack = ({navigation}) => (
             />
           </View>
         ),
-        headerTitle: ' ',
+        headerTitle: () => <Settings />,
+        headerTitleAlign: 'center',
         headerRight: () => (
           <TouchableOpacity
             onPress={() => console.log('notfy')}
