@@ -22,4 +22,4 @@
 
 ## Images of App
 
-img4.png
+https://github.com/AbhavThakur/Discount_Adda_app/blob/master/img4.png
