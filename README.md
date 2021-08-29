@@ -1,6 +1,6 @@
 # Discount-Adda
 
-> The app is made using React Native, which cross platform library for creating Apps.
+> The app is made using React Native, which cross platform library for creating Apps.The app uses Firebase  for authentication and storage features. 
 
 ## About Project
 
