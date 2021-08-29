@@ -22,4 +22,4 @@
 
 ## Images of App
 
-https://github.com/AbhavThakur/Discount_Adda_app/blob/master/img4.png
+![Home Scrren UI](https://github.com/AbhavThakur/Discount_Adda_app/blob/master/img4.png)
