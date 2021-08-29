@@ -24,6 +24,22 @@
 
 > https://play.google.com/store/apps/details?id=com.discountadda
 
-## Images of App
+## Demo Working Video of Apps
 
-![Home Scrren UI](https://github.com/AbhavThakur/Discount_Adda_app/blob/master/img4.png)
+> https://drive.google.com/file/d/1QfRQOP7SxVu7VEIOC8FXsr8VUZNrHdV4/view?usp=sharing
+
+## OnBoarding of App
+
+![OnBoarding Screen UI](<https://github.com/AbhavThakur/Discount_Adda_app/blob/master/assets/app/img2%20(Phone).jpg>)
+
+![OnBoarding Screen UI](<https://github.com/AbhavThakur/Discount_Adda_app/blob/master/assets/app/img3%20(Phone).jpg>)
+
+![OnBoarding Screen UI](<https://github.com/AbhavThakur/Discount_Adda_app/blob/master/assets/app/img5%20(Phone).jpg>)
+
+## Store Screen
+
+![Store Screen UI](<https://github.com/AbhavThakur/Discount_Adda_app/blob/master/assets/app/img8%20(Phone).jpg>)
+
+## Home Screen
+
+![Home Screen UI](<https://github.com/AbhavThakur/Discount_Adda_app/blob/master/assets/app/img9%20(Phone).png>)
