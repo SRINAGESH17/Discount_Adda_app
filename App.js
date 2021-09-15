@@ -1,11 +1,10 @@
 import React, {useEffect} from 'react';
 import RNBootSplash from 'react-native-bootsplash';
-import codePush from 'react-native-code-push';
 import Providers from './app/navigation';
 
-const CODE_PUSH_Options = {
-  checkFrequency: codePush.CheckFrequency.ON_APP_START,
-};
+// const CODE_PUSH_Options = {
+//   checkFrequency: codePush.CheckFrequency.ON_APP_START,
+// };
 
 const App = () => {
   useEffect(() => {

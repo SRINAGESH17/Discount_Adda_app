@@ -30,7 +30,7 @@ const Settings = ({navigation}) => {
   };
 
   const GetCurrentLocation = async () => {
-    let {status} = await Location.requestBackgroundPermissionsAsync();
+    let {status} = await Location.requestForegroundPermissionsAsync();
 
     if (status !== 'granted') {
       Alert.alert(

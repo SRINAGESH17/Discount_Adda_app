@@ -205,6 +205,7 @@ const MainStack = ({navigation}) => (
     />
   </Stack.Navigator>
 );
+
 const AppStack = () => {
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>

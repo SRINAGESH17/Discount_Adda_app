@@ -3,9 +3,27 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import SelectBox from 'react-native-multi-selectbox';
+import {xorBy} from 'lodash';
 
-function HomeCategory({navigation}) {
-  const [women, setWomen] = useState([]);
+const infoResturants = [
+  {
+    id: '1',
+    item: 'Veg Resturant',
+  },
+  {
+    id: '2',
+    item: 'Non-Veg Resturant',
+  },
+  {
+    id: '3',
+    item: 'Veg & Non-Veg Resturant',
+  },
+];
+
+function Resturants({navigation}) {
+  const [selectedTeams, setSelectedTeams] = useState([]);
+  const [rest, setRest] = useState([]);
   const [data, setdata] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
@@ -16,11 +34,14 @@ function HomeCategory({navigation}) {
   }, []);
 
   const gethome = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/daily';
-    fetch(menurl)
+    setdata(infoResturants);
+
+    const resturants = 'https://merchantitemlist.herokuapp.com/rest';
+    fetch(resturants)
       .then(res => res.json())
       .then(resJson => {
-        setdata(resJson);
+        setRest(resJson);
+        // console.log(`restaurant`, resJson);
       })
       .catch(err => {
         console.log('Error: ', err);
@@ -54,16 +75,16 @@ function HomeCategory({navigation}) {
       contentAlert = contentAlert + item.item + ', ' + '\n';
     });
     // Alert.alert(contentAlert);
-    console.log(contentAlert);
+    console.log('value of category', contentAlert);
 
     setLoading(true);
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('HomeCategory')
+      .collection('Resturants')
       .doc(auth().currentUser.uid)
-      .set({
-        home: contentAlert,
+      .update({
+        restauranttype: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
 
@@ -71,6 +92,25 @@ function HomeCategory({navigation}) {
     setTimeout(() => {
       setLoading(false);
     }, 1500);
+  };
+  const Submitcategory = () => {
+    onMultiChange();
+    let content = '';
+    selectedTeams.forEach(item => {
+      content = content + item.item + ',' + '\n';
+    });
+    console.log(`value from subcategory`, content);
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Resturants')
+      .doc(auth().currentUser.uid)
+      .update({
+        resturantcategory: content,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+
+      .catch(() => alert('category   not updated'));
   };
 
   // render items for flatlist
@@ -88,12 +128,15 @@ function HomeCategory({navigation}) {
       </View>
     );
   };
+  function onMultiChange() {
+    return item => setSelectedTeams(xorBy(selectedTeams, [item], 'id'));
+  }
 
   return (
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Home Essentials"
+          title="Restaurant Type"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -120,12 +163,34 @@ function HomeCategory({navigation}) {
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
+              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>
       </List.AccordionGroup>
-      <View style={{position: 'absolute', bottom: 10, width: 120, right: 100}}>
-        <Button color="#D02824" title="submit" onPress={submit} />
+      <View style={{height: 40}} />
+      <Text style={{fontSize: 20, paddingBottom: 10}}>
+        Add subcategory for Resturants
+      </Text>
+      {isLoading ? (
+        <ActivityIndicator animating={true} color="#D02824" size="large" />
+      ) : (
+        <SelectBox
+          label="Select Resturant types"
+          options={rest}
+          selectedValues={selectedTeams}
+          onMultiSelect={onMultiChange()}
+          onTapClose={onMultiChange()}
+          isMulti
+          inputPlaceholder="Type Here to search"
+          toggleIconColor="#D02824"
+          searchIconColor="#D02824"
+          arrowIconColor="#D02824"
+        />
+      )}
+
+      <View style={{marginTop: 10, width: 120}}>
+        <Button color="#D02824" title="submit" onPress={Submitcategory} />
       </View>
     </View>
   );
@@ -152,4 +217,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default HomeCategory;
+export default Resturants;

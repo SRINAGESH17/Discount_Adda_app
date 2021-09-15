@@ -16,10 +16,24 @@ function FashionCategory({navigation}) {
 
   useEffect(() => {
     getfashion();
+    // list();
   }, []);
 
+  const list = () => {
+    const menurl = 'https://merchantitemlist.herokuapp.com/list';
+    fetch(menurl)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log(`value from list`, resJson.list);
+        setBeauty(resJson.list);
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      });
+  };
+
   const getfashion = () => {
-    const menurl = 'https://nodetestrestapi.herokuapp.com/menfashion';
+    const menurl = 'https://merchantitemlist.herokuapp.com/shopping';
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -52,7 +66,7 @@ function FashionCategory({navigation}) {
       })
       .finally(() => setisLoading(false));
 
-    const beautysurl = 'https://nodetestrestapi.herokuapp.com/beauty';
+    const beautysurl = 'https://merchantitemlist.herokuapp.com/beauty';
     fetch(beautysurl)
       .then(res => res.json())
       .then(resJson => {
@@ -295,7 +309,7 @@ function FashionCategory({navigation}) {
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Men Clothes"
+          title="Clothes"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -326,7 +340,7 @@ function FashionCategory({navigation}) {
             </View>
           )}
         </List.Accordion>
-        <View style={styles.Accordion}>
+        {/* <View style={styles.Accordion}>
           <List.Accordion
             title="Women Clothes"
             id="2"
@@ -360,9 +374,9 @@ function FashionCategory({navigation}) {
               </View>
             )}
           </List.Accordion>
-        </View>
+        </View> */}
 
-        <View style={styles.Accordion}>
+        {/* <View style={styles.Accordion}>
           <List.Accordion
             title="Kids Clothes"
             id="3"
@@ -396,7 +410,7 @@ function FashionCategory({navigation}) {
               </View>
             )}
           </List.Accordion>
-        </View>
+        </View> */}
         <View style={styles.Accordion}>
           <List.Accordion
             title="Beauty & Personal Care"
