@@ -23,7 +23,6 @@
     "@react-navigation/material-top-tabs": "^5.3.15",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
-    "appcenter-cli": "^2.10.0",
     "expo-location": "^12.1.2",
     "formik": "^2.2.9",
     "lodash": "^4.17.21",

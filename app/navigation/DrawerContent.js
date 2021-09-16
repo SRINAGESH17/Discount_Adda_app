@@ -4,6 +4,7 @@ import {Avatar, Title, Caption, Drawer} from 'react-native-paper';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+
 import {AuthContext} from './AuthProvider';
 
 function DrawerContent(props) {
@@ -44,7 +45,8 @@ function DrawerContent(props) {
     // Stop listening for updates when no longer required
 
     return () => subscriber();
-  }, []);
+  }, [uid]);
+
   return (
     <View style={{flex: 1}}>
       <DrawerContentScrollView {...props}>

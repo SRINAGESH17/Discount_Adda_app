@@ -155,11 +155,11 @@ const header = () => {
   return (
     <View style={styles.header}>
       <Text style={styles.txt}>Date</Text>
-      <View style={styles.verticleLine}></View>
+      <View style={styles.verticleLine} />
       <Text style={[styles.txt, styles.customer]}>Customer{'\n'}Name </Text>
-      <View style={styles.verticleLine}></View>
+      <View style={styles.verticleLine} />
       <Text style={styles.txt}>Saved</Text>
-      <View style={styles.verticleLine}></View>
+      <View style={styles.verticleLine} />
       <Text style={[styles.txt, styles.cardno]}>Card{'\n'}Number</Text>
     </View>
   );
@@ -176,7 +176,7 @@ function TranscationRecord(props) {
           ListHeaderComponent={header}
           stickyHeaderIndices={[0]}
           ItemSeparatorComponent={() => (
-            <View style={{height: 1, backgroundColor: 'lightgrey'}}></View>
+            <View style={{height: 1, backgroundColor: 'lightgrey'}} />
           )}
           renderItem={({item}) => (
             <View style={styles.detail}>

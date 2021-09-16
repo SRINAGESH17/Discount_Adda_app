@@ -10,12 +10,10 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from 'react-native';
-import DatePicker from 'react-native-datepicker';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import FormButton from '../../components/FormButton';
 import FormText from '../../components/FormText';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {AuthContext} from '../../navigation/AuthProvider';
 
@@ -61,7 +59,7 @@ function Profile({navigation}) {
     setLoading(false);
 
     return () => subscriber();
-  }, []);
+  }, [uid]);
 
   const {logout} = useContext(AuthContext);
   return (

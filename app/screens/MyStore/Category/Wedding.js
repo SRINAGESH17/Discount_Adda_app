@@ -4,7 +4,7 @@ import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
-function HomeCategory({navigation}) {
+function Wedding({navigation}) {
   const [women, setWomen] = useState([]);
   const [data, setdata] = useState([]);
 
@@ -12,11 +12,11 @@ function HomeCategory({navigation}) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    gethome();
+    getwedding();
   }, []);
 
-  const gethome = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/daily';
+  const getwedding = () => {
+    const menurl = 'https://merchantitemlist.herokuapp.com/wedding';
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -60,17 +60,16 @@ function HomeCategory({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('HomeCategory')
+      .collection('wedding')
       .doc(auth().currentUser.uid)
       .set({
-        home: contentAlert,
+        wedding: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-
+      .then(() => {
+        setLoading(false);
+      })
       .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
   };
 
   // render items for flatlist
@@ -93,7 +92,7 @@ function HomeCategory({navigation}) {
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Home Essentials"
+          title="Wedding"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -107,6 +106,9 @@ function HomeCategory({navigation}) {
             </View>
           ) : (
             <View>
+              <View style={{marginBottom: 10}}>
+                <Button color="#D02824" title="submit" onPress={submit} />
+              </View>
               {isLoading ? (
                 <ActivityIndicator
                   animating={true}
@@ -124,9 +126,6 @@ function HomeCategory({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
-      <View style={{position: 'absolute', bottom: 10, width: 120, right: 100}}>
-        <Button color="#D02824" title="submit" onPress={submit} />
-      </View>
     </View>
   );
 }
@@ -152,4 +151,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default HomeCategory;
+export default Wedding;

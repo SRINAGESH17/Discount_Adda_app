@@ -77,7 +77,7 @@ function EditStore({navigation}) {
       .doc(auth().currentUser.uid)
       .set({
         StoreName: db.storename,
-        storetype: db.storetype,
+        address: db.address,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .catch(() => alert('about  not updated'));
@@ -167,7 +167,7 @@ function EditStore({navigation}) {
 
       Alert.alert(
         'Photo uploaded!',
-        'Your photo has been uploaded to Firebase Cloud Storage!',
+        'Your photo has been uploaded successfully!',
       );
 
       return url;
@@ -192,7 +192,7 @@ function EditStore({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <Headline>Please add the following Details</Headline>
       <View style={{marginTop: 5}}>
         {loading ? (
@@ -209,7 +209,7 @@ function EditStore({navigation}) {
           <Formik
             initialValues={{
               storename: '',
-              storetype: '',
+              address: '',
             }}
             onSubmit={values => aboutstorename(values)}
             validationSchema={yup.object().shape({
@@ -217,10 +217,10 @@ function EditStore({navigation}) {
                 .string()
                 .min(4)
                 .required('Please, provide name of your business!'),
-              storetype: yup
+              address: yup
                 .string()
                 .min(4)
-                .required('Please, provide name of your business!'),
+                .required('Please, provide address of your business!'),
             })}>
             {({
               values,
@@ -232,8 +232,9 @@ function EditStore({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Text>Add Details of your business</Text>
-                <View flexDirection="row">
+                <Title>Add Name and Address</Title>
+
+                <View>
                   <TextInput
                     placeholder="Name of the business"
                     multiline={true}
@@ -242,13 +243,14 @@ function EditStore({navigation}) {
                     onBlur={() => setFieldTouched('storename')}
                     style={{
                       borderColor: '#ccc',
-                      width: windowWidth * 0.4,
+                      width: windowWidth * 0.8,
                       borderWidth: 1,
                       textAlignVertical: 'top',
                       color: '#000',
                       marginEnd: 10,
                     }}
                     placeholderTextColor="#aaa"
+                    maxLength={16}
                   />
                   {touched.storename && errors.storename && (
                     <Text style={{fontSize: 12, color: '#FF0D10'}}>
@@ -256,23 +258,24 @@ function EditStore({navigation}) {
                     </Text>
                   )}
                   <TextInput
-                    placeholder="Eg. Grocery,Clothes,Medical"
+                    placeholder="Address of the business"
                     multiline={true}
-                    value={values.storetype}
-                    onChangeText={handleChange('storetype')}
-                    onBlur={() => setFieldTouched('storetype')}
+                    value={values.address}
+                    onChangeText={handleChange('address')}
+                    onBlur={() => setFieldTouched('address')}
                     style={{
                       borderColor: '#ccc',
-                      width: windowWidth * 0.5,
+                      width: windowWidth * 0.8,
                       borderWidth: 1,
                       textAlignVertical: 'top',
                       color: '#000',
+                      marginTop: 10,
                     }}
                     placeholderTextColor="#aaa"
                   />
-                  {touched.storetype && errors.storetype && (
+                  {touched.address && errors.address && (
                     <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                      {errors.storetype}
+                      {errors.address}
                     </Text>
                   )}
                 </View>
@@ -425,20 +428,20 @@ function EditStore({navigation}) {
           style={{
             backgroundColor: '#D02824',
             padding: 15,
-            marginTop: 100,
+            marginTop: 40,
             alignItems: 'center',
             borderRadius: 20,
           }}>
           <Text style={{color: 'white'}}>Add Subcategory</Text>
         </TouchableOpacity>
       ) : null}
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
     padding: 10,
   },
@@ -512,7 +515,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginTop: 10,
     width: 80,
-    marginBottom: 20,
+    marginBottom: 16,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 5,

@@ -30,10 +30,11 @@ import {Button, Headline, Title} from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {useIsFocused} from '@react-navigation/native';
+import {useCallback} from 'react/cjs/react.development';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
-function EditDetails({navigation}) {
+function EditDetails({navigation, route}) {
   const [loading, setLoading] = useState(false);
 
   const [isModalVisible, setModalVisible] = useState(false);
@@ -45,6 +46,8 @@ function EditDetails({navigation}) {
 
   const [userPost, setUserPosts] = useState([]);
 
+  const abc = route.params;
+  // console.log('abs', abc);
   const deleteImage = () => {
     setModalVisible(!isModalVisible);
   };
@@ -297,11 +300,12 @@ function EditDetails({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add the Name of your business</Title>
+                <Title>Edit the Name of your business</Title>
                 <TextInput
-                  placeholder="Name of the business"
+                  placeholder={abc.NameStore}
                   numberOfLines={1}
                   multiline={true}
+                  maxLength={16}
                   value={values.storename}
                   onChangeText={handleChange('storename')}
                   onBlur={() => setFieldTouched('storename')}
@@ -369,9 +373,9 @@ function EditDetails({navigation}) {
               handleSubmit,
             }) => (
               <View>
-                <Title>Add details about the business</Title>
+                <Title>Edit details about the business</Title>
                 <TextInput
-                  placeholder="About the business"
+                  placeholder={abc.AboutStore}
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -518,12 +522,22 @@ function EditDetails({navigation}) {
       <View style={styles.box}>
         <TouchableOpacity
           onPress={picture}
-          style={{backgroundColor: '#D02824', padding: 15, marginTop: 10}}>
+          style={{
+            backgroundColor: '#D02824',
+            padding: 15,
+            marginTop: 10,
+            borderRadius: 10,
+          }}>
           <Text style={{color: 'white'}}>Add Picture</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={deleteImage}
-          style={{backgroundColor: '#D02824', padding: 15, marginTop: 10}}>
+          style={{
+            backgroundColor: '#D02824',
+            padding: 15,
+            marginTop: 10,
+            borderRadius: 10,
+          }}>
           <Text style={{color: 'white'}}>Delete Picture</Text>
         </TouchableOpacity>
       </View>
@@ -532,7 +546,7 @@ function EditDetails({navigation}) {
         style={{
           backgroundColor: '#D02824',
           padding: 15,
-          marginTop: 100,
+          marginTop: 50,
           alignItems: 'center',
           borderRadius: 20,
         }}>

@@ -92,7 +92,7 @@ function Bill(props) {
           {'\u20B9'} {(amount * discount) / 100}
         </Text>
       </View>
-      <View style={styles.verticleLine}></View>
+      <View style={styles.verticleLine} />
       <View style={styles.details}>
         <Text>Grand Total </Text>
         <Text>

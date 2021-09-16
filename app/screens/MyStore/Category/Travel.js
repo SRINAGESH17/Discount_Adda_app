@@ -3,47 +3,23 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import SelectBox from 'react-native-multi-selectbox';
-import {xorBy} from 'lodash';
 
-const infoResturants = [
-  {
-    id: '1',
-    item: 'Veg Resturant',
-  },
-  {
-    id: '2',
-    item: 'Non-Veg Resturant',
-  },
-  {
-    id: '3',
-    item: 'Veg & Non-Veg Resturant',
-  },
-];
-
-function Resturants({navigation}) {
-  const [selectedTeams, setSelectedTeams] = useState([]);
-  const [rest, setRest] = useState([]);
+function Travel({navigation}) {
   const [data, setdata] = useState([]);
-  const [sub, setsub] = useState(false);
-  const [subtext, setsubtext] = useState('');
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    gethome();
+    gettravel();
   }, []);
 
-  const gethome = () => {
-    setdata(infoResturants);
-
-    const resturants = 'https://merchantitemlist.herokuapp.com/rest';
-    fetch(resturants)
+  const gettravel = () => {
+    const menurl = 'https://merchantitemlist.herokuapp.com/travel';
+    fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
-        setRest(resJson);
-        // console.log(`restaurant`, resJson);
+        setdata(resJson);
       })
       .catch(err => {
         console.log('Error: ', err);
@@ -77,45 +53,20 @@ function Resturants({navigation}) {
       contentAlert = contentAlert + item.item + ', ' + '\n';
     });
     // Alert.alert(contentAlert);
-    console.log('value of category', contentAlert);
+    console.log(contentAlert);
 
     setLoading(true);
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Resturants')
+      .collection('travel')
       .doc(auth().currentUser.uid)
       .set({
-        restauranttype: contentAlert,
+        travel: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
-        setsub(true);
-      })
-      .catch(() => alert('category   not updated'));
-  };
-  const Submitcategory = () => {
-    onMultiChange();
-    let content = '';
-    selectedTeams.forEach(item => {
-      content = content + item.item + ',' + '\n';
-    });
-    console.log('value from subcategory', content);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('Resturants')
-      .doc(auth().currentUser.uid)
-      .update({
-        resturantcategory: content,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        setsub(false);
-        setsubtext(
-          'Details Submitted for subcategory\nSelect category again to select subcategory ',
-        );
       })
       .catch(() => alert('category   not updated'));
   };
@@ -135,15 +86,12 @@ function Resturants({navigation}) {
       </View>
     );
   };
-  function onMultiChange() {
-    return item => setSelectedTeams(xorBy(selectedTeams, [item], 'id'));
-  }
 
   return (
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Restaurant Type"
+          title="Travelling Agencies"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -157,6 +105,9 @@ function Resturants({navigation}) {
             </View>
           ) : (
             <View>
+              <View style={{marginBottom: 10}}>
+                <Button color="#D02824" title="submit" onPress={submit} />
+              </View>
               {isLoading ? (
                 <ActivityIndicator
                   animating={true}
@@ -170,41 +121,10 @@ function Resturants({navigation}) {
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>
       </List.AccordionGroup>
-      {sub ? (
-        <View>
-          <View style={{height: 40}} />
-          <Text style={{fontSize: 20, paddingBottom: 10}}>
-            Add subcategory for Resturants
-          </Text>
-          {isLoading ? (
-            <ActivityIndicator animating={true} color="#D02824" size="large" />
-          ) : (
-            <SelectBox
-              label="Select Resturant types"
-              options={rest}
-              selectedValues={selectedTeams}
-              onMultiSelect={onMultiChange()}
-              onTapClose={onMultiChange()}
-              isMulti
-              inputPlaceholder="Type Here to search"
-              toggleIconColor="#D02824"
-              searchIconColor="#D02824"
-              arrowIconColor="#D02824"
-            />
-          )}
-
-          <View style={{marginTop: 10, width: 120}}>
-            <Button color="#D02824" title="submit" onPress={Submitcategory} />
-          </View>
-        </View>
-      ) : (
-        <Text>{subtext}</Text>
-      )}
     </View>
   );
 }
@@ -230,4 +150,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default Resturants;
+export default Travel;

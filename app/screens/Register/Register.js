@@ -64,7 +64,7 @@ function Register({navigation}) {
     if (isFocused) {
       const CurrentUserInfo = async () => {
         try {
-          let info = await GoogleSignin.signInSilently();
+          let info = await GoogleSignin.getCurrentUser();
           // console.log('User Info --> ', info);
           setImg(info.user.photo);
           setemail(info.user.email);
@@ -82,7 +82,7 @@ function Register({navigation}) {
     }
 
     console.log('Register SCreen');
-  }, []);
+  }, [isFocused]);
 
   const startLoading = db => {
     setLoading(true);
@@ -99,15 +99,17 @@ function Register({navigation}) {
         createdAt: firestore.Timestamp.fromDate(new Date()),
         userImg: img,
       })
+      .then(() => {
+        setLoading(false);
+        navigation.reset({
+          index: 0,
+          routes: [{name: 'Home'}],
+        });
+      })
       .catch(() => alert('Details not submitted'));
-    setTimeout(() => {
-      setLoading(false);
-      navigation.navigate('Home');
-    }, 2000);
+
     // console.log(db.contact, db.name, db.last, db.email);
   };
-  const phoneRegExp =
-    /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {Image, View, TouchableOpacity, Text} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import MerchantHome from '../screens/MerchantHome';
 import ScanCard from '../screens/Card/ScanCard';
@@ -14,7 +15,7 @@ import Profile from '../screens/Profile/Profile';
 import EditProfile from '../screens/Profile/EditProfile';
 import VerifyCode from '../screens/Register/VerifyCode';
 import Mystore from '../screens/MyStore/Mystore';
-import EditStore from '../screens/MyStore/EditStore';
+import EditStore from '../screens/MyStore/AddStore';
 import Success from '../screens/Profile/Success';
 import DrawerContent from './DrawerContent';
 import Settings from '../screens/Settings/Settings';
@@ -157,7 +158,7 @@ const MainStack = ({navigation}) => (
       component={EditStore}
       options={{
         headerShown: true,
-        headerTitle: 'Add Store Details',
+        headerTitle: 'Add business Details',
       }}
     />
     <Stack.Screen
@@ -207,6 +208,15 @@ const MainStack = ({navigation}) => (
 );
 
 const AppStack = () => {
+  useEffect(() => {
+    GoogleSignin.configure({
+      scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
+      webClientId:
+        '432625471246-v0t28iarr07k24amatg4v2r51cbpqmfe.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
+      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
+    });
+  }, []);
+
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={MainStack} />

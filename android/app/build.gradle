@@ -136,8 +136,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 7 // do not use decimal number here
-        versionName "Beta"
+        versionCode 8 // do not use decimal number here
+        versionName "Release"
         multiDexEnabled true
     }
     splits {

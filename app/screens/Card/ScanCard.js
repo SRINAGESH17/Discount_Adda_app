@@ -31,7 +31,7 @@ function ScanCard({navigation}) {
           Good Morning Harish !! I hope you get a lot of{'\n'}customers today.
           All the best for today
         </Text>
-        <View style={styles.verticleLine}></View>
+        <View style={styles.verticleLine} />
         <Text style={styles.textAmount}>
           Today's sell{'\n'}
           {'\u20B9'} 10,000

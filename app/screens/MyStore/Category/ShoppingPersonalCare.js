@@ -19,19 +19,6 @@ function FashionCategory({navigation}) {
     // list();
   }, []);
 
-  const list = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/list';
-    fetch(menurl)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log(`value from list`, resJson.list);
-        setBeauty(resJson.list);
-      })
-      .catch(err => {
-        console.log('Error: ', err);
-      });
-  };
-
   const getfashion = () => {
     const menurl = 'https://merchantitemlist.herokuapp.com/shopping';
     fetch(menurl)
@@ -157,80 +144,77 @@ function FashionCategory({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('clothesfootwear')
       .doc(auth().currentUser.uid)
       .set({
-        menfashion: contentAlert,
+        clothesfootwear: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-
-      .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  };
-
-  const submitWomen = () => {
-    const listSelected = women.filter(item => item.selected === true);
-    let contentAlert = '';
-    listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + '\n';
-    });
-
-    console.log(contentAlert);
-    setLoading(true);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('WomenFashion')
-      .doc(auth().currentUser.uid)
-      .set({
-        womenfashion: contentAlert,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
+      .then(() => {
+        setLoading(false);
       })
-
       .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
   };
 
-  const submitkids = () => {
-    const listSelected = kids.filter(item => item.selected === true);
-    let contentAlert = '';
-    listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + '\n';
-    });
+  // const submitWomen = () => {
+  //   const listSelected = women.filter(item => item.selected === true);
+  //   let contentAlert = '';
+  //   listSelected.forEach(item => {
+  //     contentAlert = contentAlert + item.value + '\n';
+  //   });
 
-    console.log(contentAlert);
-    setLoading(true);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('Kids')
-      .doc(auth().currentUser.uid)
-      .set({
-        kids: contentAlert,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
+  //   console.log(contentAlert);
+  //   setLoading(true);
+  //   firestore()
+  //     .collection('mycategory')
+  //     .doc(auth().currentUser.uid)
+  //     .collection('Fashion')
+  //     .doc(auth().currentUser.uid)
+  //     .collection('WomenFashion')
+  //     .doc(auth().currentUser.uid)
+  //     .set({
+  //       womenfashion: contentAlert,
+  //       createdAt: firestore.Timestamp.fromDate(new Date()),
+  //     })
 
-      .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-  };
+  //     .catch(() => alert('category   not updated'));
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1500);
+  // };
+
+  // const submitkids = () => {
+  //   const listSelected = kids.filter(item => item.selected === true);
+  //   let contentAlert = '';
+  //   listSelected.forEach(item => {
+  //     contentAlert = contentAlert + item.value + '\n';
+  //   });
+
+  //   console.log(contentAlert);
+  //   setLoading(true);
+  //   firestore()
+  //     .collection('mycategory')
+  //     .doc(auth().currentUser.uid)
+  //     .collection('Fashion')
+  //     .doc(auth().currentUser.uid)
+  //     .collection('Kids')
+  //     .doc(auth().currentUser.uid)
+  //     .set({
+  //       kids: contentAlert,
+  //       createdAt: firestore.Timestamp.fromDate(new Date()),
+  //     })
+
+  //     .catch(() => alert('category   not updated'));
+  //   setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1500);
+  // };
 
   const submitBeauty = () => {
     const listSelected = beauty.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + '\n';
+      contentAlert = contentAlert + item.value + ', ' + '\n';
     });
 
     console.log(contentAlert);
@@ -238,19 +222,16 @@ function FashionCategory({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('Beauty')
+      .collection('PersonalCare')
       .doc(auth().currentUser.uid)
       .set({
         beauty: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-
+      .then(() => {
+        setLoading(false);
+      })
       .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
   };
 
   // render items for flatlist
@@ -309,7 +290,7 @@ function FashionCategory({navigation}) {
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Clothes"
+          title="Clothes & FootWear"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (

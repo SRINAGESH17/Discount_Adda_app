@@ -1,11 +1,14 @@
 import React from 'react';
 import {View, StyleSheet, Text} from 'react-native';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import FashionCategory from '../screens/MyStore/Category/FashionCategory';
-import HomeCategory from '../screens/MyStore/Category/HomeCategory';
+import FashionCategory from '../screens/MyStore/Category/ShoppingPersonalCare';
+import HomeCategory from '../screens/MyStore/Category/DailyNeed';
 import MedicneCategory from '../screens/MyStore/Category/MedicneCategory';
-import FootWear from '../screens/MyStore/Category/FootWear';
+import Repair from '../screens/MyStore/Category/Repair';
 import Resturants from '../screens/MyStore/Category/Resturants';
+import Wedding from '../screens/MyStore/Category/Wedding';
+import Travel from '../screens/MyStore/Category/Travel';
+import Fitness from '../screens/MyStore/Category/Fitness';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -23,8 +26,11 @@ function AppTop(props) {
       <Tab.Screen name="Restaurants " component={Resturants} />
       <Tab.Screen name="Shopping & Personal Care" component={FashionCategory} />
       <Tab.Screen name="Daily Needs" component={HomeCategory} />
-      <Tab.Screen name="Medicine" component={MedicneCategory} />
-      <Tab.Screen name="Foot Wear" component={FootWear} />
+      <Tab.Screen name="Medical" component={MedicneCategory} />
+      <Tab.Screen name="Repair" component={Repair} />
+      <Tab.Screen name="Wedding" component={Wedding} />
+      <Tab.Screen name="Travel" component={Travel} />
+      <Tab.Screen name="Fitness" component={Fitness} />
     </Tab.Navigator>
   );
 }

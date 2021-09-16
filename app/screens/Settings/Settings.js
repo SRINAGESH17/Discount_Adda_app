@@ -41,7 +41,7 @@ const Settings = ({navigation}) => {
       );
     }
 
-    let {coords} = await Location.getCurrentPositionAsync();
+    let {coords} = await Location.getLastKnownPositionAsync();
 
     if (coords) {
       const {latitude, longitude} = coords;

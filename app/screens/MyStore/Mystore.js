@@ -77,7 +77,12 @@ const styles = StyleSheet.create({
   },
   txtproducts: {
     justifyContent: 'center',
-    borderRadius: 4,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    alignItems: 'center',
+    margin: 5,
+    padding: 5,
   },
   textCategory: {
     fontSize: 15,
@@ -118,23 +123,24 @@ export default function Mystore({navigation}) {
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
 
-  const [storetype, setstoretype] = useState('');
-
   const [userPost, setUserPosts] = useState([]);
   // Category states
 
-  //fashion category
-  const [menfashion, setmenfashion] = useState('');
-  const [womenfashion, setwomenfashion] = useState('');
-  const [kidfashion, setkidfashion] = useState('');
-  const [beauty, setbeauty] = useState('');
-  // foot wear
-  const [menfootwear, setmenfootwear] = useState('');
-  const [womenfootwear, setwomenfootwear] = useState('');
+  // category
+  const [resturants, setResturants] = useState('');
+  const [resturantsubcategory, setRestursetSubcategory] = useState('');
+  const [clothesfootwear, setClothesFootwear] = useState('');
+  const [personal, setPersonalCare] = useState('');
+  const [demand, setdemand] = useState('');
+  // d
+  const [dailyNeed, setDailyNeed] = useState('');
+  const [medical, setMedical] = useState('');
   // home category
-  const [home, sethome] = useState('');
+  const [repair, setRepair] = useState('');
   // medical category
-  const [medicine, setmedicine] = useState('');
+  const [wedding, setWedding] = useState('');
+  const [travel, setTravel] = useState('');
+  const [fitness, setFitness] = useState('');
 
   const [loading, setLoading] = useState(false);
 
@@ -150,7 +156,7 @@ export default function Mystore({navigation}) {
     // Prevent one pixel triggering setIndex in the middle
     // of the transition. With this we have to scroll a bit
     // more to trigger the index change.
-    const isNoMansLand = 0.4 < distance;
+    const isNoMansLand = distance > 0.4;
 
     if (roundIndex !== indexRef.current && !isNoMansLand) {
       setIndex(roundIndex);
@@ -230,18 +236,18 @@ export default function Mystore({navigation}) {
             setAbout(documentSnapshot.data().About);
           }
         })
-        .then(() => post());
+        .then(() => Post());
     }
-  }, [isFocused]);
+  }, [isFocused, uid]);
 
-  async function post() {
+  async function Post() {
     firestore()
       .collection('users')
       .doc(uid)
-      .onSnapshot(documentSnapshot => {
+      .get()
+      .then(documentSnapshot => {
         const userData = documentSnapshot.data();
         setContact(userData.contact);
-        setAddress(userData.address);
       });
     firestore()
       .collection('StoreName')
@@ -255,7 +261,7 @@ export default function Mystore({navigation}) {
         if (documentSnapshot.exists) {
           console.log('User data: ', documentSnapshot.data());
           setName(documentSnapshot.data().StoreName);
-          setstoretype(documentSnapshot.data().storetype);
+          setAddress(documentSnapshot.data().address);
         }
       });
 
@@ -282,130 +288,75 @@ export default function Mystore({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('Resturants')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setmenfashion(null);
+          setResturants(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setmenfashion(documentSnapshot.data().menfashion);
+          setResturants(documentSnapshot.data().restauranttype);
+          setRestursetSubcategory(documentSnapshot.data().resturantcategory);
         }
       });
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('WomenFashion')
+      .collection('clothesfootwear')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setwomenfashion(null);
+          setClothesFootwear(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setwomenfashion(documentSnapshot.data().womenfashion);
+          setClothesFootwear(documentSnapshot.data().clothesfootwear);
         }
       });
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('MenFashion')
+      .collection('PersonalCare')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setkidfashion(null);
+          setPersonalCare(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setkidfashion(documentSnapshot.data().kids);
+          setPersonalCare(documentSnapshot.data().beauty);
         }
       });
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Fashion')
-      .doc(auth().currentUser.uid)
-      .collection('Beauty')
+      .collection('ondemand')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setbeauty(null);
+          setdemand(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setbeauty(documentSnapshot.data().beauty);
+          setdemand(documentSnapshot.data().Demand);
         }
       });
     // footWear section
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('FootWear')
-      .doc(auth().currentUser.uid)
-      .collection('MenFootWear')
+      .collection('DailyNeed')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setmenfootwear(null);
+          setDailyNeed(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setmenfootwear(documentSnapshot.data().menfootwear);
+          setDailyNeed(documentSnapshot.data().DailyNeed);
         }
       });
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('FootWear')
-      .doc(auth().currentUser.uid)
-      .collection('WomenFootWear')
-      .doc(auth().currentUser.uid)
-      .get()
-      .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
-        if (documentSnapshot.exists === false) {
-          setwomenfootwear(null);
-        }
-        if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setwomenfootwear(documentSnapshot.data().womenfootwear);
-        }
-      });
-    // home sectionTitle
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('HomeCategory')
-      .doc(auth().currentUser.uid)
-      .get()
-      .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
-        if (documentSnapshot.exists === false) {
-          sethome(null);
-        }
-        if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          sethome(documentSnapshot.data().home);
-        }
-      });
-    // medical
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
@@ -413,13 +364,71 @@ export default function Mystore({navigation}) {
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
-          setmedicine(null);
+          setMedical(null);
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
-          setmedicine(documentSnapshot.data().medical);
+          setMedical(documentSnapshot.data().medical);
+        }
+      });
+    // home sectionTitle
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('repair')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setRepair(null);
+        }
+        if (documentSnapshot.exists) {
+          setRepair(documentSnapshot.data().repair);
+        }
+      });
+    // medical
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('wedding')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setWedding(null);
+        }
+        if (documentSnapshot.exists) {
+          setWedding(documentSnapshot.data().wedding);
+        }
+      });
+
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('travel')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setTravel(null);
+        }
+        if (documentSnapshot.exists) {
+          setTravel(documentSnapshot.data().travel);
+        }
+      });
+
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('fitness')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setFitness(null);
+        }
+        if (documentSnapshot.exists) {
+          setFitness(documentSnapshot.data().fitness);
         }
       });
   }
@@ -429,13 +438,23 @@ export default function Mystore({navigation}) {
       <View>
         <TouchableOpacity
           style={styles.slideSubtitle}
-          onPress={() => navigation.navigate('EditDetails')}>
+          onPress={() =>
+            navigation.navigate('EditDetails', {
+              AboutStore: about,
+              NameStore: name,
+            })
+          }>
           <Image source={require('../../assets/edit.png')} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.back}
-          onPress={() => navigation.navigate('Home')}>
+          onPress={() =>
+            navigation.reset({
+              index: 0,
+              routes: [{name: 'Home'}],
+            })
+          }>
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
         <View style={styles.slideTitle}>
@@ -462,7 +481,7 @@ export default function Mystore({navigation}) {
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{
-            paddingBottom: windowHeight * 0.1,
+            paddingBottom: windowHeight * 0.04,
           }}>
           {/* View as customer */}
           <View
@@ -482,7 +501,6 @@ export default function Mystore({navigation}) {
           {/* Grocery Store */}
 
           <View style={{marginTop: 10}}>
-            <Text>{storetype} Store</Text>
             <View flexDirection="row">
               <Text>Vashi</Text>
               <Text style={{marginStart: 20, color: '#008B3E'}}>Open now</Text>
@@ -563,44 +581,55 @@ export default function Mystore({navigation}) {
               flexDirection: 'row',
               padding: 5,
             }}>
-            {menfashion === null ? null : (
+            {resturants === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{menfashion}</Text>
+                <Text style={styles.textCategory}>{resturants}</Text>
               </View>
             )}
-            {womenfashion === null ? null : (
+            {clothesfootwear === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{womenfashion}</Text>
+                <Text style={styles.textCategory}>{clothesfootwear}</Text>
               </View>
             )}
-            {kidfashion === null ? null : (
+            {personal === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{kidfashion}</Text>
+                <Text style={styles.textCategory}>{personal}</Text>
               </View>
             )}
-            {beauty === null ? null : (
+            {demand === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{beauty}</Text>
+                <Text style={styles.textCategory}>{demand}</Text>
               </View>
             )}
-            {menfootwear === null ? null : (
+            {dailyNeed === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{menfootwear}</Text>
+                <Text style={styles.textCategory}>{dailyNeed}</Text>
               </View>
             )}
-            {womenfootwear === null ? null : (
+            {medical === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{womenfootwear}</Text>
+                <Text style={styles.textCategory}>{medical}</Text>
               </View>
             )}
-            {home === null ? null : (
+            {repair === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{home}</Text>
+                <Text style={styles.textCategory}>{repair}</Text>
               </View>
             )}
-            {medicine === null ? null : (
+            {wedding === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{medicine}</Text>
+                <Text style={styles.textCategory}>{wedding}</Text>
+              </View>
+            )}
+
+            {travel === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text style={styles.textCategory}>{travel}</Text>
+              </View>
+            )}
+            {fitness === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text style={styles.textCategory}>{fitness}</Text>
               </View>
             )}
           </View>
@@ -623,7 +652,7 @@ export default function Mystore({navigation}) {
           </View>
         </ScrollView>
       </View>
-      <Pagination index={index}></Pagination>
+      <Pagination index={index} />
     </>
   );
 }

@@ -3,30 +3,10 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import SelectBox from 'react-native-multi-selectbox';
-import {xorBy} from 'lodash';
 
-const infoResturants = [
-  {
-    id: '1',
-    item: 'Veg Resturant',
-  },
-  {
-    id: '2',
-    item: 'Non-Veg Resturant',
-  },
-  {
-    id: '3',
-    item: 'Veg & Non-Veg Resturant',
-  },
-];
-
-function Resturants({navigation}) {
-  const [selectedTeams, setSelectedTeams] = useState([]);
-  const [rest, setRest] = useState([]);
+function HomeCategory({navigation}) {
   const [data, setdata] = useState([]);
-  const [sub, setsub] = useState(false);
-  const [subtext, setsubtext] = useState('');
+  const [ondemand, setOnDemand] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -36,14 +16,21 @@ function Resturants({navigation}) {
   }, []);
 
   const gethome = () => {
-    setdata(infoResturants);
-
-    const resturants = 'https://merchantitemlist.herokuapp.com/rest';
-    fetch(resturants)
+    const menurl = 'https://merchantitemlist.herokuapp.com/daily';
+    fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
-        setRest(resJson);
-        // console.log(`restaurant`, resJson);
+        setdata(resJson);
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      })
+      .finally(() => setisLoading(false));
+    const demand = 'https://merchantitemlist.herokuapp.com/demand';
+    fetch(demand)
+      .then(res => res.json())
+      .then(resJson => {
+        setOnDemand(resJson);
       })
       .catch(err => {
         console.log('Error: ', err);
@@ -69,6 +56,22 @@ function Resturants({navigation}) {
     setdata(newData);
   };
 
+  const onChangeValueDemand = (itemSelected, index) => {
+    const newData = ondemand.map(item => {
+      if (item.id === itemSelected.id) {
+        return {
+          ...item,
+          selected: !item.selected,
+        };
+      }
+      return {
+        ...item,
+        selected: item.selected,
+      };
+    });
+    setOnDemand(newData);
+  };
+
   // submit  buttons
   const submit = () => {
     const listSelected = data.filter(item => item.selected === true);
@@ -77,52 +80,53 @@ function Resturants({navigation}) {
       contentAlert = contentAlert + item.item + ', ' + '\n';
     });
     // Alert.alert(contentAlert);
-    console.log('value of category', contentAlert);
+    console.log(contentAlert);
 
     setLoading(true);
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Resturants')
+      .collection('DailyNeed')
       .doc(auth().currentUser.uid)
       .set({
-        restauranttype: contentAlert,
+        DailyNeed: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
-        setsub(true);
       })
       .catch(() => alert('category   not updated'));
   };
-  const Submitcategory = () => {
-    onMultiChange();
-    let content = '';
-    selectedTeams.forEach(item => {
-      content = content + item.item + ',' + '\n';
+
+  const submitDemand = () => {
+    const listSelected = ondemand.filter(item => item.selected === true);
+    let contentAlert = '';
+    listSelected.forEach(item => {
+      contentAlert = contentAlert + item.item + ', ' + '\n';
     });
-    console.log('value from subcategory', content);
+    // Alert.alert(contentAlert);
+    console.log(contentAlert);
+
+    setLoading(true);
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('Resturants')
+      .collection('ondemand')
       .doc(auth().currentUser.uid)
-      .update({
-        resturantcategory: content,
+      .set({
+        Demand: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-      .then(() => {
-        setsub(false);
-        setsubtext(
-          'Details Submitted for subcategory\nSelect category again to select subcategory ',
-        );
-      })
+
       .catch(() => alert('category   not updated'));
+    setTimeout(() => {
+      setLoading(false);
+    }, 1500);
   };
 
   // render items for flatlist
 
-  const renderItemMen = ({item, index}) => {
+  const renderItemDaily = ({item, index}) => {
     return (
       <View>
         <RadioButton.Item
@@ -135,15 +139,26 @@ function Resturants({navigation}) {
       </View>
     );
   };
-  function onMultiChange() {
-    return item => setSelectedTeams(xorBy(selectedTeams, [item], 'id'));
-  }
+
+  const renderItemDemand = ({item, index}) => {
+    return (
+      <View>
+        <RadioButton.Item
+          label={item.item}
+          value={item.selected}
+          status={item.selected ? 'checked' : 'unchecked'}
+          onPress={() => onChangeValueDemand(item, index)}
+          style={{}}
+        />
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <List.AccordionGroup>
         <List.Accordion
-          title="Restaurant Type"
+          title="Home Essentials"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -157,6 +172,9 @@ function Resturants({navigation}) {
             </View>
           ) : (
             <View>
+              <View style={{marginBottom: 10}}>
+                <Button color="#D02824" title="submit" onPress={submit} />
+              </View>
               {isLoading ? (
                 <ActivityIndicator
                   animating={true}
@@ -166,45 +184,50 @@ function Resturants({navigation}) {
               ) : (
                 <FlatList
                   data={data}
-                  renderItem={renderItemMen}
+                  renderItem={renderItemDaily}
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>
-      </List.AccordionGroup>
-      {sub ? (
-        <View>
-          <View style={{height: 40}} />
-          <Text style={{fontSize: 20, paddingBottom: 10}}>
-            Add subcategory for Resturants
-          </Text>
-          {isLoading ? (
-            <ActivityIndicator animating={true} color="#D02824" size="large" />
+        {/* <View style={{marginTop: 10}}> */}
+        <List.Accordion
+          title="On Demand Service"
+          id="2"
+          right={props => <Text {...props}>+</Text>}>
+          {loading ? (
+            <View style={{alignItems: 'center'}}>
+              <Text style={{fontSize: 18}}>Details submitted</Text>
+              <ActivityIndicator
+                animating={true}
+                color="#D02824"
+                size="large"
+              />
+            </View>
           ) : (
-            <SelectBox
-              label="Select Resturant types"
-              options={rest}
-              selectedValues={selectedTeams}
-              onMultiSelect={onMultiChange()}
-              onTapClose={onMultiChange()}
-              isMulti
-              inputPlaceholder="Type Here to search"
-              toggleIconColor="#D02824"
-              searchIconColor="#D02824"
-              arrowIconColor="#D02824"
-            />
+            <View>
+              <View style={{marginBottom: 10}}>
+                <Button color="#D02824" title="submit" onPress={submitDemand} />
+              </View>
+              {isLoading ? (
+                <ActivityIndicator
+                  animating={true}
+                  color="#D02824"
+                  size="large"
+                />
+              ) : (
+                <FlatList
+                  data={ondemand}
+                  renderItem={renderItemDemand}
+                  keyExtractor={item => `key-${item.id}`}
+                />
+              )}
+            </View>
           )}
-
-          <View style={{marginTop: 10, width: 120}}>
-            <Button color="#D02824" title="submit" onPress={Submitcategory} />
-          </View>
-        </View>
-      ) : (
-        <Text>{subtext}</Text>
-      )}
+        </List.Accordion>
+        {/* </View> */}
+      </List.AccordionGroup>
     </View>
   );
 }
@@ -230,4 +253,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default Resturants;
+export default HomeCategory;

@@ -3,9 +3,15 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import SelectBox from 'react-native-multi-selectbox';
+import {xorBy} from 'lodash';
 
 function MedicneCategory({navigation}) {
   const [data, setdata] = useState([]);
+  const [hospital, setHospital] = useState([]);
+  const [selectedTeams, setSelectedTeams] = useState([]);
+  const [sub, setsub] = useState(false);
+  const [subtext, setsubtext] = useState('');
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -15,11 +21,22 @@ function MedicneCategory({navigation}) {
   }, []);
 
   const getmedical = () => {
-    const menurl = 'https://nodetestrestapi.herokuapp.com/medicine';
+    const menurl = 'https://merchantitemlist.herokuapp.com/medical';
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
         setdata(resJson);
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      })
+      .finally(() => setisLoading(false));
+
+    const hospitaldetails = 'https://merchantitemlist.herokuapp.com/hospital';
+    fetch(hospitaldetails)
+      .then(res => res.json())
+      .then(resJson => {
+        setHospital(resJson);
       })
       .catch(err => {
         console.log('Error: ', err);
@@ -50,7 +67,7 @@ function MedicneCategory({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ' + '\n';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
@@ -65,11 +82,36 @@ function MedicneCategory({navigation}) {
         medical: contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-
+      .then(() => {
+        setLoading(false);
+        setsub(true);
+      })
       .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
+  };
+
+  const Submitcategory = () => {
+    onMultiChange();
+    let content = '';
+    selectedTeams.forEach(item => {
+      content = content + item.item + ',' + '\n';
+    });
+    console.log('value from subcategory', content);
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Medical')
+      .doc(auth().currentUser.uid)
+      .update({
+        hospitalcategory: content,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        setsub(false);
+        setsubtext(
+          'Details Submitted for subcategory\nSelect category again to select subcategory',
+        );
+      })
+      .catch(() => alert('category   not updated'));
   };
 
   // render items for flatlist
@@ -78,7 +120,7 @@ function MedicneCategory({navigation}) {
     return (
       <View>
         <RadioButton.Item
-          label={item.value}
+          label={item.item}
           value={item.selected}
           status={item.selected ? 'checked' : 'unchecked'}
           onPress={() => onChangeValue(item, index)}
@@ -86,6 +128,10 @@ function MedicneCategory({navigation}) {
       </View>
     );
   };
+
+  function onMultiChange() {
+    return item => setSelectedTeams(xorBy(selectedTeams, [item], 'id'));
+  }
 
   return (
     <View style={styles.container}>
@@ -123,6 +169,35 @@ function MedicneCategory({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
+      {sub ? (
+        <View>
+          <View style={{height: 40}} />
+          <Text style={{fontSize: 20, paddingBottom: 10}}>
+            Add subcategory for Hospital
+          </Text>
+          {isLoading ? (
+            <ActivityIndicator animating={true} color="#D02824" size="large" />
+          ) : (
+            <SelectBox
+              label="Select Hospital types"
+              options={hospital}
+              selectedValues={selectedTeams}
+              onMultiSelect={onMultiChange()}
+              onTapClose={onMultiChange()}
+              isMulti
+              inputPlaceholder="Type Here to search"
+              toggleIconColor="#D02824"
+              searchIconColor="#D02824"
+              arrowIconColor="#D02824"
+            />
+          )}
+          <View style={{marginTop: 10, width: 120}}>
+            <Button color="#D02824" title="submit" onPress={Submitcategory} />
+          </View>
+        </View>
+      ) : (
+        <Text>{subtext}</Text>
+      )}
     </View>
   );
 }
