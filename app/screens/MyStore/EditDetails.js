@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-  KeyboardAvoidingView,
   StyleSheet,
   Text,
   View,
@@ -13,7 +12,6 @@ import {
   ActivityIndicator,
   Alert,
   Image,
-  ImageBackground,
   Pressable,
 } from 'react-native';
 import Modal from 'react-native-modal';
@@ -57,6 +55,7 @@ function EditDetails({navigation, route}) {
   };
   const {uid} = auth().currentUser;
   const isFocused = useIsFocused();
+
   useEffect(() => {
     if (isFocused) {
       BusinessPic();
@@ -116,8 +115,8 @@ function EditDetails({navigation, route}) {
   //  image save
   const Camera = () => {
     ImagePicker.openCamera({
-      compressImageMaxWidth: 300,
-      compressImageMaxHeight: 300,
+      compressImageMaxWidth: 500,
+      compressImageMaxHeight: 500,
       cropping: true,
       compressImageQuality: 0.7,
     }).then(image => {
@@ -172,14 +171,10 @@ function EditDetails({navigation, route}) {
 
     try {
       await tasks;
-
       const url = storageRef.getDownloadURL();
-
       setUploading(false);
       setImage(null);
-
       Alert.alert('Photo uploaded!', 'Your photo has been uploaded ');
-
       return url;
     } catch (e) {
       console.error(e);
@@ -198,8 +193,11 @@ function EditDetails({navigation, route}) {
         imageurl,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
+      .then(() => BusinessPic())
       .catch(() => alert('profile pics not updated'));
   };
+
+  // Delete the posts with the given options
 
   const deleteOption = postId => {
     //function to make two option alert
