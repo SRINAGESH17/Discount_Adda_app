@@ -13,6 +13,7 @@ import {
   Alert,
   Image,
   Pressable,
+  Switch,
 } from 'react-native';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
@@ -44,8 +45,27 @@ function EditDetails({navigation, route}) {
 
   const [userPost, setUserPosts] = useState([]);
 
+  const [isEnabled, setIsEnabled] = useState(null);
+
+  const toggleSwitch = () => {
+    setIsEnabled(previousState => !previousState);
+    firestore()
+      .collection('mystore')
+      .doc(uid)
+      .collection('status')
+      .doc(uid)
+      .set({
+        status: isEnabled ? 'Close' : 'Open',
+        value: isEnabled ? 'false' : 'true',
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .catch(() => alert('about  not updated'));
+  };
+
   const abc = route.params;
-  // console.log('abs', abc);
+
+  const Status = abc.StatusStore;
+  console.log('Value from store', abc);
   const deleteImage = () => {
     setModalVisible(!isModalVisible);
   };
@@ -79,6 +99,12 @@ function EditDetails({navigation, route}) {
 
         setUserPosts(posts);
       });
+
+    if (Status === 'true') {
+      setIsEnabled(true);
+    } else {
+      setIsEnabled(false);
+    }
   };
 
   const aboutsave = db => {
@@ -330,6 +356,7 @@ function EditDetails({navigation, route}) {
                     marginTop: 10,
                     width: 150,
                     marginBottom: 30,
+                    borderRadius: 20,
                   }}>
                   Submit
                 </Button>
@@ -402,6 +429,7 @@ function EditDetails({navigation, route}) {
                     marginTop: 10,
                     width: 150,
                     marginBottom: 30,
+                    borderRadius: 20,
                   }}>
                   Submit
                 </Button>
@@ -409,6 +437,35 @@ function EditDetails({navigation, route}) {
             )}
           </Formik>
         )}
+      </View>
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'flex-start',
+          flexDirection: 'row',
+          padding: 8,
+        }}>
+        <Text style={{fontSize: 16, color: '#000', fontWeight: '600'}}>
+          Shop Status :
+        </Text>
+        <Switch
+          trackColor={{false: '#767577', true: '#ECA9A7'}}
+          thumbColor={isEnabled ? '#D02824' : '#f4f3f4'}
+          ios_backgroundColor="#3e3e3e"
+          onValueChange={toggleSwitch}
+          style={{
+            transform: [{scaleX: 1.2}, {scaleY: 1.2}],
+            marginHorizontal: 10,
+          }}
+          value={isEnabled}
+        />
+        <Text style={{fontSize: 15, color: '#000'}}>
+          {isEnabled ? (
+            <Text style={{fontSize: 15, color: '#FF0D10'}}>Open</Text>
+          ) : (
+            'Closed'
+          )}
+        </Text>
       </View>
 
       {/* adding photo modal */}
@@ -494,17 +551,6 @@ function EditDetails({navigation, route}) {
                         style={{width: '100%', height: '100%'}}
                         source={{uri: item.imageurl}}
                       />
-                      {/* <Button
-                        onPress={() => console.log('delete')}
-                        mode="contained"
-                        style={{
-                          backgroundColor: '#D02824',
-                          marginTop: 10,
-                          width: 150,
-                          marginBottom: 30,
-                        }}>
-                        Delete
-                      </Button> */}
                     </Pressable>
                   );
                 })}
@@ -526,7 +572,7 @@ function EditDetails({navigation, route}) {
             marginTop: 10,
             borderRadius: 10,
           }}>
-          <Text style={{color: 'white'}}>Add Picture</Text>
+          <Text style={{color: 'white', fontWeight: '600'}}>Add Picture</Text>
         </TouchableOpacity>
         <TouchableOpacity
           onPress={deleteImage}
@@ -543,12 +589,12 @@ function EditDetails({navigation, route}) {
         onPress={() => navigation.navigate('Category')}
         style={{
           backgroundColor: '#D02824',
-          padding: 15,
+          padding: 10,
           marginTop: 50,
           alignItems: 'center',
           borderRadius: 20,
         }}>
-        <Text style={{color: 'white'}}>Add Categories</Text>
+        <Text style={{color: 'white', fontSize: 18}}>Add Categories</Text>
       </TouchableOpacity>
     </View>
   );
@@ -630,7 +676,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#D02824',
     padding: 10,
     marginTop: 30,
-    width: 80,
+    width: 100,
     marginBottom: 20,
     alignItems: 'center',
     justifyContent: 'center',

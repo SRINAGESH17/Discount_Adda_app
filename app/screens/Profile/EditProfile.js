@@ -295,7 +295,7 @@ function EditProfile({navigation}) {
                 <View style={{marginTop: 30}}>
                   <Button
                     color="#D02824"
-                    title="Update Profile"
+                    title="Update  Profile"
                     disabled={!isValid}
                     onPress={handleSubmit}
                   />
