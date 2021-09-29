@@ -5,6 +5,7 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import SelectBox from 'react-native-multi-selectbox';
 import {xorBy} from 'lodash';
+import ListView from '../../../components/ListView';
 
 function MedicneCategory({navigation}) {
   const [data, setdata] = useState([]);
@@ -15,6 +16,10 @@ function MedicneCategory({navigation}) {
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [medical, setMedical] = useState('');
+
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     getmedical();
@@ -42,6 +47,20 @@ function MedicneCategory({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Medical')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setMedical(null);
+        }
+        if (documentSnapshot.exists) {
+          setMedical(documentSnapshot.data().medical);
+        }
+      });
   };
 
   // on change value
@@ -67,10 +86,13 @@ function MedicneCategory({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -79,12 +101,13 @@ function MedicneCategory({navigation}) {
       .collection('Medical')
       .doc(auth().currentUser.uid)
       .set({
-        medical: contentAlert,
+        medical: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
         setsub(true);
+        getmedical();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -93,7 +116,7 @@ function MedicneCategory({navigation}) {
     onMultiChange();
     let content = '';
     selectedTeams.forEach(item => {
-      content = content + item.item + ',' + '\n';
+      content = content + item.item + ',';
     });
     console.log('value from subcategory', content);
     firestore()
@@ -102,11 +125,12 @@ function MedicneCategory({navigation}) {
       .collection('Medical')
       .doc(auth().currentUser.uid)
       .update({
-        hospitalcategory: content,
+        hospitalcategory: content.length === 0 ? null : content,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setsub(false);
+        getmedical();
         setsubtext(
           'Details Submitted for subcategory\nSelect category again to select subcategory',
         );
@@ -198,6 +222,7 @@ function MedicneCategory({navigation}) {
       ) : (
         <Text>{subtext}</Text>
       )}
+      <ListView list={medical} styletitle={{marginTop: 200}} />
     </View>
   );
 }

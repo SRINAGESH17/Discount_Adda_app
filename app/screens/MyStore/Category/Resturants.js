@@ -1,10 +1,19 @@
 import React, {useState, useEffect} from 'react';
 import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
-import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
+import {
+  List,
+  RadioButton,
+  ActivityIndicator,
+  Headline,
+  Title,
+  Banner,
+} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import SelectBox from 'react-native-multi-selectbox';
 import {xorBy} from 'lodash';
+import ListView from '../../../components/ListView';
+import HeaderAlert from '../../../components/HeaderAlert';
 
 const infoResturants = [
   {
@@ -28,14 +37,17 @@ function Resturants({navigation}) {
   const [sub, setsub] = useState(false);
   const [subtext, setsubtext] = useState('');
 
+  const [list, setlist] = useState('');
+  const [sublist, setSublist] = useState('');
+
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
-
+  const [visible, setVisible] = React.useState(false);
   useEffect(() => {
-    gethome();
+    getResturant();
   }, []);
 
-  const gethome = () => {
+  const getResturant = () => {
     setdata(infoResturants);
 
     const resturants = 'https://merchantitemlist.herokuapp.com/rest';
@@ -49,6 +61,22 @@ function Resturants({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Resturants')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setlist('Empty list');
+          setSublist('Empty subcategory list');
+        }
+        if (documentSnapshot.exists) {
+          setlist(documentSnapshot.data().restauranttype);
+          setSublist(documentSnapshot.data().resturantcategory);
+        }
+      });
   };
 
   // on change value
@@ -74,10 +102,13 @@ function Resturants({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log('value of category', contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -86,12 +117,13 @@ function Resturants({navigation}) {
       .collection('Resturants')
       .doc(auth().currentUser.uid)
       .set({
-        restauranttype: contentAlert,
+        restauranttype: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
-        setsub(true);
+        contentAlert.length === 0 ? setsub(false) : setsub(true);
+        getResturant();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -99,7 +131,7 @@ function Resturants({navigation}) {
     onMultiChange();
     let content = '';
     selectedTeams.forEach(item => {
-      content = content + item.item + ',' + '\n';
+      content = content + item.item + ',';
     });
     console.log('value from subcategory', content);
     firestore()
@@ -108,7 +140,7 @@ function Resturants({navigation}) {
       .collection('Resturants')
       .doc(auth().currentUser.uid)
       .update({
-        resturantcategory: content,
+        resturantcategory: content.length === 0 ? null : content,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
@@ -116,6 +148,7 @@ function Resturants({navigation}) {
         setsubtext(
           'Details Submitted for subcategory\nSelect category again to select subcategory ',
         );
+        getResturant();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -141,10 +174,15 @@ function Resturants({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
+
       <List.AccordionGroup>
         <List.Accordion
           title="Restaurant Type"
           id="1"
+          accessibilityLabel="Select a category"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
             <View style={{alignItems: 'center'}}>
@@ -177,7 +215,11 @@ function Resturants({navigation}) {
       </List.AccordionGroup>
       {sub ? (
         <View>
-          <View style={{height: 40}} />
+          <View
+            style={{
+              height: 40,
+            }}
+          />
           <Text style={{fontSize: 20, paddingBottom: 10}}>
             Add subcategory for Resturants
           </Text>
@@ -205,6 +247,7 @@ function Resturants({navigation}) {
       ) : (
         <Text>{subtext}</Text>
       )}
+      <ListView list={list} sublist={sublist} styletitle={{marginTop: 200}} />
     </View>
   );
 }
@@ -217,17 +260,20 @@ const styles = StyleSheet.create({
   Accordion: {
     marginTop: 10,
   },
-  // box: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   paddingStart: 20,
-  //   paddingEnd: 20,
-  //   paddingVertical: 5,
-  // },
-  // check: {
-  //   width: 20,
-  //   height: 20,
-  // },
+  liststyle: {
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+    elevation: 3,
+    padding: 5,
+    width: 300,
+    alignSelf: 'center',
+  },
 });
 
 export default Resturants;

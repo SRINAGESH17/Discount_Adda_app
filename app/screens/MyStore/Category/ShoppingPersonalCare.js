@@ -3,16 +3,20 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import ListView from '../../../components/ListView';
+import HeaderAlert from '../../../components/HeaderAlert';
 
 function FashionCategory({navigation}) {
-  const [women, setWomen] = useState([]);
-  const [kids, setkids] = useState([]);
   const [beauty, setBeauty] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
   const [data, setdata] = useState([]);
+
+  const [clothesfootwear, setClothesFootwear] = useState('');
+  const [personal, setPersonalCare] = useState('');
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     getfashion();
@@ -31,28 +35,6 @@ function FashionCategory({navigation}) {
       })
       .finally(() => setisLoading(false));
 
-    const womenurl = 'https://nodetestrestapi.herokuapp.com/womenfashion';
-    fetch(womenurl)
-      .then(res => res.json())
-      .then(resJson => {
-        setWomen(resJson);
-      })
-      .catch(err => {
-        console.log('Error: ', err);
-      })
-      .finally(() => setisLoading(false));
-
-    const kidsurl = 'https://nodetestrestapi.herokuapp.com/kidfashion';
-    fetch(kidsurl)
-      .then(res => res.json())
-      .then(resJson => {
-        setkids(resJson);
-      })
-      .catch(err => {
-        console.log('Error: ', err);
-      })
-      .finally(() => setisLoading(false));
-
     const beautysurl = 'https://merchantitemlist.herokuapp.com/beauty';
     fetch(beautysurl)
       .then(res => res.json())
@@ -63,6 +45,34 @@ function FashionCategory({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('clothesfootwear')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setClothesFootwear('Empty list for FootWear & Clothes');
+        }
+        if (documentSnapshot.exists) {
+          setClothesFootwear(documentSnapshot.data().clothesfootwear);
+        }
+      });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('PersonalCare')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setPersonalCare('Empty List for PersonalCare');
+        }
+        if (documentSnapshot.exists) {
+          setPersonalCare(documentSnapshot.data().beauty);
+        }
+      });
   };
 
   // on change value
@@ -81,37 +91,6 @@ function FashionCategory({navigation}) {
       };
     });
     setdata(newData);
-  };
-  const onChangeValueWomen = (itemSelected, index) => {
-    const newData = women.map(item => {
-      if (item.id === itemSelected.id) {
-        return {
-          ...item,
-          selected: !item.selected,
-        };
-      }
-      return {
-        ...item,
-        selected: item.selected,
-      };
-    });
-    setWomen(newData);
-  };
-
-  const onChangeValuekids = (itemSelected, index) => {
-    const newData = kids.map(item => {
-      if (item.id === itemSelected.id) {
-        return {
-          ...item,
-          selected: !item.selected,
-        };
-      }
-      return {
-        ...item,
-        selected: item.selected,
-      };
-    });
-    setkids(newData);
   };
 
   const onChangeValueBeauty = (itemSelected, index) => {
@@ -135,10 +114,13 @@ function FashionCategory({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + ', ' + '\n';
+      contentAlert = contentAlert + item.value + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -147,77 +129,27 @@ function FashionCategory({navigation}) {
       .collection('clothesfootwear')
       .doc(auth().currentUser.uid)
       .set({
-        clothesfootwear: contentAlert,
+        clothesfootwear: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
+        getfashion();
         setLoading(false);
       })
       .catch(() => alert('category   not updated'));
   };
 
-  // const submitWomen = () => {
-  //   const listSelected = women.filter(item => item.selected === true);
-  //   let contentAlert = '';
-  //   listSelected.forEach(item => {
-  //     contentAlert = contentAlert + item.value + '\n';
-  //   });
-
-  //   console.log(contentAlert);
-  //   setLoading(true);
-  //   firestore()
-  //     .collection('mycategory')
-  //     .doc(auth().currentUser.uid)
-  //     .collection('Fashion')
-  //     .doc(auth().currentUser.uid)
-  //     .collection('WomenFashion')
-  //     .doc(auth().currentUser.uid)
-  //     .set({
-  //       womenfashion: contentAlert,
-  //       createdAt: firestore.Timestamp.fromDate(new Date()),
-  //     })
-
-  //     .catch(() => alert('category   not updated'));
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 1500);
-  // };
-
-  // const submitkids = () => {
-  //   const listSelected = kids.filter(item => item.selected === true);
-  //   let contentAlert = '';
-  //   listSelected.forEach(item => {
-  //     contentAlert = contentAlert + item.value + '\n';
-  //   });
-
-  //   console.log(contentAlert);
-  //   setLoading(true);
-  //   firestore()
-  //     .collection('mycategory')
-  //     .doc(auth().currentUser.uid)
-  //     .collection('Fashion')
-  //     .doc(auth().currentUser.uid)
-  //     .collection('Kids')
-  //     .doc(auth().currentUser.uid)
-  //     .set({
-  //       kids: contentAlert,
-  //       createdAt: firestore.Timestamp.fromDate(new Date()),
-  //     })
-
-  //     .catch(() => alert('category   not updated'));
-  //   setTimeout(() => {
-  //     setLoading(false);
-  //   }, 1500);
-  // };
-
   const submitBeauty = () => {
     const listSelected = beauty.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.value + ', ' + '\n';
+      contentAlert = contentAlert + item.value + ', ';
     });
 
-    console.log(contentAlert);
+    console.log('vlue', contentAlert.length);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
     setLoading(true);
     firestore()
       .collection('mycategory')
@@ -225,10 +157,11 @@ function FashionCategory({navigation}) {
       .collection('PersonalCare')
       .doc(auth().currentUser.uid)
       .set({
-        beauty: contentAlert,
+        beauty: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
+        getfashion();
         setLoading(false);
       })
       .catch(() => alert('category   not updated'));
@@ -244,30 +177,6 @@ function FashionCategory({navigation}) {
           value={item.selected}
           status={item.selected ? 'checked' : 'unchecked'}
           onPress={() => onChangeValue(item, index)}
-        />
-      </View>
-    );
-  };
-  const renderItemWomen = ({item, index}) => {
-    return (
-      <View>
-        <RadioButton.Item
-          label={item.value}
-          value={item.selected}
-          status={item.selected ? 'checked' : 'unchecked'}
-          onPress={() => onChangeValueWomen(item, index)}
-        />
-      </View>
-    );
-  };
-  const renderItemKids = ({item, index}) => {
-    return (
-      <View>
-        <RadioButton.Item
-          label={item.value}
-          value={item.selected}
-          status={item.selected ? 'checked' : 'unchecked'}
-          onPress={() => onChangeValuekids(item, index)}
         />
       </View>
     );
@@ -288,6 +197,9 @@ function FashionCategory({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
       <List.AccordionGroup>
         <List.Accordion
           title="Clothes & FootWear"
@@ -321,77 +233,7 @@ function FashionCategory({navigation}) {
             </View>
           )}
         </List.Accordion>
-        {/* <View style={styles.Accordion}>
-          <List.Accordion
-            title="Women Clothes"
-            id="2"
-            right={props => <Text {...props}>+</Text>}>
-            {loading ? (
-              <View style={{alignItems: 'center'}}>
-                <Text style={{fontSize: 18}}>Details submitted</Text>
-                <ActivityIndicator
-                  animating={true}
-                  color="#D02824"
-                  size="large"
-                />
-              </View>
-            ) : (
-              <View>
-                {isLoading ? (
-                  <ActivityIndicator
-                    animating={true}
-                    color="#D02824"
-                    size="large"
-                  />
-                ) : (
-                  <FlatList
-                    data={women}
-                    renderItem={renderItemWomen}
-                    keyExtractor={item => `key-${item.id}`}
-                  />
-                )}
 
-                <Button color="#D02824" title="submit" onPress={submitWomen} />
-              </View>
-            )}
-          </List.Accordion>
-        </View> */}
-
-        {/* <View style={styles.Accordion}>
-          <List.Accordion
-            title="Kids Clothes"
-            id="3"
-            right={props => <Text {...props}>+</Text>}>
-            {loading ? (
-              <View style={{alignItems: 'center'}}>
-                <Text style={{fontSize: 18}}>Details submitted</Text>
-                <ActivityIndicator
-                  animating={true}
-                  color="#D02824"
-                  size="large"
-                />
-              </View>
-            ) : (
-              <View>
-                {isLoading ? (
-                  <ActivityIndicator
-                    animating={true}
-                    color="#D02824"
-                    size="large"
-                  />
-                ) : (
-                  <FlatList
-                    data={kids}
-                    renderItem={renderItemKids}
-                    keyExtractor={item => `key-${item.id}`}
-                  />
-                )}
-
-                <Button color="#D02824" title="submit" onPress={submitkids} />
-              </View>
-            )}
-          </List.Accordion>
-        </View> */}
         <View style={styles.Accordion}>
           <List.Accordion
             title="Beauty & Personal Care"
@@ -428,6 +270,11 @@ function FashionCategory({navigation}) {
           </List.Accordion>
         </View>
       </List.AccordionGroup>
+      <ListView
+        list={clothesfootwear}
+        sublist={personal}
+        styletitle={{marginTop: 200}}
+      />
     </View>
   );
 }

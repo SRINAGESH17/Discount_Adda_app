@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
 import {useIsFocused} from '@react-navigation/native';
 import TextLessMoreView from '../../components/TextLessMoreView';
@@ -147,7 +148,8 @@ export default function Mystore({navigation}) {
   const [travel, setTravel] = useState('');
   const [fitness, setFitness] = useState('');
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(true);
 
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -227,6 +229,8 @@ export default function Mystore({navigation}) {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
+      setLoading(true);
+
       firestore()
         .collection('about')
         .doc(uid)
@@ -241,11 +245,15 @@ export default function Mystore({navigation}) {
             setAbout(documentSnapshot.data().About);
           }
         })
-        .then(() => Post());
+        .then(() => Post())
+        .then(() => {
+          setModalVisible(false);
+          setLoading(false);
+        });
     }
   }, [isFocused, uid]);
 
-  async function Post() {
+  function Post() {
     firestore()
       .collection('users')
       .doc(uid)
@@ -408,7 +416,7 @@ export default function Mystore({navigation}) {
           setRepair(documentSnapshot.data().repair);
         }
       });
-    // medical
+    // wedding
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
@@ -489,6 +497,11 @@ export default function Mystore({navigation}) {
           </View>
         ) : null}
       </View>
+      <Modal isVisible={isModalVisible}>
+        <View style={{flex: 1}}>
+          <Text>Hello!</Text>
+        </View>
+      </Modal>
       <FlatList
         data={userPost}
         style={styles.carousel}

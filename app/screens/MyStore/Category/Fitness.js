@@ -3,12 +3,17 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import HeaderAlert from '../../../components/HeaderAlert';
+import ListView from '../../../components/ListView';
 
 function Fitness({navigation}) {
   const [data, setdata] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [fitness, setFitness] = useState('');
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     getfitness();
@@ -25,6 +30,21 @@ function Fitness({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('fitness')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setFitness(null);
+        }
+        if (documentSnapshot.exists) {
+          setFitness(documentSnapshot.data().fitness);
+        }
+      });
   };
 
   // on change value
@@ -50,10 +70,13 @@ function Fitness({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -62,11 +85,12 @@ function Fitness({navigation}) {
       .collection('fitness')
       .doc(auth().currentUser.uid)
       .set({
-        fitness: contentAlert,
+        fitness: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
+        getfitness();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -89,6 +113,10 @@ function Fitness({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
+
       <List.AccordionGroup>
         <List.Accordion
           title="Fitness"
@@ -125,6 +153,7 @@ function Fitness({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
+      <ListView list={fitness} styletitle={{marginTop: 200}} />
     </View>
   );
 }

@@ -290,7 +290,7 @@ function EditDetails({navigation, route}) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <View style={{marginTop: 5}}>
         {loading ? (
           <View style={{alignItems: 'center'}}>
@@ -444,10 +444,9 @@ function EditDetails({navigation, route}) {
           justifyContent: 'flex-start',
           flexDirection: 'row',
           padding: 8,
+          marginBottom: 10,
         }}>
-        <Text style={{fontSize: 16, color: '#000', fontWeight: '600'}}>
-          Shop Status :
-        </Text>
+        <Title>Shop Status :</Title>
         <Switch
           trackColor={{false: '#767577', true: '#ECA9A7'}}
           thumbColor={isEnabled ? '#D02824' : '#f4f3f4'}
@@ -596,13 +595,12 @@ function EditDetails({navigation, route}) {
         }}>
         <Text style={{color: 'white', fontSize: 18}}>Add Categories</Text>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     padding: 10,
   },

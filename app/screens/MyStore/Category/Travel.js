@@ -3,12 +3,17 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import ListView from '../../../components/ListView';
+import HeaderAlert from '../../../components/HeaderAlert';
 
 function Travel({navigation}) {
   const [data, setdata] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [travel, setTravel] = useState('');
+
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     gettravel();
@@ -25,6 +30,20 @@ function Travel({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('travel')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setTravel(null);
+        }
+        if (documentSnapshot.exists) {
+          setTravel(documentSnapshot.data().travel);
+        }
+      });
   };
 
   // on change value
@@ -50,10 +69,13 @@ function Travel({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -62,11 +84,12 @@ function Travel({navigation}) {
       .collection('travel')
       .doc(auth().currentUser.uid)
       .set({
-        travel: contentAlert,
+        travel: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
+        gettravel();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -89,6 +112,10 @@ function Travel({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
+
       <List.AccordionGroup>
         <List.Accordion
           title="Travelling Agencies"
@@ -125,6 +152,7 @@ function Travel({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
+      <ListView list={travel} styletitle={{marginTop: 200}} />
     </View>
   );
 }

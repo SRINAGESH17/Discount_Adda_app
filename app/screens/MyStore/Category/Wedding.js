@@ -3,13 +3,17 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import ListView from '../../../components/ListView';
+import HeaderAlert from '../../../components/HeaderAlert';
 
 function Wedding({navigation}) {
-  const [women, setWomen] = useState([]);
   const [data, setdata] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [wedding, setWedding] = useState('');
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     getwedding();
@@ -26,6 +30,20 @@ function Wedding({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('wedding')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setWedding(null);
+        }
+        if (documentSnapshot.exists) {
+          setWedding(documentSnapshot.data().wedding);
+        }
+      });
   };
 
   // on change value
@@ -51,10 +69,13 @@ function Wedding({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -63,11 +84,12 @@ function Wedding({navigation}) {
       .collection('wedding')
       .doc(auth().currentUser.uid)
       .set({
-        wedding: contentAlert,
+        wedding: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
+        getwedding();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -90,6 +112,10 @@ function Wedding({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
+
       <List.AccordionGroup>
         <List.Accordion
           title="Wedding"
@@ -126,6 +152,7 @@ function Wedding({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
+      <ListView list={wedding} styletitle={{marginTop: 200}} />
     </View>
   );
 }
