@@ -29,12 +29,14 @@ import FormInput from '../../components/FormInput';
 
 function EditProfile({navigation}) {
   const [image, setImage] = useState(null);
+  const [error, setError] = useState('');
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
   const [loading, setLoading] = useState(false);
 
   const Camera = () => {
+    setError('');
     ImagePicker.openCamera({
       compressImageMaxWidth: 300,
       compressImageMaxHeight: 300,
@@ -48,6 +50,7 @@ function EditProfile({navigation}) {
   };
 
   const PickImage = () => {
+    setError('');
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -103,24 +106,24 @@ function EditProfile({navigation}) {
   };
 
   const submitpost = async () => {
-    const imageurl = await uploadImage();
-    console.log('imageurl: ' + imageurl);
-    firestore()
-      .collection('users')
-      .doc(auth().currentUser.uid)
-      .update({
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-        userImg: imageurl,
-      })
-      .catch(() => alert('profile pics not updated'));
+    if (image === null) {
+      setError('Please select a photo');
+    } else {
+      const imageurl = await uploadImage();
+      console.log('imageurl: ' + imageurl);
+      firestore()
+        .collection('users')
+        .doc(auth().currentUser.uid)
+        .update({
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+          userImg: imageurl,
+        })
+        .catch(() => alert('profile pics not updated'));
+    }
   };
 
   const savePostData = async db => {
     setLoading(true);
-    // const na = await AsyncStorage.getItem('first');
-    // const la = await AsyncStorage.getItem('last');
-    // const ad = await AsyncStorage.getItem('address');
-    // const dob = await AsyncStorage.getItem('dob');
 
     firestore()
       .collection('users')
@@ -161,7 +164,9 @@ function EditProfile({navigation}) {
               <Text style={styles.buttonText}>Open Camera</Text>
             </TouchableOpacity>
           </View>
-
+          <Text style={{fontSize: 15, color: '#FF0D10', textAlign: 'center'}}>
+            {error}
+          </Text>
           <View style={styles.imageContainer}>
             {image !== null ? (
               <Image source={{uri: image}} style={styles.imageBox} />
@@ -290,7 +295,7 @@ function EditProfile({navigation}) {
                 <View style={{marginTop: 30}}>
                   <Button
                     color="#D02824"
-                    title="Update Profile"
+                    title="Update  Profile"
                     disabled={!isValid}
                     onPress={handleSubmit}
                   />

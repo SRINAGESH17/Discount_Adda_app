@@ -3,6 +3,8 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import ListView from '../../../components/ListView';
+import HeaderAlert from '../../../components/HeaderAlert';
 
 function HomeCategory({navigation}) {
   const [data, setdata] = useState([]);
@@ -10,6 +12,12 @@ function HomeCategory({navigation}) {
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
+
+  const [demand, setdemand] = useState('');
+  // daily Need
+  const [dailyNeed, setDailyNeed] = useState('');
+
+  const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
     gethome();
@@ -26,8 +34,8 @@ function HomeCategory({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
-    const demand = 'https://merchantitemlist.herokuapp.com/demand';
-    fetch(demand)
+    const demandValue = 'https://merchantitemlist.herokuapp.com/demand';
+    fetch(demandValue)
       .then(res => res.json())
       .then(resJson => {
         setOnDemand(resJson);
@@ -36,6 +44,35 @@ function HomeCategory({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('ondemand')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setdemand(null);
+        }
+        if (documentSnapshot.exists) {
+          setdemand(documentSnapshot.data().Demand);
+        }
+      });
+    // footWear section
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('DailyNeed')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setDailyNeed(null);
+        }
+        if (documentSnapshot.exists) {
+          setDailyNeed(documentSnapshot.data().DailyNeed);
+        }
+      });
   };
 
   // on change value
@@ -77,10 +114,13 @@ function HomeCategory({navigation}) {
     const listSelected = data.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
-    console.log(contentAlert);
+    // console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -89,11 +129,12 @@ function HomeCategory({navigation}) {
       .collection('DailyNeed')
       .doc(auth().currentUser.uid)
       .set({
-        DailyNeed: contentAlert,
+        DailyNeed: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
+        gethome();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -102,10 +143,13 @@ function HomeCategory({navigation}) {
     const listSelected = ondemand.filter(item => item.selected === true);
     let contentAlert = '';
     listSelected.forEach(item => {
-      contentAlert = contentAlert + item.item + ', ' + '\n';
+      contentAlert = contentAlert + item.item + ', ';
     });
     // Alert.alert(contentAlert);
     console.log(contentAlert);
+    if (contentAlert.length === 0) {
+      setVisible(true);
+    }
 
     setLoading(true);
     firestore()
@@ -114,14 +158,14 @@ function HomeCategory({navigation}) {
       .collection('ondemand')
       .doc(auth().currentUser.uid)
       .set({
-        Demand: contentAlert,
+        Demand: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-
+      .then(() => {
+        setLoading(false);
+        gethome();
+      })
       .catch(() => alert('category   not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1500);
   };
 
   // render items for flatlist
@@ -156,6 +200,9 @@ function HomeCategory({navigation}) {
 
   return (
     <View style={styles.container}>
+      {visible && (
+        <HeaderAlert text="Selected categories are empty" value={true} />
+      )}
       <List.AccordionGroup>
         <List.Accordion
           title="Home Essentials"
@@ -191,43 +238,48 @@ function HomeCategory({navigation}) {
             </View>
           )}
         </List.Accordion>
-        {/* <View style={{marginTop: 10}}> */}
-        <List.Accordion
-          title="On Demand Service"
-          id="2"
-          right={props => <Text {...props}>+</Text>}>
-          {loading ? (
-            <View style={{alignItems: 'center'}}>
-              <Text style={{fontSize: 18}}>Details submitted</Text>
-              <ActivityIndicator
-                animating={true}
-                color="#D02824"
-                size="large"
-              />
-            </View>
-          ) : (
-            <View>
-              <View style={{marginBottom: 10}}>
-                <Button color="#D02824" title="submit" onPress={submitDemand} />
-              </View>
-              {isLoading ? (
+        <View style={{marginTop: 10, flex: 0.8}}>
+          <List.Accordion
+            title="On Demand Service"
+            id="2"
+            right={props => <Text {...props}>+</Text>}>
+            {loading ? (
+              <View style={{alignItems: 'center'}}>
+                <Text style={{fontSize: 18}}>Details submitted</Text>
                 <ActivityIndicator
                   animating={true}
                   color="#D02824"
                   size="large"
                 />
-              ) : (
-                <FlatList
-                  data={ondemand}
-                  renderItem={renderItemDemand}
-                  keyExtractor={item => `key-${item.id}`}
-                />
-              )}
-            </View>
-          )}
-        </List.Accordion>
-        {/* </View> */}
+              </View>
+            ) : (
+              <View>
+                <View style={{marginBottom: 10}}>
+                  <Button
+                    color="#D02824"
+                    title="submit"
+                    onPress={submitDemand}
+                  />
+                </View>
+                {isLoading ? (
+                  <ActivityIndicator
+                    animating={true}
+                    color="#D02824"
+                    size="large"
+                  />
+                ) : (
+                  <FlatList
+                    data={ondemand}
+                    renderItem={renderItemDemand}
+                    keyExtractor={item => `key-${item.id}`}
+                  />
+                )}
+              </View>
+            )}
+          </List.Accordion>
+        </View>
       </List.AccordionGroup>
+      <ListView list={dailyNeed} sublist={demand} />
     </View>
   );
 }

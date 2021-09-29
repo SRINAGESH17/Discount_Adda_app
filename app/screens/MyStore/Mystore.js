@@ -12,8 +12,10 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import Modal from 'react-native-modal';
 import LottieView from 'lottie-react-native';
 import {useIsFocused} from '@react-navigation/native';
+import TextLessMoreView from '../../components/TextLessMoreView';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
@@ -124,6 +126,10 @@ export default function Mystore({navigation}) {
   const [address, setAddress] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
+
+  // Status
+  const [Status, setStatus] = useState('');
+  const [StatusValue, setStatusValue] = useState(null);
   // Category states
 
   // category
@@ -132,7 +138,7 @@ export default function Mystore({navigation}) {
   const [clothesfootwear, setClothesFootwear] = useState('');
   const [personal, setPersonalCare] = useState('');
   const [demand, setdemand] = useState('');
-  // d
+  // daily Need
   const [dailyNeed, setDailyNeed] = useState('');
   const [medical, setMedical] = useState('');
   // home category
@@ -142,7 +148,8 @@ export default function Mystore({navigation}) {
   const [travel, setTravel] = useState('');
   const [fitness, setFitness] = useState('');
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(true);
 
   const indexRef = useRef(index);
   indexRef.current = index;
@@ -222,6 +229,8 @@ export default function Mystore({navigation}) {
   const isFocused = useIsFocused();
   useEffect(() => {
     if (isFocused) {
+      setLoading(true);
+
       firestore()
         .collection('about')
         .doc(uid)
@@ -236,11 +245,15 @@ export default function Mystore({navigation}) {
             setAbout(documentSnapshot.data().About);
           }
         })
-        .then(() => Post());
+        .then(() => Post())
+        .then(() => {
+          setModalVisible(false);
+          setLoading(false);
+        });
     }
   }, [isFocused, uid]);
 
-  async function Post() {
+  function Post() {
     firestore()
       .collection('users')
       .doc(uid)
@@ -282,6 +295,23 @@ export default function Mystore({navigation}) {
         setUserPosts(posts);
       });
 
+    // Status messages
+    firestore()
+      .collection('mystore')
+      .doc(auth().currentUser.uid)
+      .collection('status')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setStatus('Close');
+          setStatusValue(false);
+        }
+        if (documentSnapshot.exists) {
+          setStatus(documentSnapshot.data().status);
+          setStatusValue(documentSnapshot.data().value);
+        }
+      });
     // category section
 
     // fashion section
@@ -386,7 +416,7 @@ export default function Mystore({navigation}) {
           setRepair(documentSnapshot.data().repair);
         }
       });
-    // medical
+    // wedding
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
@@ -442,6 +472,7 @@ export default function Mystore({navigation}) {
             navigation.navigate('EditDetails', {
               AboutStore: about,
               NameStore: name,
+              StatusStore: StatusValue,
             })
           }>
           <Image source={require('../../assets/edit.png')} />
@@ -466,6 +497,11 @@ export default function Mystore({navigation}) {
           </View>
         ) : null}
       </View>
+      <Modal isVisible={isModalVisible}>
+        <View style={{flex: 1}}>
+          <Text>Hello!</Text>
+        </View>
+      </Modal>
       <FlatList
         data={userPost}
         style={styles.carousel}
@@ -502,8 +538,10 @@ export default function Mystore({navigation}) {
 
           <View style={{marginTop: 10}}>
             <View flexDirection="row">
-              <Text>Vashi</Text>
-              <Text style={{marginStart: 20, color: '#008B3E'}}>Open now</Text>
+              <Text>Status</Text>
+              <Text style={{marginStart: 20, color: '#008B3E'}}>
+                {Status} now
+              </Text>
             </View>
             <View
               flexDirection="row"
@@ -514,7 +552,7 @@ export default function Mystore({navigation}) {
                   borderWidth: 1,
                   padding: 10,
                   marginStart: 10,
-                  width: 170,
+                  width: 150,
                   borderColor: '#ccc',
                   borderRadius: 5,
                 }}>
@@ -525,7 +563,7 @@ export default function Mystore({navigation}) {
           {/* About the store */}
           <View style={{marginTop: 5}}>
             <Text style={styles.txt}>ABOUT THE STORE</Text>
-            <Text
+            {/* <Text
               style={{
                 borderWidth: 1,
                 padding: 10,
@@ -534,7 +572,8 @@ export default function Mystore({navigation}) {
                 borderRadius: 5,
               }}>
               {about}
-            </Text>
+            </Text> */}
+            <TextLessMoreView text={about} targetLines={2} />
           </View>
           {/* Discount on products */}
 
@@ -571,7 +610,7 @@ export default function Mystore({navigation}) {
             />
           </View>
           {/* Types of products */}
-          <Text style={styles.txt}>TYPES OF PRODUCTS</Text>
+          <Text style={styles.txt}>Types Of Products</Text>
           <View
             style={{
               borderWidth: 1,
