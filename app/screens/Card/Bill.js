@@ -76,6 +76,7 @@ function Bill(props) {
           style={styles.amount}
           placeholder="2821.00"
           value={amount}
+          keyboardType="numeric"
           onChangeText={amt => setAmount(amt)}
         />
       </View>
@@ -120,7 +121,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-
     paddingStart: 20,
     paddingEnd: 20,
   },
@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   discounts: {
-    width: '50%',
+    width: '52%',
     marginLeft: '50%',
   },
   amount: {

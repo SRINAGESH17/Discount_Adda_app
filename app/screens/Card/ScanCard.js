@@ -24,6 +24,16 @@ function ScanCard({navigation}) {
     setModalVisible(!isModalVisible);
   };
 
+  const handleCardNumber = text => {
+    let formattedText = text.split(' ').join('');
+    if (formattedText.length > 0) {
+      formattedText = formattedText.match(new RegExp('.{1,4}', 'g')).join(' ');
+    }
+    setCard(formattedText);
+    console.log('text', formattedText);
+    return formattedText;
+  };
+
   return (
     <>
       <View style={styles.header}>
@@ -64,18 +74,21 @@ function ScanCard({navigation}) {
                 <Text style={{fontSize: 20, top: 20}}>
                   Enter your card Number
                 </Text>
+
                 <FormInput
                   style={{
                     backgroundColor: 'white',
                     marginTop: -8,
                     marginBottom: 10,
+                    color: '#000',
                   }}
                   value={card}
-                  onChangeText={number => setCard(number)}
+                  onChangeText={text => handleCardNumber(text)}
                   placeholderText="Enter your card no. here"
                   keyboardType="numeric"
-                  maxLength={10}
+                  maxLength={14}
                 />
+
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#D02824',
@@ -83,7 +96,7 @@ function ScanCard({navigation}) {
                     padding: 8,
                     borderRadius: 10,
                   }}
-                  onPress={() => navigation.navigate('Details')}>
+                  onPress={() => navigation.navigate('Details', card)}>
                   <Text style={{color: 'white'}}>Next</Text>
                 </TouchableOpacity>
               </View>

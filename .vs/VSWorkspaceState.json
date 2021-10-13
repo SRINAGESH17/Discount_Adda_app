@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\app",
+    "\\app\\navigation",
+    "\\app\\screens\\MyStore\\Category"
   ],
-  "SelectedNode": "\\App.js",
+  "SelectedNode": "\\app\\navigation\\AuthProvider.js",
   "PreviewInSolutionExplorer": false
 }

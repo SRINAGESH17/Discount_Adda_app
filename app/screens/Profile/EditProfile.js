@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
   Button,
 } from 'react-native';
-// import * as ImagePicker from 'react-native-image-picker';
+
 import ImagePicker from 'react-native-image-crop-picker';
 
 import auth from '@react-native-firebase/auth';
