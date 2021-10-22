@@ -653,7 +653,7 @@ function EditDetails({navigation, route}) {
         <View
           style={{
             width: windowWidth * 0.9,
-            height: windowHeight * 0.3,
+            height: windowHeight * 0.35,
             alignItems: 'center',
             backgroundColor: '#E8EAED',
             padding: 20,
@@ -793,7 +793,7 @@ const styles = StyleSheet.create({
   done: {
     backgroundColor: '#D02824',
     padding: 10,
-    marginTop: 30,
+    marginTop: 20,
     width: 100,
     marginBottom: 20,
     alignItems: 'center',

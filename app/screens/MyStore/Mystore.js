@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Pressable,
+  Alert,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -463,6 +464,9 @@ export default function Mystore({navigation}) {
           setFitness(documentSnapshot.data().fitness);
         }
       });
+    if (discount === '' || address === '') {
+      Alert.alert('Please add discount and address in edit section');
+    }
   }
 
   return (
