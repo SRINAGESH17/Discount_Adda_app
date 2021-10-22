@@ -28,27 +28,21 @@ function Details({navigation, route}) {
   }, []);
 
   const Info = async () => {
-    // setName(await AsyncStorage.getItem('first'));
-    // setlast(await AsyncStorage.getItem('last'));
-    // setEmail(await AsyncStorage.getItem('mail'));
-    // setContact(await AsyncStorage.getItem('contact'));
-    // setDate(await AsyncStorage.getItem('date'));
-    const menurl = `https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`;
-    fetch(menurl)
-      .then(res => res.json())
-      .then(resJson => {
-        console.log('data', resJson[0].firstName);
-        setName(resJson[0].firstName);
-        setlast(resJson[0].lastName);
-        setContact(resJson[0].contactNumber);
-        setDate(resJson[0].dateCreated);
-        setexpiry(resJson[0].expiryDate);
-        setimg(resJson[0].image);
-      })
-      .catch(err => {
-        console.log('Error: ', err);
-      })
-      .finally(() => setLoading(false));
+    console.log('card no', cardno);
+    try {
+      const menurl = `https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`;
+      const response = await fetch(menurl);
+      const resJson = await response.json();
+      setName(resJson[0].firstName);
+      setlast(resJson[0].lastName);
+      setContact(resJson[0].contactNumber);
+      setDate(resJson[0].dateCreated);
+      setexpiry(resJson[0].expiryDate);
+      setimg(resJson[0].image);
+      setLoading(false);
+    } catch (error) {
+      console.log('Error from api:', error);
+    }
   };
   return (
     <ScrollView style={styles.container}>
@@ -90,7 +84,12 @@ function Details({navigation, route}) {
           <View style={{marginTop: 30}}>
             <FormButton
               buttonTitle="Proceed"
-              onPress={() => navigation.navigate('Bill')}
+              onPress={() =>
+                navigation.navigate('Bill', {
+                  cardNumber: cardno,
+                  username: Name + last,
+                })
+              }
             />
           </View>
         </View>

@@ -30,7 +30,7 @@ function ScanCard({navigation}) {
       formattedText = formattedText.match(new RegExp('.{1,4}', 'g')).join(' ');
     }
     setCard(formattedText);
-    console.log('text', formattedText);
+    // console.log('text', formattedText);
     return formattedText;
   };
 
@@ -80,6 +80,8 @@ function ScanCard({navigation}) {
                     backgroundColor: 'white',
                     marginTop: -8,
                     marginBottom: 10,
+                  }}
+                  styletext={{
                     color: '#000',
                   }}
                   value={card}
@@ -95,6 +97,7 @@ function ScanCard({navigation}) {
                     alignItems: 'center',
                     padding: 8,
                     borderRadius: 10,
+                    marginTop: 4,
                   }}
                   onPress={() => navigation.navigate('Details', card)}>
                   <Text style={{color: 'white'}}>Next</Text>
@@ -212,7 +215,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     width: '100%',
     padding: 20,
-    height: 190,
+    height: 200,
   },
   button: {
     borderRadius: 20,

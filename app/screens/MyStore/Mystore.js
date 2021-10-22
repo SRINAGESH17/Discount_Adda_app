@@ -124,6 +124,7 @@ export default function Mystore({navigation}) {
   const [about, setAbout] = useState('');
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
+  const [discount, setdiscount] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
 
@@ -275,6 +276,7 @@ export default function Mystore({navigation}) {
           console.log('User data: ', documentSnapshot.data());
           setName(documentSnapshot.data().StoreName);
           setAddress(documentSnapshot.data().address);
+          setdiscount(documentSnapshot.data().discount);
         }
       });
 
@@ -473,6 +475,7 @@ export default function Mystore({navigation}) {
               AboutStore: about,
               NameStore: name,
               StatusStore: StatusValue,
+              Discountinfo: discount,
             })
           }>
           <Image source={require('../../assets/edit.png')} />
@@ -480,16 +483,11 @@ export default function Mystore({navigation}) {
 
         <TouchableOpacity
           style={styles.back}
-          onPress={() =>
-            navigation.reset({
-              index: 0,
-              routes: [{name: 'Home'}],
-            })
-          }>
+          onPress={() => navigation.navigate('Home')}>
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
         <View style={styles.slideTitle}>
-          <Text style={{fontSize: 19, color: '#000'}}>{name} Stores</Text>
+          <Text style={{fontSize: 18, color: '#000'}}>{name} Stores</Text>
         </View>
         {userPost.length === 0 ? (
           <View>
@@ -562,7 +560,7 @@ export default function Mystore({navigation}) {
           </View>
           {/* About the store */}
           <View style={{marginTop: 5}}>
-            <Text style={styles.txt}>ABOUT THE STORE</Text>
+            <Text style={styles.txt}>About The Store</Text>
             {/* <Text
               style={{
                 borderWidth: 1,
@@ -576,39 +574,20 @@ export default function Mystore({navigation}) {
             <TextLessMoreView text={about} targetLines={2} />
           </View>
           {/* Discount on products */}
-
-          <View
-            style={{
-              marginTop: 10,
-              alignItems: 'center',
-              borderWidth: 1,
-              padding: 10,
-              width: windowWidth * 0.92,
-              borderColor: '#ccc',
-              borderRadius: 5,
-              justifyContent: 'flex-start',
-              height: windowHeight * 0.17,
-            }}>
-            <FlatList
-              data={value}
-              nestedScrollEnabled
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item: data}) => {
-                return (
-                  <View
-                    flexDirection="row"
-                    style={{
-                      alignItems: 'center',
-                      width: windowWidth,
-                      marginBottom: 10,
-                    }}>
-                    <Image source={require('../../assets/discount.png')} />
-                    <Text style={{marginStart: 10}}>{data.value}</Text>
-                  </View>
-                );
-              }}
-            />
+          <View style={{marginTop: 5}}>
+            <Text style={styles.txt}>Discounts </Text>
+            <Text
+              style={{
+                borderWidth: 1,
+                padding: 10,
+                width: windowWidth * 0.92,
+                borderColor: '#ccc',
+                borderRadius: 5,
+              }}>
+              {discount}
+            </Text>
           </View>
+
           {/* Types of products */}
           <Text style={styles.txt}>Types Of Products</Text>
           <View

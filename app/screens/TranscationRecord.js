@@ -1,153 +1,161 @@
-import React from 'react';
-import {View, StyleSheet, Text, FlatList, SafeAreaView} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  SafeAreaView,
+  ActivityIndicator,
+} from 'react-native';
+import auth from '@react-native-firebase/auth';
 
 const data = [
   {
     id: 1,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 2,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 3,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 4,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 5,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 6,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 7,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 8,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 9,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 10,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 11,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 12,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 13,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 14,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 15,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 16,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 17,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 18,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 19,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 20,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '500',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '500',
+    cardNumber: '83271232832',
   },
   {
     id: 21,
-    Date: '10/02/21',
-    Customer: 'Aman Singh',
-    Saved: '400',
-    Card: '83271232832',
+    dateCreated: '10/02/21',
+    name: 'Aman Singh',
+    amount: '400',
+    cardNumber: '83271232832',
   },
 ];
 
@@ -164,13 +172,45 @@ const header = () => {
     </View>
   );
 };
+
 function TranscationRecord(props) {
+  const [loading, setLoading] = useState(true);
+  const [value, setvalue] = useState([]);
+  const [response, setresponse] = useState('');
+  const {uid} = auth().currentUser;
+  useEffect(() => {
+    Info();
+  }, []);
+
+  const Info = async () => {
+    const Discountlist = `https://usercard.herokuapp.com/api/v1/discount/${uid}`;
+    fetch(Discountlist)
+      .then(res => res.json())
+      .then(resJson => {
+        console.log('data', resJson);
+        if (resJson.success === true) {
+          setvalue(resJson.discountList);
+          setresponse('');
+        } else {
+          setresponse('No transaction Records found');
+        }
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      })
+      .finally(() => setLoading(false));
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Transcation Record</Text>
-      <View>
+      {loading ? (
+        <ActivityIndicator animating={true} color="#D02824" size="large" />
+      ) : value.length === 0 ? (
+        <Text>{response}</Text>
+      ) : (
         <FlatList
-          data={data}
+          data={value}
           horizontal={false}
           keyExtractor={item => item.id}
           ListHeaderComponent={header}
@@ -180,16 +220,16 @@ function TranscationRecord(props) {
           )}
           renderItem={({item}) => (
             <View style={styles.detail}>
-              <Text style={styles.detailtxt}>{item.Date}</Text>
-              <Text style={styles.detailtxt}>{item.Customer}</Text>
-              <Text style={[styles.detailtxt, styles.saved]}>
-                {'\u20B9'} {item.Saved}
+              <Text style={styles.detailtxt}>{item.dateCreated}</Text>
+              <Text style={styles.detailtxt}>{item.name}</Text>
+              <Text style={[styles.detailtxt, styles.amount]}>
+                {'\u20B9'} {item.amount}
               </Text>
-              <Text style={styles.detailtxt}>{item.Card}</Text>
+              <Text style={styles.detailtxt}>{item.cardNumber}</Text>
             </View>
           )}
         />
-      </View>
+      )}
     </SafeAreaView>
   );
 }
@@ -197,6 +237,7 @@ function TranscationRecord(props) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
+    flex: 1,
   },
   title: {
     color: '#333333',
@@ -242,7 +283,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     flex: 1,
   },
-  saved: {
+  amount: {
     marginStart: 30,
     flex: 0.7,
   },
