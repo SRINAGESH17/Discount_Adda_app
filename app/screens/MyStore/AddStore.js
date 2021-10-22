@@ -105,9 +105,9 @@ function EditStore({navigation}) {
   //  camera and picker
   const Camera = () => {
     ImagePicker.openCamera({
-      compressImageMaxWidth: 300,
-      compressImageMaxHeight: 300,
-      cropping: true,
+      width: 1200,
+      height: 780,
+      // cropping: true,
       compressImageQuality: 0.7,
     }).then(image => {
       console.log(image);
@@ -118,9 +118,9 @@ function EditStore({navigation}) {
 
   const PickImage = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
+      width: 1200,
+      height: 780,
+      // cropping: true,
       compressImageQuality: 0.7,
     }).then(image => {
       console.log(image);

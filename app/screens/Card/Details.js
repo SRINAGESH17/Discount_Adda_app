@@ -6,69 +6,94 @@ import {
   TextInput,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import FormButton from '../../components/FormButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function Details({navigation}) {
+function Details({navigation, route}) {
   const [Name, setName] = useState('');
   const [last, setlast] = useState('');
-  const [Email, setEmail] = useState('');
+  const [img, setimg] = useState('');
   const [contact, setContact] = useState('');
 
   const [date, setDate] = useState('');
+  const [expiry, setexpiry] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const cardno = route.params;
 
   useEffect(() => {
     Info();
   }, []);
-  const Info = async () => {
-    setName(await AsyncStorage.getItem('first'));
-    setlast(await AsyncStorage.getItem('last'));
-    setEmail(await AsyncStorage.getItem('mail'));
-    setContact(await AsyncStorage.getItem('contact'));
 
-    setDate(await AsyncStorage.getItem('date'));
+  const Info = async () => {
+    console.log('card no', cardno);
+    try {
+      const menurl = `https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`;
+      const response = await fetch(menurl);
+      const resJson = await response.json();
+      setName(resJson[0].firstName);
+      setlast(resJson[0].lastName);
+      setContact(resJson[0].contactNumber);
+      setDate(resJson[0].dateCreated);
+      setexpiry(resJson[0].expiryDate);
+      setimg(resJson[0].image);
+      setLoading(false);
+    } catch (error) {
+      console.log('Error from api:', error);
+    }
   };
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Card details</Text>
-      <View style={styles.imgcontainer}>
-        <Image
-          style={styles.image}
-          source={require('../../assets/abhav.jpg')}
-        />
-        <Text style={styles.imgtxt}>USER SINCE {date}</Text>
-      </View>
+      {loading ? (
+        <ActivityIndicator animating={true} color="#D02824" size="large" />
+      ) : (
+        <View>
+          <View style={styles.imgcontainer}>
+            <Image style={styles.image} source={{uri: img}} />
+            <Text style={styles.imgtxt}>USER SINCE {date}</Text>
+          </View>
 
-      <Text style={styles.name}>User Name</Text>
-      <Text style={{marginTop: 10}}>
-        {Name} {last}
-      </Text>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
-      </View>
-      <Text style={styles.name}>Email Id</Text>
-      <TextInput placeholder="****************" />
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
-      </View>
-      <Text style={styles.name}>Mobile Number</Text>
-      <Text style={styles.name}>+ 91 - {contact}</Text>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
-      </View>
-      <Text style={styles.name}>Card Expiry</Text>
+          <Text style={styles.name}>User Name</Text>
+          <Text style={{marginTop: 10}}>
+            {Name} {last}
+          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
+          </View>
+          <Text style={styles.name}>Email Id</Text>
+          <TextInput placeholder="****************" />
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
+          </View>
+          <Text style={styles.name}>Mobile Number</Text>
+          <Text style={styles.name}>
+            + 91 - {contact.replace(/.(?=.{4})/g, 'x')}
+          </Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
+          </View>
+          <Text style={styles.name}>Card Expiry</Text>
 
-      <Text style={styles.name}>9 Nov 2021</Text>
-      <View style={{flexDirection: 'row', alignItems: 'center'}}>
-        <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
-      </View>
-      <View style={{marginTop: 30}}>
-        <FormButton
-          buttonTitle="Proceed"
-          onPress={() => navigation.navigate('Bill')}
-        />
-      </View>
+          <Text style={styles.name}>{expiry}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
+          </View>
+          <View style={{marginTop: 30}}>
+            <FormButton
+              buttonTitle="Proceed"
+              onPress={() =>
+                navigation.navigate('Bill', {
+                  cardNumber: cardno,
+                  username: Name + last,
+                })
+              }
+            />
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }

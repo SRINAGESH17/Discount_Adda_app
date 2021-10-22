@@ -10,18 +10,48 @@ import {
   Pressable,
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
+import auth from '@react-native-firebase/auth';
+
 import FormButton from '../../components/FormButton';
 import Modal from 'react-native-modal';
 import FormInput from '../../components/FormInput';
 
 const windowHeight = Dimensions.get('window').height;
 
-function Bill(props) {
+function Bill({navigation, route}) {
   const [discount, setDiscount] = useState();
   const [amount, setAmount] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  };
+
+  const details = route.params;
+  const {uid} = auth().currentUser;
+
+  const presentdate = new Date().toDateString();
+
+  const Info = async () => {
+    const discountdetails = 'https://usercard.herokuapp.com/api/v1/discount';
+    fetch(discountdetails, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        merchantId: uid,
+        name: details.username,
+        amount: amount,
+        dateCreated: presentdate,
+        cardNumber: details.cardNumber,
+      }),
+    })
+      .then(() => {
+        Alert.alert('Discount details updated');
+        navigation.navigate('Home');
+      })
+      .catch(error => Alert.alert(error));
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -76,6 +106,7 @@ function Bill(props) {
           style={styles.amount}
           placeholder="2821.00"
           value={amount}
+          keyboardType="numeric"
           onChangeText={amt => setAmount(amt)}
         />
       </View>
@@ -110,7 +141,7 @@ function Bill(props) {
             amount - (amount * discount) / 100
           } to the Merchant`}
         /> */}
-        <FormButton buttonTitle="Submit" />
+        <FormButton buttonTitle="Submit" onPress={Info} />
       </View>
     </SafeAreaView>
   );
@@ -120,7 +151,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-
     paddingStart: 20,
     paddingEnd: 20,
   },
@@ -140,7 +170,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   discounts: {
-    width: '50%',
+    width: '52%',
     marginLeft: '50%',
   },
   amount: {

@@ -6,6 +6,7 @@ import {theme} from './theme';
 const FormInput = ({
   title,
   style,
+  styletext,
   labelValue,
   placeholderText,
   iconType,
@@ -21,7 +22,7 @@ const FormInput = ({
       <View style={[styles.inputContainer, style]}>
         <TextInput
           value={labelValue}
-          style={styles.input}
+          style={[styles.input, styletext]}
           numberOfLines={1}
           placeholder={placeholderText}
           placeholderTextColor="#ccc"

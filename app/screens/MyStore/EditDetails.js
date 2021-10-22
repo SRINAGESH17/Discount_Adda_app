@@ -38,12 +38,16 @@ function EditDetails({navigation, route}) {
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [isVisible, setVisible] = useState(false);
+  const [isaddress, setmodalAddress] = useState(false);
 
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
 
   const [userPost, setUserPosts] = useState([]);
+
+  const [discount, setdiscount] = useState('');
+  const [address, setaddress] = useState('');
 
   const [isEnabled, setIsEnabled] = useState(null);
 
@@ -60,18 +64,30 @@ function EditDetails({navigation, route}) {
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .catch(() => alert('about  not updated'));
+    firestore()
+      .collection('StoreName')
+      .doc(auth().currentUser.uid)
+      .update({
+        status: isEnabled ? 'Close' : 'Open',
+      })
+      .catch(() => alert('about  not updated'));
   };
 
-  const abc = route.params;
+  const mystore = route.params;
 
-  const Status = abc.StatusStore;
-  console.log('Value from store', abc);
+  const Status = mystore.StatusStore;
+  console.log('Value from store', mystore);
+
   const deleteImage = () => {
     setModalVisible(!isModalVisible);
   };
 
   const picture = () => {
     setVisible(!isVisible);
+  };
+
+  const addAddress = () => {
+    setmodalAddress(!isaddress);
   };
   const {uid} = auth().currentUser;
   const isFocused = useIsFocused();
@@ -113,7 +129,7 @@ function EditDetails({navigation, route}) {
     firestore()
       .collection('about')
       .doc(auth().currentUser.uid)
-      .set({
+      .update({
         About: db.about,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
@@ -126,24 +142,43 @@ function EditDetails({navigation, route}) {
   const aboutstorename = db => {
     setLoading(true);
     Keyboard.dismiss();
+
+    console.log('discount', discount);
     firestore()
       .collection('StoreName')
       .doc(auth().currentUser.uid)
-      .set({
-        StoreName: db.storename,
+      .update({
+        StoreName:
+          db.storename === undefined ? mystore.NameStore : db.storename,
+        discount: discount.length === 0 ? mystore.Discountinfo : discount,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
+      .then(() => {
+        setLoading(false);
+      })
       .catch(() => alert('about  not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+  };
+  const shopaddress = db => {
+    Keyboard.dismiss();
+
+    console.log('discount', discount);
+    firestore()
+      .collection('StoreName')
+      .doc(auth().currentUser.uid)
+      .update({
+        address: address,
+      })
+      .then(() => {
+        Alert.alert('Successfully updated address');
+      })
+      .catch(() => alert('about  not updated'));
   };
   //  image save
   const Camera = () => {
     ImagePicker.openCamera({
-      compressImageMaxWidth: 500,
-      compressImageMaxHeight: 500,
-      cropping: true,
+      width: 1200,
+      height: 780,
+      // cropping: true,
       compressImageQuality: 0.7,
     }).then(image => {
       console.log(image);
@@ -154,9 +189,9 @@ function EditDetails({navigation, route}) {
 
   const PickImage = () => {
     ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropping: true,
+      width: 1200,
+      height: 780,
+      // cropping: true,
       compressImageQuality: 0.7,
     }).then(image => {
       console.log(image);
@@ -326,10 +361,10 @@ function EditDetails({navigation, route}) {
               <View>
                 <Title>Edit the Name of your business</Title>
                 <TextInput
-                  placeholder={abc.NameStore}
+                  placeholder={mystore.NameStore}
                   numberOfLines={1}
                   multiline={true}
-                  maxLength={16}
+                  maxLength={20}
                   value={values.storename}
                   onChangeText={handleChange('storename')}
                   onBlur={() => setFieldTouched('storename')}
@@ -350,6 +385,32 @@ function EditDetails({navigation, route}) {
                 <Button
                   disabled={!isValid}
                   onPress={handleSubmit}
+                  mode="contained"
+                  style={{
+                    backgroundColor: '#D02824',
+                    marginTop: 10,
+                    width: 150,
+                    marginBottom: 30,
+                    borderRadius: 20,
+                  }}>
+                  Submit
+                </Button>
+                <TextInput
+                  placeholder={'Add discount'}
+                  value={discount}
+                  onChangeText={txt => setdiscount(txt)}
+                  style={{
+                    borderColor: '#ccc',
+                    width: windowWidth * 0.9,
+                    borderWidth: 1,
+                    textAlignVertical: 'top',
+                    color: '#000',
+                  }}
+                  placeholderTextColor="#aaa"
+                />
+
+                <Button
+                  onPress={aboutstorename}
                   mode="contained"
                   style={{
                     backgroundColor: '#D02824',
@@ -400,7 +461,7 @@ function EditDetails({navigation, route}) {
               <View>
                 <Title>Edit details about the business</Title>
                 <TextInput
-                  placeholder={abc.AboutStore}
+                  placeholder={mystore.AboutStore}
                   numberOfLines={3}
                   multiline={true}
                   value={values.about}
@@ -584,6 +645,64 @@ function EditDetails({navigation, route}) {
           <Text style={{color: 'white'}}>Delete Picture</Text>
         </TouchableOpacity>
       </View>
+      {/* Add address modal */}
+      <Modal
+        isVisible={isaddress}
+        animationOut="fadeOutDown"
+        animationIn="fadeInUp">
+        <View
+          style={{
+            width: windowWidth * 0.9,
+            height: windowHeight * 0.35,
+            alignItems: 'center',
+            backgroundColor: '#E8EAED',
+            padding: 20,
+            borderRadius: 10,
+          }}>
+          <Text>Edit Address</Text>
+          <TextInput
+            placeholder={'Add address'}
+            value={address}
+            onChangeText={txt => setaddress(txt)}
+            style={{
+              borderColor: '#ccc',
+              width: windowWidth * 0.8,
+              borderWidth: 1,
+              textAlignVertical: 'top',
+              color: '#000',
+            }}
+            placeholderTextColor="#aaa"
+          />
+
+          <Button
+            onPress={shopaddress}
+            mode="contained"
+            style={{
+              backgroundColor: '#D02824',
+              marginTop: 10,
+              width: 150,
+              marginBottom: 30,
+              borderRadius: 20,
+            }}>
+            Submit
+          </Button>
+          <TouchableOpacity onPress={addAddress} style={styles.done}>
+            <Text style={{color: 'white'}}>Close</Text>
+          </TouchableOpacity>
+        </View>
+      </Modal>
+      <TouchableOpacity
+        onPress={addAddress}
+        style={{
+          backgroundColor: '#D02824',
+          padding: 15,
+          marginTop: 10,
+          borderRadius: 10,
+          width: windowWidth * 0.3,
+          alignItems: 'center',
+        }}>
+        <Text style={{color: 'white'}}>Edit Address</Text>
+      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => navigation.navigate('Category')}
         style={{
@@ -608,6 +727,7 @@ const styles = StyleSheet.create({
     flex: 0.7,
     backgroundColor: '#E8EAED',
     padding: 20,
+    borderRadius: 10,
   },
   txt: {
     fontSize: 16,
@@ -673,7 +793,7 @@ const styles = StyleSheet.create({
   done: {
     backgroundColor: '#D02824',
     padding: 10,
-    marginTop: 30,
+    marginTop: 20,
     width: 100,
     marginBottom: 20,
     alignItems: 'center',

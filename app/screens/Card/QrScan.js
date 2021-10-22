@@ -17,7 +17,7 @@ function QrScan({navigation}) {
   const QrScanner = value => {
     setBarcode(value);
     if (value.data != null) {
-      navigation.navigate('Details');
+      navigation.navigate('Details', value.data);
     } else {
       navigation.goBack();
     }

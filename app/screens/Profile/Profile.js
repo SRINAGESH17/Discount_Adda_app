@@ -33,9 +33,7 @@ function Profile({navigation}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-
-    const subscriber = firestore()
+    firestore()
       .collection('users')
       .doc(uid)
       .onSnapshot(documentSnapshot => {
@@ -54,11 +52,9 @@ function Profile({navigation}) {
             .slice(1)
             .join(' '),
         );
+
+        setLoading(false);
       });
-
-    setLoading(false);
-
-    return () => subscriber();
   }, [uid]);
 
   const {logout} = useContext(AuthContext);
