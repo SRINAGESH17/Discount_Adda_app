@@ -1,6 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import {StyleSheet, Text, View, Image, Alert, Button} from 'react-native';
 import * as Location from 'expo-location';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 const Settings = ({navigation}) => {
   const [locationServiceEnabled, setLocationServiceEnabled] = useState(false);
@@ -49,6 +51,17 @@ const Settings = ({navigation}) => {
         latitude,
         longitude,
       });
+      console.log(
+        '🚀😄 ~ file: Settings.js ~ line 45 ~ GetCurrentLocation ~ coords',
+        coords,
+      );
+      firestore()
+        .collection('StoreName')
+        .doc(auth().currentUser.uid)
+        .update({
+          Coordinates: coords,
+        })
+        .catch(() => alert('Location  not updated'));
 
       for (let item of response) {
         // console.log(item)

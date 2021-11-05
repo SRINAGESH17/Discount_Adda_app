@@ -126,6 +126,7 @@ export default function Mystore({navigation}) {
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
   const [discount, setdiscount] = useState('');
+  const [discountText, setdiscountText] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
 
@@ -278,6 +279,7 @@ export default function Mystore({navigation}) {
           setName(documentSnapshot.data().StoreName);
           setAddress(documentSnapshot.data().address);
           setdiscount(documentSnapshot.data().discount);
+          setdiscountText(documentSnapshot.data().discountstatus);
         }
       });
 
@@ -464,9 +466,9 @@ export default function Mystore({navigation}) {
           setFitness(documentSnapshot.data().fitness);
         }
       });
-    if (discount === '' || address === '') {
-      Alert.alert('Please add discount and address in edit section');
-    }
+    // if (discount === '' || address === '') {
+    //   Alert.alert('Please add discount and address in edit section');
+    // }
   }
 
   return (
@@ -480,6 +482,8 @@ export default function Mystore({navigation}) {
               NameStore: name,
               StatusStore: StatusValue,
               Discountinfo: discount,
+              DiscountStatus: discountText,
+              contact: contact,
             })
           }>
           <Image source={require('../../assets/edit.png')} />
@@ -491,7 +495,7 @@ export default function Mystore({navigation}) {
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
         <View style={styles.slideTitle}>
-          <Text style={{fontSize: 18, color: '#000'}}>{name} Stores</Text>
+          <Text style={{fontSize: 18, color: '#000'}}>{name} </Text>
         </View>
         {userPost.length === 0 ? (
           <View>
@@ -588,7 +592,7 @@ export default function Mystore({navigation}) {
                 borderColor: '#ccc',
                 borderRadius: 5,
               }}>
-              {discount}
+              {discount}% {discountText}
             </Text>
           </View>
 

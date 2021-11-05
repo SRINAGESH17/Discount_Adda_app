@@ -47,6 +47,7 @@ function EditDetails({navigation, route}) {
   const [userPost, setUserPosts] = useState([]);
 
   const [discount, setdiscount] = useState('');
+  const [discountText, setdiscountText] = useState('');
   const [address, setaddress] = useState('');
 
   const [isEnabled, setIsEnabled] = useState(null);
@@ -115,6 +116,13 @@ function EditDetails({navigation, route}) {
 
         setUserPosts(posts);
       });
+    firestore()
+      .collection('StoreName')
+      .doc(uid)
+      .update({
+        contactNumber: mystore.contact,
+      })
+      .catch(() => alert('about  not updated'));
 
     if (Status === 'true') {
       setIsEnabled(true);
@@ -133,10 +141,8 @@ function EditDetails({navigation, route}) {
         About: db.about,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
+      .then(() => setLoading(false))
       .catch(() => alert('about  not updated'));
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
   };
 
   const aboutstorename = db => {
@@ -151,6 +157,8 @@ function EditDetails({navigation, route}) {
         StoreName:
           db.storename === undefined ? mystore.NameStore : db.storename,
         discount: discount.length === 0 ? mystore.Discountinfo : discount,
+        discountstatus:
+          discountText.length === 0 ? mystore.DiscountStatus : discountText,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
@@ -364,7 +372,7 @@ function EditDetails({navigation, route}) {
                   placeholder={mystore.NameStore}
                   numberOfLines={1}
                   multiline={true}
-                  maxLength={20}
+                  maxLength={25}
                   value={values.storename}
                   onChangeText={handleChange('storename')}
                   onBlur={() => setFieldTouched('storename')}
@@ -372,7 +380,8 @@ function EditDetails({navigation, route}) {
                     borderColor: '#ccc',
                     width: windowWidth * 0.9,
                     borderWidth: 1,
-                    textAlignVertical: 'top',
+                    textAlignVertical: 'center',
+                    borderRadius: 10,
                     color: '#000',
                   }}
                   placeholderTextColor="#aaa"
@@ -395,22 +404,42 @@ function EditDetails({navigation, route}) {
                   }}>
                   Submit
                 </Button>
-                <TextInput
-                  placeholder={'Add discount'}
-                  value={discount}
-                  onChangeText={txt => setdiscount(txt)}
-                  style={{
-                    borderColor: '#ccc',
-                    width: windowWidth * 0.9,
-                    borderWidth: 1,
-                    textAlignVertical: 'top',
-                    color: '#000',
-                  }}
-                  placeholderTextColor="#aaa"
-                />
+                <View style={{flexDirection: 'row'}}>
+                  <TextInput
+                    placeholder={'Discount value'}
+                    value={discount}
+                    keyboardType="number-pad"
+                    maxLength={2}
+                    onChangeText={txt => setdiscount(txt)}
+                    style={{
+                      borderColor: '#ccc',
+                      width: windowWidth * 0.27,
+                      borderWidth: 1,
+                      textAlignVertical: 'center',
+                      borderRadius: 10,
+                      color: '#000',
+                    }}
+                    placeholderTextColor="#aaa"
+                  />
+                  <TextInput
+                    placeholder={'% on all products'}
+                    value={discountText}
+                    onChangeText={txt => setdiscountText(txt)}
+                    style={{
+                      borderColor: '#ccc',
+                      width: windowWidth * 0.6,
+                      borderWidth: 1,
+                      textAlignVertical: 'center',
+                      borderRadius: 10,
+                      marginStart: 7,
+                      color: '#000',
+                    }}
+                    placeholderTextColor="#aaa"
+                  />
+                </View>
 
                 <Button
-                  onPress={aboutstorename}
+                  onPress={() => aboutstorename()}
                   mode="contained"
                   style={{
                     backgroundColor: '#D02824',

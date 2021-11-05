@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\app",
-    "\\app\\navigation",
-    "\\app\\screens\\MyStore\\Category"
+    "\\app\\navigation"
   ],
-  "SelectedNode": "\\app\\navigation\\AuthProvider.js",
+  "SelectedNode": "\\app\\navigation\\AppStack.js",
   "PreviewInSolutionExplorer": false
 }
