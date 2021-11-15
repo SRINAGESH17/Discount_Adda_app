@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,34 +6,48 @@ import {
   SafeAreaView,
   Image,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
-import {RNCamera} from 'react-native-camera';
-
+import QRCodeScanner from 'react-native-qrcode-scanner';
 import FormButton from '../../components/FormButton';
+const CAM_VIEW_HEIGHT = Dimensions.get('screen').width * 1.5;
+const CAM_VIEW_WIDTH = Dimensions.get('screen').width;
+
+const leftMargin = 100;
+const topMargin = 50;
+const frameWidth = 200;
+const frameHeight = 250;
+
+const scanAreaX = leftMargin / CAM_VIEW_HEIGHT;
+const scanAreaY = topMargin / CAM_VIEW_WIDTH;
+const scanAreaWidth = frameWidth / CAM_VIEW_HEIGHT;
+const scanAreaHeight = frameHeight / CAM_VIEW_WIDTH;
 
 function QrScan({navigation}) {
-  const [barcode, setBarcode] = useState(null);
+  const [scanned, setScanned] = useState(false);
+  const [cardnumber, setcardnumber] = useState();
 
-  const QrScanner = value => {
-    setBarcode(value);
+  const handleBarCodeScanned = value => {
+    setScanned(true);
+    setcardnumber(value.data);
+    console.log('value: ', value.data);
     if (value.data != null) {
       navigation.navigate('Details', value.data);
     } else {
       navigation.goBack();
     }
-    console.log(value.data.length);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Scan Card</Text>
 
-      {barcode != null && (
+      {scanned === true && (
         <View style={[styles.rnCamera, styles.rmCameraResult]}>
-          <Text style={styles.rmCameraResultText}>{barcode.data}</Text>
+          <Text style={styles.rmCameraResultText}>{cardnumber}</Text>
 
           <View style={styles.cardContainer}>
-            <TouchableOpacity onPress={() => setBarcode(null)}>
+            <TouchableOpacity onPress={() => setScanned(false)}>
               <Image
                 style={styles.img}
                 source={require('../../assets/scanning.png')}
@@ -43,14 +57,21 @@ function QrScan({navigation}) {
           </View>
         </View>
       )}
-      {barcode === null && (
-        <RNCamera style={styles.rnCamera} onBarCodeRead={QrScanner} />
+      {scanned === false && (
+        <QRCodeScanner
+          showMarker={true}
+          markerStyle={{borderRadius: 20, borderColor: '#D02824'}}
+          onRead={handleBarCodeScanned}
+        />
       )}
 
       <View style={styles.btn}>
         <FormButton
           buttonTitle="Cancel"
-          onPress={() => navigation.navigate('Scan')}
+          onPress={() => {
+            navigation.navigate('Scan');
+            setScanned(true);
+          }}
         />
       </View>
     </SafeAreaView>
@@ -61,10 +82,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
+    alignItems: 'center',
   },
   btn: {
     padding: 20,
     marginTop: 90,
+    width: 200,
   },
   title: {
     color: '#333333',

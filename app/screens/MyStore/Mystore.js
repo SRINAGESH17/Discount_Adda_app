@@ -296,7 +296,13 @@ export default function Mystore({navigation}) {
 
           return {id, ...data};
         });
-        // console.log('id of the post: ', posts);
+        firestore()
+          .collection('StoreName')
+          .doc(auth().currentUser.uid)
+          .update({
+            shopimage: posts[0].imageurl,
+          })
+          .catch(() => alert('about  not updated'));
         setUserPosts(posts);
       });
 

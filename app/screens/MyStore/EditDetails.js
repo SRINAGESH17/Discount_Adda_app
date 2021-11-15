@@ -149,13 +149,26 @@ function EditDetails({navigation, route}) {
     setLoading(true);
     Keyboard.dismiss();
 
-    console.log('discount', discount);
+    console.log('discount', db.storename);
     firestore()
       .collection('StoreName')
       .doc(auth().currentUser.uid)
       .update({
-        StoreName:
-          db.storename === undefined ? mystore.NameStore : db.storename,
+        StoreName: db.storename,
+      })
+      .then(() => {
+        setLoading(false);
+      })
+      .catch(() => alert('about  not updated'));
+  };
+
+  const AddDiscountdetails = () => {
+    setLoading(true);
+
+    firestore()
+      .collection('StoreName')
+      .doc(auth().currentUser.uid)
+      .update({
         discount: discount.length === 0 ? mystore.Discountinfo : discount,
         discountstatus:
           discountText.length === 0 ? mystore.DiscountStatus : discountText,
@@ -422,7 +435,7 @@ function EditDetails({navigation, route}) {
                     placeholderTextColor="#aaa"
                   />
                   <TextInput
-                    placeholder={'% on all products'}
+                    placeholder={'on all products'}
                     value={discountText}
                     onChangeText={txt => setdiscountText(txt)}
                     style={{
@@ -439,7 +452,7 @@ function EditDetails({navigation, route}) {
                 </View>
 
                 <Button
-                  onPress={() => aboutstorename()}
+                  onPress={() => AddDiscountdetails()}
                   mode="contained"
                   style={{
                     backgroundColor: '#D02824',

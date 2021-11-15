@@ -55,13 +55,13 @@ const Settings = ({navigation}) => {
         '🚀😄 ~ file: Settings.js ~ line 45 ~ GetCurrentLocation ~ coords',
         coords,
       );
-      firestore()
-        .collection('StoreName')
-        .doc(auth().currentUser.uid)
-        .update({
-          Coordinates: coords,
-        })
-        .catch(() => alert('Location  not updated'));
+      // firestore()
+      //   .collection('StoreName')
+      //   .doc(auth().currentUser.uid)
+      //   .update({
+      //     Coordinates: coords,
+      //   })
+      //   .catch(() => alert('Location  not updated'));
 
       for (let item of response) {
         // console.log(item)
