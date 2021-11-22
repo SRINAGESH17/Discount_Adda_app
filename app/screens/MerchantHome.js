@@ -94,7 +94,7 @@ function MerchantHome({navigation}) {
               fontWeight: 'bold',
               color: '#000000',
             }}>
-            #230
+            # {Math.floor(Math.random() * (300 - 100 + 1) + 100)}
           </Text>
           <Text style={{color: '#2C2F32'}}>
             <View style={styles.CircleShape}>

@@ -29,7 +29,7 @@ function Bill({navigation, route}) {
   const details = route.params;
   const {uid} = auth().currentUser;
 
-  const presentdate = new Date().toDateString();
+  const presentdate = new Date().toDateString() + new Date().toTimeString();
 
   const Info = async () => {
     const discountdetails = 'https://usercard.herokuapp.com/api/v1/discount';
@@ -43,6 +43,7 @@ function Bill({navigation, route}) {
         merchantId: uid,
         name: details.username,
         amount: amount,
+        amountsaved: (amount * discount) / 100,
         dateCreated: presentdate,
         cardNumber: details.cardNumber,
       }),

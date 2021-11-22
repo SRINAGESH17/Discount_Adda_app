@@ -144,6 +144,7 @@ export default function Mystore({navigation}) {
   // daily Need
   const [dailyNeed, setDailyNeed] = useState('');
   const [medical, setMedical] = useState('');
+  const [medicalSubcategory, setmedicalSubcategory] = useState('');
   // home category
   const [repair, setRepair] = useState('');
   // medical category
@@ -410,6 +411,7 @@ export default function Mystore({navigation}) {
         }
         if (documentSnapshot.exists) {
           setMedical(documentSnapshot.data().medical);
+          setmedicalSubcategory(documentSnapshot.data().hospitalcategory);
         }
       });
     // home sectionTitle
@@ -615,7 +617,9 @@ export default function Mystore({navigation}) {
             }}>
             {resturants === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{resturants}</Text>
+                <Text style={styles.textCategory}>
+                  {resturants}({resturantsubcategory})
+                </Text>
               </View>
             )}
             {clothesfootwear === null ? null : (
@@ -640,7 +644,9 @@ export default function Mystore({navigation}) {
             )}
             {medical === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>{medical}</Text>
+                <Text style={styles.textCategory}>
+                  {medical}({medicalSubcategory})
+                </Text>
               </View>
             )}
             {repair === null ? null : (

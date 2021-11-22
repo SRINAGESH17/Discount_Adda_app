@@ -1,9 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\app",
+    "\\android",
+    "\\android\\app",
     "\\app\\navigation"
   ],
-  "SelectedNode": "\\app\\navigation\\AppStack.js",
+  "SelectedNode": "\\android\\app\\build.gradle",
   "PreviewInSolutionExplorer": false
 }

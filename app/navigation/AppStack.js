@@ -53,7 +53,7 @@ const MainStack = ({navigation}) => (
             />
           </View>
         ),
-        headerTitle: () => <Settings />,
+        // headerTitle: () => <Settings />,
         headerTitleAlign: 'center',
         headerRight: () => (
           <TouchableOpacity

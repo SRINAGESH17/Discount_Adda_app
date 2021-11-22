@@ -7,6 +7,7 @@ import {
   Image,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import FormButton from '../../components/FormButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -21,6 +22,8 @@ function Details({navigation, route}) {
   const [expiry, setexpiry] = useState('');
   const [loading, setLoading] = useState(true);
 
+  const [response, setresponse] = useState('');
+
   const cardno = route.params;
 
   useEffect(() => {
@@ -33,12 +36,21 @@ function Details({navigation, route}) {
       const menurl = `https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`;
       const response = await fetch(menurl);
       const resJson = await response.json();
-      setName(resJson[0].firstName);
-      setlast(resJson[0].lastName);
-      setContact(resJson[0].contactNumber);
-      setDate(resJson[0].dateCreated);
-      setexpiry(resJson[0].expiryDate);
-      setimg(resJson[0].image);
+      if (resJson.success === true) {
+        setName(resJson[0].firstName);
+        setlast(resJson[0].lastName);
+        setContact(resJson[0].contactNumber);
+        setDate(resJson[0].dateCreated);
+        setexpiry(resJson[0].expiryDate);
+        setimg(resJson[0].image);
+      } else {
+        setresponse('Card Number did not found');
+        Alert.alert(
+          'Card with the given number not found Check Card number again',
+        );
+        navigation.goBack();
+      }
+
       setLoading(false);
     } catch (error) {
       console.log('Error from api:', error);
@@ -64,7 +76,7 @@ function Details({navigation, route}) {
             <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
           </View>
           <Text style={styles.name}>Email Id</Text>
-          <TextInput placeholder="****************" />
+          <Text>"****************"</Text>
           <View style={{flexDirection: 'row', alignItems: 'center'}}>
             <View style={{flex: 1, height: 1, backgroundColor: '#ccc'}} />
           </View>
