@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
+import {windowHeight} from '../../../utils/Dimentions';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 function FashionCategory({navigation}) {
   const [beauty, setBeauty] = useState([]);
@@ -24,7 +26,7 @@ function FashionCategory({navigation}) {
   }, []);
 
   const getfashion = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/shopping';
+    const menurl = `${API_URL}/${endPoints.shopping.shoppinglist}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -35,7 +37,7 @@ function FashionCategory({navigation}) {
       })
       .finally(() => setisLoading(false));
 
-    const beautysurl = 'https://merchantitemlist.herokuapp.com/beauty';
+    const beautysurl = `${API_URL}/${endPoints.shopping.beauty}`;
     fetch(beautysurl)
       .then(res => res.json())
       .then(resJson => {
@@ -225,6 +227,7 @@ function FashionCategory({navigation}) {
               ) : (
                 <FlatList
                   data={data}
+                  style={{height: windowHeight * 0.4}}
                   renderItem={renderItemMen}
                   keyExtractor={item => `key-${item.id}`}
                 />

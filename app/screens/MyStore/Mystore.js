@@ -152,6 +152,10 @@ export default function Mystore({navigation}) {
   const [travel, setTravel] = useState('');
   const [fitness, setFitness] = useState('');
 
+  const [shops, setshops] = useState('');
+
+  const [education, seteducation] = useState('');
+
   const [loading, setLoading] = useState(null);
   const [isModalVisible, setModalVisible] = useState(true);
 
@@ -474,6 +478,35 @@ export default function Mystore({navigation}) {
           setFitness(documentSnapshot.data().fitness);
         }
       });
+
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('shops')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setshops(null);
+        }
+        if (documentSnapshot.exists) {
+          setshops(documentSnapshot.data().shops);
+        }
+      });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('education')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          seteducation(null);
+        }
+        if (documentSnapshot.exists) {
+          seteducation(documentSnapshot.data().education);
+        }
+      });
     // if (discount === '' || address === '') {
     //   Alert.alert('Please add discount and address in edit section');
     // }
@@ -668,6 +701,16 @@ export default function Mystore({navigation}) {
             {fitness === null ? null : (
               <View style={styles.txtproducts}>
                 <Text style={styles.textCategory}>{fitness}</Text>
+              </View>
+            )}
+            {shops === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text style={styles.textCategory}>{shops}</Text>
+              </View>
+            )}
+            {education === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text style={styles.textCategory}>{education}</Text>
               </View>
             )}
           </View>

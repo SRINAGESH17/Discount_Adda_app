@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
+import {windowHeight} from '../../../utils/Dimentions';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 function Wedding({navigation}) {
   const [data, setdata] = useState([]);
@@ -20,7 +22,7 @@ function Wedding({navigation}) {
   }, []);
 
   const getwedding = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/wedding';
+    const menurl = `${API_URL}/${endPoints.wedding}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -144,6 +146,7 @@ function Wedding({navigation}) {
               ) : (
                 <FlatList
                   data={data}
+                  style={{height: windowHeight * 0.5}}
                   renderItem={renderItemMen}
                   keyExtractor={item => `key-${item.id}`}
                 />

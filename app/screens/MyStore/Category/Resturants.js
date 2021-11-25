@@ -14,6 +14,7 @@ import SelectBox from 'react-native-multi-selectbox';
 import {xorBy} from 'lodash';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 const infoResturants = [
   {
@@ -50,7 +51,7 @@ function Resturants({navigation}) {
   const getResturant = () => {
     setdata(infoResturants);
 
-    const resturants = 'https://merchantitemlist.herokuapp.com/rest';
+    const resturants = `${API_URL}/${endPoints.resturant}`;
     fetch(resturants)
       .then(res => res.json())
       .then(resJson => {

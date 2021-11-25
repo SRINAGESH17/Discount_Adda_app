@@ -19,7 +19,7 @@ import FormInput from '../../components/FormInput';
 const windowHeight = Dimensions.get('window').height;
 
 function Bill({navigation, route}) {
-  const [discount, setDiscount] = useState();
+  const [discount, setDiscount] = useState('');
   const [amount, setAmount] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -29,30 +29,35 @@ function Bill({navigation, route}) {
   const details = route.params;
   const {uid} = auth().currentUser;
 
-  const presentdate = new Date().toDateString() + new Date().toTimeString();
+  const presentdate =
+    new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
 
-  const Info = async () => {
-    const discountdetails = 'https://usercard.herokuapp.com/api/v1/discount';
-    fetch(discountdetails, {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        merchantId: uid,
-        name: details.username,
-        amount: amount,
-        amountsaved: (amount * discount) / 100,
-        dateCreated: presentdate,
-        cardNumber: details.cardNumber,
-      }),
-    })
-      .then(() => {
-        Alert.alert('Discount details updated');
-        navigation.navigate('Home');
+  const Info = () => {
+    if (discount.length === 0) {
+      Alert.alert('Please enter the discount');
+    } else {
+      const discountdetails = 'https://usercard.herokuapp.com/api/v1/discount';
+      fetch(discountdetails, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          merchantId: uid,
+          name: details.username,
+          amount: amount,
+          amountsaved: (amount * discount) / 100,
+          dateCreated: presentdate,
+          cardNumber: details.cardNumber,
+        }),
       })
-      .catch(error => Alert.alert(error));
+        .then(() => {
+          Alert.alert('Discount details updated');
+          navigation.navigate('Home');
+        })
+        .catch(error => Alert.alert(error));
+    }
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -107,6 +112,7 @@ function Bill({navigation, route}) {
           style={styles.amount}
           placeholder="2821.00"
           value={amount}
+          maxLength={8}
           keyboardType="numeric"
           onChangeText={amt => setAmount(amt)}
         />

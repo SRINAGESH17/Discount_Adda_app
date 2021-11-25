@@ -18,11 +18,11 @@ function Details({navigation, route}) {
   const [img, setimg] = useState('');
   const [contact, setContact] = useState('');
 
+  const [data, setdata] = useState([]);
+
   const [date, setDate] = useState('');
   const [expiry, setexpiry] = useState('');
   const [loading, setLoading] = useState(true);
-
-  const [response, setresponse] = useState('');
 
   const cardno = route.params;
 
@@ -30,32 +30,30 @@ function Details({navigation, route}) {
     Info();
   }, []);
 
-  const Info = async () => {
-    console.log('card no', cardno);
-    try {
-      const menurl = `https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`;
-      const response = await fetch(menurl);
-      const resJson = await response.json();
-      if (resJson.success === true) {
-        setName(resJson[0].firstName);
-        setlast(resJson[0].lastName);
-        setContact(resJson[0].contactNumber);
-        setDate(resJson[0].dateCreated);
-        setexpiry(resJson[0].expiryDate);
-        setimg(resJson[0].image);
-      } else {
-        setresponse('Card Number did not found');
-        Alert.alert(
-          'Card with the given number not found Check Card number again',
-        );
-        navigation.goBack();
-      }
+  const Info = () =>
+    fetch(`https://usercard.herokuapp.com/api/v1/userDetails/${cardno}`)
+      .then(response => response.json())
+      .then(resJson => {
+        console.log('data', resJson.cardList[0].firstName);
+        if (resJson.success === true) {
+          setName(resJson.cardList[0].firstName);
+          setlast(resJson.cardList[0].lastName);
+          setContact(resJson.cardList[0].contactNumber);
+          setDate(resJson.cardList[0].dateCreated);
+          setexpiry(resJson.cardList[0].expiryDate);
+          setimg(resJson.cardList[0].image);
+          setLoading(false);
+        } else {
+          Alert.alert(
+            'Card with the given number not found Check Card number again',
+          );
+          navigation.goBack();
+        }
+      })
+      .catch(error => {
+        console.error('error', error);
+      });
 
-      setLoading(false);
-    } catch (error) {
-      console.log('Error from api:', error);
-    }
-  };
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Card details</Text>

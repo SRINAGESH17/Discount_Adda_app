@@ -22,6 +22,7 @@ function ScanCard({navigation}) {
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+    navigation.navigate('Details', card);
   };
 
   const handleCardNumber = text => {
@@ -64,7 +65,7 @@ function ScanCard({navigation}) {
             <View style={styles.modalView}>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
-                onPress={toggleModal}>
+                onPress={() => setModalVisible(false)}>
                 <Text style={{fontSize: 25}}>X</Text>
               </Pressable>
               <View
@@ -99,7 +100,9 @@ function ScanCard({navigation}) {
                     borderRadius: 10,
                     marginTop: 4,
                   }}
-                  onPress={() => navigation.navigate('Details', card)}>
+                  onPress={() => {
+                    toggleModal();
+                  }}>
                   <Text style={{color: 'white'}}>Next</Text>
                 </TouchableOpacity>
               </View>
@@ -108,7 +111,10 @@ function ScanCard({navigation}) {
         </Modal>
 
         <View style={styles.buttonContainer}>
-          <FormButton buttonTitle="Enter Card Number" onPress={toggleModal} />
+          <FormButton
+            buttonTitle="Enter Card Number"
+            onPress={() => setModalVisible(true)}
+          />
           <FormButton
             buttonTitle="Scan Card"
             onPress={() => navigation.navigate('Qr')}

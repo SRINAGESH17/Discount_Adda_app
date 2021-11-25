@@ -6,6 +6,8 @@ import firestore from '@react-native-firebase/firestore';
 import SelectBox from 'react-native-multi-selectbox';
 import {xorBy} from 'lodash';
 import ListView from '../../../components/ListView';
+import {windowHeight} from '../../../utils/Dimentions';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 function MedicneCategory({navigation}) {
   const [data, setdata] = useState([]);
@@ -26,7 +28,7 @@ function MedicneCategory({navigation}) {
   }, []);
 
   const getmedical = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/medical';
+    const menurl = `${API_URL}/${endPoints.Medical.medicallist}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -37,7 +39,7 @@ function MedicneCategory({navigation}) {
       })
       .finally(() => setisLoading(false));
 
-    const hospitaldetails = 'https://merchantitemlist.herokuapp.com/hospital';
+    const hospitaldetails = `${API_URL}/${endPoints.Medical.hospital}`;
     fetch(hospitaldetails)
       .then(res => res.json())
       .then(resJson => {
@@ -175,6 +177,9 @@ function MedicneCategory({navigation}) {
             </View>
           ) : (
             <View>
+              <View style={{marginBottom: 10}}>
+                <Button color="#D02824" title="submit" onPress={submit} />
+              </View>
               {isLoading ? (
                 <ActivityIndicator
                   animating={true}
@@ -184,11 +189,11 @@ function MedicneCategory({navigation}) {
               ) : (
                 <FlatList
                   data={data}
+                  style={{height: windowHeight * 0.5}}
                   renderItem={renderItemMen}
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}
-              <Button color="#D02824" title="submit" onPress={submit} />
             </View>
           )}
         </List.Accordion>

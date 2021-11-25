@@ -3,26 +3,26 @@ import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
+import ListView from '../../../components/ListView';
 import {windowHeight} from '../../../utils/Dimentions';
 import {API_URL, endPoints} from '../../../Config/Config';
 
-function Repair({navigation}) {
+function EducationCategory({navigation}) {
   const [data, setdata] = useState([]);
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
 
-  const [repair, setRepair] = useState('');
+  const [education, setEducation] = useState('');
   const [visible, setVisible] = React.useState(false);
 
   useEffect(() => {
-    getrepair();
+    geteducation();
   }, []);
 
-  const getrepair = () => {
-    const menurl = `${API_URL}/${endPoints.repair}`;
+  const geteducation = () => {
+    const menurl = `${API_URL}/${endPoints.education}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -32,18 +32,19 @@ function Repair({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
+
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('repair')
+      .collection('education')
       .doc(auth().currentUser.uid)
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists === false) {
-          setRepair(null);
+          setEducation(null);
         }
         if (documentSnapshot.exists) {
-          setRepair(documentSnapshot.data().repair);
+          setEducation(documentSnapshot.data().education);
         }
       });
   };
@@ -83,15 +84,15 @@ function Repair({navigation}) {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
-      .collection('repair')
+      .collection('education')
       .doc(auth().currentUser.uid)
       .set({
-        repair: contentAlert.length === 0 ? null : contentAlert,
+        education: contentAlert.length === 0 ? null : contentAlert,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         setLoading(false);
-        getrepair();
+        geteducation();
       })
       .catch(() => alert('category   not updated'));
   };
@@ -119,7 +120,7 @@ function Repair({navigation}) {
 
       <List.AccordionGroup>
         <List.Accordion
-          title="Repair List"
+          title="Education"
           id="1"
           right={props => <Text {...props}>+</Text>}>
           {loading ? (
@@ -154,7 +155,7 @@ function Repair({navigation}) {
           )}
         </List.Accordion>
       </List.AccordionGroup>
-      <ListView list={repair} styletitle={{marginTop: 200}} />
+      <ListView list={education} styletitle={{marginTop: 200}} />
     </View>
   );
 }
@@ -180,4 +181,4 @@ const styles = StyleSheet.create({
   // },
 });
 
-export default Repair;
+export default EducationCategory;

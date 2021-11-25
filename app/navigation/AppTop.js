@@ -9,6 +9,8 @@ import Resturants from '../screens/MyStore/Category/Resturants';
 import Wedding from '../screens/MyStore/Category/Wedding';
 import Travel from '../screens/MyStore/Category/Travel';
 import Fitness from '../screens/MyStore/Category/Fitness';
+import GeneralCategory from '../screens/MyStore/Category/GeneralCategory';
+import EducationCategory from '../screens/MyStore/Category/EducationCategory';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -24,7 +26,9 @@ function AppTop(props) {
         inactiveTintColor: '#000',
       }}>
       <Tab.Screen name="Restaurants " component={Resturants} />
+      <Tab.Screen name="Shops" component={GeneralCategory} />
       <Tab.Screen name="Shopping & Personal Care" component={FashionCategory} />
+      <Tab.Screen name="Education" component={EducationCategory} />
       <Tab.Screen name="Daily Needs" component={HomeCategory} />
       <Tab.Screen name="Medical" component={MedicneCategory} />
       <Tab.Screen name="Repair" component={Repair} />

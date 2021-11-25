@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
+import {windowHeight} from '../../../utils/Dimentions';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 function HomeCategory({navigation}) {
   const [data, setdata] = useState([]);
@@ -24,7 +26,7 @@ function HomeCategory({navigation}) {
   }, []);
 
   const gethome = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/daily';
+    const menurl = `${API_URL}/${endPoints.DailyNeed.dailyNeed}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -34,7 +36,7 @@ function HomeCategory({navigation}) {
         console.log('Error: ', err);
       })
       .finally(() => setisLoading(false));
-    const demandValue = 'https://merchantitemlist.herokuapp.com/demand';
+    const demandValue = `${API_URL}/${endPoints.DailyNeed.demand}`;
     fetch(demandValue)
       .then(res => res.json())
       .then(resJson => {
@@ -231,6 +233,7 @@ function HomeCategory({navigation}) {
               ) : (
                 <FlatList
                   data={data}
+                  style={{height: windowHeight * 0.5}}
                   renderItem={renderItemDaily}
                   keyExtractor={item => `key-${item.id}`}
                 />
@@ -270,6 +273,7 @@ function HomeCategory({navigation}) {
                 ) : (
                   <FlatList
                     data={ondemand}
+                    style={{height: windowHeight * 0.5}}
                     renderItem={renderItemDemand}
                     keyExtractor={item => `key-${item.id}`}
                   />

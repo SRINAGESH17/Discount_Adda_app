@@ -5,6 +5,8 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import HeaderAlert from '../../../components/HeaderAlert';
 import ListView from '../../../components/ListView';
+import {windowHeight} from '../../../utils/Dimentions';
+import {API_URL, endPoints} from '../../../Config/Config';
 
 function Fitness({navigation}) {
   const [data, setdata] = useState([]);
@@ -20,7 +22,7 @@ function Fitness({navigation}) {
   }, []);
 
   const getfitness = () => {
-    const menurl = 'https://merchantitemlist.herokuapp.com/fit';
+    const menurl = `${API_URL}/${endPoints.fitness}`;
     fetch(menurl)
       .then(res => res.json())
       .then(resJson => {
@@ -145,6 +147,7 @@ function Fitness({navigation}) {
               ) : (
                 <FlatList
                   data={data}
+                  style={{height: windowHeight * 0.5}}
                   renderItem={renderItemMen}
                   keyExtractor={item => `key-${item.id}`}
                 />

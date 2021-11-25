@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ActivityIndicator,
 } from 'react-native';
+import {Card, Divider, Paragraph} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 
 const data = [
@@ -178,18 +179,19 @@ function TranscationRecord(props) {
   const [value, setvalue] = useState([]);
   const [response, setresponse] = useState('');
   const {uid} = auth().currentUser;
+
   useEffect(() => {
     Info();
   }, []);
 
-  const Info = async () => {
+  const Info = () => {
     const Discountlist = `https://usercard.herokuapp.com/api/v1/discount/${uid}`;
     fetch(Discountlist)
       .then(res => res.json())
       .then(resJson => {
-        console.log('data', resJson);
         if (resJson.success === true) {
           setvalue(resJson.discountList);
+          console.log('amount', resJson.discountList[0].amount);
           setresponse('');
         } else {
           setresponse('No transaction Records found');
@@ -204,6 +206,7 @@ function TranscationRecord(props) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Transcation Record</Text>
+      <Divider />
       {loading ? (
         <ActivityIndicator animating={true} color="#D02824" size="large" />
       ) : value.length === 0 ? (
@@ -213,20 +216,38 @@ function TranscationRecord(props) {
           data={value}
           horizontal={false}
           keyExtractor={item => item.id}
-          ListHeaderComponent={header}
-          stickyHeaderIndices={[0]}
-          ItemSeparatorComponent={() => (
-            <View style={{height: 1, backgroundColor: 'lightgrey'}} />
-          )}
           renderItem={({item}) => (
-            <View style={styles.detail}>
-              <Text style={styles.detailtxt}>{item.dateCreated}</Text>
-              <Text style={styles.detailtxt}>{item.name}</Text>
-              <Text style={[styles.detailtxt, styles.amount]}>
-                {'\u20B9'} {item.amount}
-              </Text>
-              <Text style={styles.detailtxt}>{item.cardNumber}</Text>
-            </View>
+            <Card
+              style={{
+                backgroundColor: '#fff',
+                shadowColor: '#000',
+                shadowOffset: {
+                  width: 0,
+                  height: 8,
+                },
+                shadowOpacity: 0.44,
+                shadowRadius: 10.32,
+                elevation: 16,
+                margin: 5,
+              }}>
+              <Card.Title title={item.name} subtitle={item.dateCreated} />
+              <Card.Content>
+                <Paragraph>Card Number:- {item.cardNumber}</Paragraph>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '100%',
+                  }}>
+                  <Paragraph>
+                    Total Amount:- {'\u20B9'} {item.amount}
+                  </Paragraph>
+                  <Paragraph>
+                    Discount Amount:- {'\u20B9'} {item.amountsaved}
+                  </Paragraph>
+                </View>
+              </Card.Content>
+            </Card>
           )}
         />
       )}
