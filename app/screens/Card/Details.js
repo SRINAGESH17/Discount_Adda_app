@@ -43,15 +43,14 @@ function Details({navigation, route}) {
           setexpiry(resJson.cardList[0].expiryDate);
           setimg(resJson.cardList[0].image);
           setLoading(false);
-        } else {
-          Alert.alert(
-            'Card with the given number not found Check Card number again',
-          );
-          navigation.goBack();
         }
       })
       .catch(error => {
-        console.error('error', error);
+        // console.error('error', error);
+        Alert.alert(
+          'Card with the given number not found Check Card number again',
+        );
+        navigation.goBack();
       });
 
   return (
