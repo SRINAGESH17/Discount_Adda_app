@@ -9,7 +9,7 @@ function ListView({list, sublist, onPress, styletitle}) {
       <View style={styles.liststyle}>
         <Text>{list}</Text>
         <Text style={{marginTop: 10}}>{sublist}</Text>
-        <Button
+        {/* <Button
           mode="contained"
           uppercase={false}
           onPress={onPress}
@@ -20,7 +20,7 @@ function ListView({list, sublist, onPress, styletitle}) {
             marginBottom: 8,
           }}>
           Empty List
-        </Button>
+        </Button> */}
       </View>
     </View>
   );

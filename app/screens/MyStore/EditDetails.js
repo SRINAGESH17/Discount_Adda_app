@@ -385,7 +385,7 @@ function EditDetails({navigation, route}) {
                   placeholder={mystore.NameStore}
                   numberOfLines={1}
                   multiline={true}
-                  maxLength={25}
+                  maxLength={40}
                   value={values.storename}
                   onChangeText={handleChange('storename')}
                   onBlur={() => setFieldTouched('storename')}

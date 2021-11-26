@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -10,6 +10,8 @@ import {
   Dimensions,
 } from 'react-native';
 import Modal from 'react-native-modal';
+import auth from '@react-native-firebase/auth';
+
 import FormButton from '../../components/FormButton';
 import FormInput from '../../components/FormInput';
 
@@ -19,6 +21,9 @@ const windowHeight = Dimensions.get('window').height;
 function ScanCard({navigation}) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [card, setCard] = useState('');
+  const [amount, setamount] = useState([]);
+
+  const {uid} = auth().currentUser;
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
@@ -35,6 +40,34 @@ function ScanCard({navigation}) {
     return formattedText;
   };
 
+  useEffect(() => {
+    Info();
+  }, []);
+
+  const Info = () => {
+    const Discountlist = `https://usercard.herokuapp.com/api/v1/discount/${uid}`;
+    fetch(Discountlist)
+      .then(res => res.json())
+      .then(resJson => {
+        if (resJson.success === true) {
+          console.log('array size', resJson.discountList.length);
+          setamount([]);
+          for (let i = 0; i < resJson.discountList.length; i++) {
+            setamount(amt => [...amt, resJson.discountList[i].amount]);
+          }
+        } else {
+          setamount([]);
+        }
+      })
+      .catch(err => {
+        console.log('Error: ', err);
+      });
+    // console.log(
+    //   'amount',
+    //   amount.reduce((a, b) => a + b, 0),
+    // );
+  };
+
   return (
     <>
       <View style={styles.header}>
@@ -45,7 +78,7 @@ function ScanCard({navigation}) {
         <View style={styles.verticleLine} />
         <Text style={styles.textAmount}>
           Today's sell{'\n'}
-          {'\u20B9'} 10,000
+          {'\u20B9'} {amount.reduce((a, b) => a + b, 0)}
         </Text>
       </View>
       <ScrollView contentContainerStyle={styles.container}>

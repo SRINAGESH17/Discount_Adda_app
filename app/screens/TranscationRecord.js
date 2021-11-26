@@ -233,19 +233,19 @@ function TranscationRecord(props) {
               <Card.Title title={item.name} subtitle={item.dateCreated} />
               <Card.Content>
                 <Paragraph>Card Number:- {item.cardNumber}</Paragraph>
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    width: '100%',
-                  }}>
-                  <Paragraph>
-                    Total Amount:- {'\u20B9'} {item.amount}
-                  </Paragraph>
-                  <Paragraph>
-                    Discount Amount:- {'\u20B9'} {item.amountsaved}
-                  </Paragraph>
-                </View>
+
+                <Paragraph>
+                  Total Amount:- {'\u20B9'} {item.amount}
+                </Paragraph>
+                <Paragraph>
+                  Discount Amount:- {'\u20B9'} {item.amountsaved} (
+                  {(item.amountsaved / item.amount) * 100}%)
+                </Paragraph>
+
+                <Paragraph>
+                  Amount Paid After Discount:- {'\u20B9'}{' '}
+                  {item.amount - item.amountsaved}
+                </Paragraph>
               </Card.Content>
             </Card>
           )}

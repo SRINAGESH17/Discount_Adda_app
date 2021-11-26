@@ -27,15 +27,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   slideImage: {
-    width: windowWidth,
-    height: windowHeight * 0.4,
+    width: '100%',
+    height: '85%',
   },
   slideTitle: {
     position: 'absolute',
     top: windowHeight * 0.01,
     right: windowWidth * 0.2,
     width: windowWidth * 0.6,
-    height: windowHeight * 0.05,
+    height: windowHeight * 0.08,
     alignItems: 'center',
   },
   slideSubtitle: {
@@ -514,7 +514,7 @@ export default function Mystore({navigation}) {
 
   return (
     <>
-      <View>
+      <View style={{height: 60}}>
         <TouchableOpacity
           style={styles.slideSubtitle}
           onPress={() =>
@@ -536,7 +536,7 @@ export default function Mystore({navigation}) {
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
         <View style={styles.slideTitle}>
-          <Text style={{fontSize: 18, color: '#000'}}>{name} </Text>
+          <Text style={{fontSize: 16, color: '#000'}}>{name} </Text>
         </View>
         {userPost.length === 0 ? (
           <View>
@@ -560,7 +560,6 @@ export default function Mystore({navigation}) {
         onScroll={onScroll}
         keyExtractor={(item, index) => index.toString()}
       />
-
       <View style={styles.container}>
         <ScrollView
           contentContainerStyle={{

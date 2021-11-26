@@ -1,5 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  Alert,
+  Button,
+  Image,
+} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -16,6 +24,11 @@ function EducationCategory({navigation}) {
 
   const [education, setEducation] = useState('');
   const [visible, setVisible] = React.useState(false);
+
+  const [expanded, setExpanded] = React.useState(false);
+  const handlePress = () => {
+    setExpanded(!expanded);
+  };
 
   useEffect(() => {
     geteducation();
@@ -118,11 +131,27 @@ function EducationCategory({navigation}) {
         <HeaderAlert text="Selected categories are empty" value={true} />
       )}
 
-      <List.AccordionGroup>
+      <List.Section>
         <List.Accordion
-          title="Education"
+          title="Education Section"
           id="1"
-          right={props => <Text {...props}>+</Text>}>
+          expanded={expanded}
+          onPress={handlePress}
+          right={props =>
+            expanded ? (
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/withdraw.png')}
+                {...props}
+              />
+            ) : (
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/up-arrow.png')}
+                {...props}
+              />
+            )
+          }>
           {loading ? (
             <View style={{alignItems: 'center'}}>
               <Text style={{fontSize: 18}}>Details submitted</Text>
@@ -154,7 +183,7 @@ function EducationCategory({navigation}) {
             </View>
           )}
         </List.Accordion>
-      </List.AccordionGroup>
+      </List.Section>
       <ListView list={education} styletitle={{marginTop: 200}} />
     </View>
   );

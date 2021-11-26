@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
+import {View, StyleSheet, Text, FlatList, Image, Button} from 'react-native';
 import {
   List,
   RadioButton,
@@ -44,6 +44,12 @@ function Resturants({navigation}) {
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = React.useState(false);
+
+  const [expanded, setExpanded] = React.useState(false);
+  const handlePress = () => {
+    setExpanded(!expanded);
+  };
+
   useEffect(() => {
     getResturant();
   }, []);
@@ -179,12 +185,28 @@ function Resturants({navigation}) {
         <HeaderAlert text="Selected categories are empty" value={true} />
       )}
 
-      <List.AccordionGroup>
+      <List.Section>
         <List.Accordion
           title="Restaurant Type"
           id="1"
           accessibilityLabel="Select a category"
-          right={props => <Text {...props}>+</Text>}>
+          expanded={expanded}
+          onPress={handlePress}
+          right={props =>
+            expanded ? (
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/withdraw.png')}
+                {...props}
+              />
+            ) : (
+              <Image
+                style={{width: 20, height: 20}}
+                source={require('../../../assets/up-arrow.png')}
+                {...props}
+              />
+            )
+          }>
           {loading ? (
             <View style={{alignItems: 'center'}}>
               <Text style={{fontSize: 18}}>Details submitted</Text>
@@ -213,7 +235,7 @@ function Resturants({navigation}) {
             </View>
           )}
         </List.Accordion>
-      </List.AccordionGroup>
+      </List.Section>
       {sub ? (
         <View>
           <View
