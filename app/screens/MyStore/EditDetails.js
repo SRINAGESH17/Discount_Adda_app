@@ -64,14 +64,14 @@ function EditDetails({navigation, route}) {
         value: isEnabled ? 'false' : 'true',
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
     firestore()
       .collection('StoreName')
       .doc(auth().currentUser.uid)
       .update({
         status: isEnabled ? 'Close' : 'Open',
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
   };
 
   const mystore = route.params;
@@ -122,7 +122,7 @@ function EditDetails({navigation, route}) {
       .update({
         contactNumber: mystore.contact,
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
 
     if (Status === 'true') {
       setIsEnabled(true);
@@ -142,7 +142,7 @@ function EditDetails({navigation, route}) {
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => setLoading(false))
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
   };
 
   const aboutstorename = db => {
@@ -159,7 +159,7 @@ function EditDetails({navigation, route}) {
       .then(() => {
         setLoading(false);
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
   };
 
   const AddDiscountdetails = () => {
@@ -177,7 +177,7 @@ function EditDetails({navigation, route}) {
       .then(() => {
         setLoading(false);
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
   };
   const shopaddress = db => {
     Keyboard.dismiss();
@@ -192,7 +192,7 @@ function EditDetails({navigation, route}) {
       .then(() => {
         Alert.alert('Successfully updated address');
       })
-      .catch(() => alert('about  not updated'));
+      .catch(() => Alert.alert('about  not updated'));
   };
   //  image save
   const Camera = () => {
@@ -265,18 +265,22 @@ function EditDetails({navigation, route}) {
   };
 
   const submitpost = async () => {
-    const imageurl = await uploadImage();
-    console.log('imageurl: ' + imageurl);
-    firestore()
-      .collection('mystore')
-      .doc(auth().currentUser.uid)
-      .collection('userPosts')
-      .add({
-        imageurl,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => BusinessPic())
-      .catch(() => alert('profile pics not updated'));
+    if (image === null) {
+      Alert.alert('Please select a photo to upload');
+    } else {
+      const imageurl = await uploadImage();
+      console.log('imageurl: ' + imageurl);
+      firestore()
+        .collection('mystore')
+        .doc(auth().currentUser.uid)
+        .collection('userPosts')
+        .add({
+          imageurl,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => BusinessPic())
+        .catch(() => Alert.alert('profile pics not updated'));
+    }
   };
 
   // Delete the posts with the given options
@@ -328,7 +332,7 @@ function EditDetails({navigation, route}) {
               console.log('it has deleted successfully');
               deleteFirestoreData(postId);
             })
-            .catch(() => alert('delete  not updated'));
+            .catch(() => Alert.alert('delete  not updated'));
         }
       });
   };
@@ -340,9 +344,9 @@ function EditDetails({navigation, route}) {
       .collection('userPosts')
       .doc(postId)
       .delete()
-      .then(() => alert('Successfully deleted'))
+      .then(() => Alert.alert('Successfully deleted'))
       .then(() => BusinessPic())
-      .catch(() => alert('not deleted from firestore'));
+      .catch(() => Alert.alert('not deleted from firestore'));
   };
 
   return (
@@ -579,7 +583,7 @@ function EditDetails({navigation, route}) {
           style={[
             styles.modalcontainer,
             {
-              flex: 0.8,
+              flex: 0.9,
               width: windowWidth * 0.9,
             },
           ]}>

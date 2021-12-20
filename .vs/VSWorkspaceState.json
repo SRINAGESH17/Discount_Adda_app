@@ -3,8 +3,10 @@
     "",
     "\\android",
     "\\android\\app",
-    "\\app\\navigation"
+    "\\app",
+    "\\app\\screens",
+    "\\app\\screens\\MyStore"
   ],
-  "SelectedNode": "\\android\\app\\build.gradle",
+  "SelectedNode": "\\app\\screens\\MyStore\\Mystore.js",
   "PreviewInSolutionExplorer": false
 }

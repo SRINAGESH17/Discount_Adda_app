@@ -72,11 +72,15 @@ function MerchantHome({navigation}) {
           }
         });
     }
-  }, [isFocused, uid, navigation]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused]);
 
   useEffect(() => {
-    Info();
-  }, []);
+    if (isFocused) {
+      Info();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isFocused]);
 
   const Info = () => {
     const Discountlist = `https://usercard.herokuapp.com/api/v1/discount/${uid}`;
@@ -84,7 +88,7 @@ function MerchantHome({navigation}) {
       .then(res => res.json())
       .then(resJson => {
         if (resJson.success === true) {
-          console.log('array size', resJson.discountList.length);
+          // console.log('array size', resJson.discountList.length);
           setamount([]);
           for (let i = 0; i < resJson.discountList.length; i++) {
             setamount(amt => [...amt, resJson.discountList[i].amount]);
@@ -162,12 +166,7 @@ function MerchantHome({navigation}) {
           <View style={styles.cardContainer}>
             <TouchableOpacity
               style={styles.card}
-              onPress={() =>
-                navigation.reset({
-                  index: 0,
-                  routes: [{name: 'Mystore'}],
-                })
-              }>
+              onPress={() => navigation.navigate('Mystore')}>
               <Image
                 style={styles.img2}
                 source={require('../assets/mystore.png')}

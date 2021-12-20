@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     padding: 10,
     flex: 1,
     fontSize: 16,
-    fontFamily: 'Lato-Regular',
     color: '#ccc',
     justifyContent: 'center',
     alignItems: 'center',

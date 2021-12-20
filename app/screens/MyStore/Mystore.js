@@ -10,6 +10,8 @@ import {
   ScrollView,
   Pressable,
   Alert,
+  Platform,
+  Linking,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
@@ -235,6 +237,7 @@ export default function Mystore({navigation}) {
 
   const {uid} = auth().currentUser;
   const isFocused = useIsFocused();
+
   useEffect(() => {
     if (isFocused) {
       setLoading(true);
@@ -246,22 +249,22 @@ export default function Mystore({navigation}) {
         .then(documentSnapshot => {
           console.log('User exists: ', documentSnapshot.exists);
           if (documentSnapshot.exists === false) {
-            navigation.replace('EditStore');
+            navigation.replace('AddStore');
           }
           if (documentSnapshot.exists) {
             console.log('User data: ', documentSnapshot.data());
             setAbout(documentSnapshot.data().About);
+            Post();
           }
         })
-        .then(() => Post())
         .then(() => {
           setModalVisible(false);
           setLoading(false);
         });
     }
-  }, [isFocused, uid]);
+  }, [isFocused]);
 
-  function Post() {
+  const Post = () => {
     firestore()
       .collection('users')
       .doc(uid)
@@ -510,7 +513,26 @@ export default function Mystore({navigation}) {
     // if (discount === '' || address === '') {
     //   Alert.alert('Please add discount and address in edit section');
     // }
-  }
+  };
+
+  const callNumber = () => {
+    console.log('callNumber ----> ', contact);
+    let phoneNumber = contact;
+    if (Platform.OS !== 'android') {
+      phoneNumber = `telprompt:${contact}`;
+    } else {
+      phoneNumber = `tel:${contact}`;
+    }
+    Linking.canOpenURL(phoneNumber)
+      .then(supported => {
+        if (!supported) {
+          Alert.alert('Phone number is not available');
+        } else {
+          return Linking.openURL(phoneNumber);
+        }
+      })
+      .catch(err => console.log(err));
+  };
 
   return (
     <>
@@ -589,9 +611,14 @@ export default function Mystore({navigation}) {
                 {Status} now
               </Text>
             </View>
-            <View
-              flexDirection="row"
-              style={{marginTop: 10, alignItems: 'center'}}>
+            <TouchableOpacity
+              onPress={() => callNumber()}
+              style={{
+                marginTop: 10,
+                alignItems: 'center',
+                // backgroundColor: 'yellow',
+                flexDirection: 'row',
+              }}>
               <Image source={require('../../assets/call.png')} />
               <Text
                 style={{
@@ -604,7 +631,7 @@ export default function Mystore({navigation}) {
                 }}>
                 +91 {contact}
               </Text>
-            </View>
+            </TouchableOpacity>
           </View>
           {/* About the store */}
           <View style={{marginTop: 5}}>

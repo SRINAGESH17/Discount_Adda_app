@@ -165,7 +165,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '500',
     color: '#ccc',
-    fontFamily: 'Lato-Regular',
   },
   ortxt: {
     width: 50,

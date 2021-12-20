@@ -15,7 +15,7 @@ import Profile from '../screens/Profile/Profile';
 import EditProfile from '../screens/Profile/EditProfile';
 import VerifyCode from '../screens/Register/VerifyCode';
 import Mystore from '../screens/MyStore/Mystore';
-import EditStore from '../screens/MyStore/AddStore';
+import AddStore from '../screens/MyStore/AddStore';
 import Success from '../screens/Profile/Success';
 import DrawerContent from './DrawerContent';
 import Settings from '../screens/Settings/Settings';
@@ -154,8 +154,8 @@ const MainStack = ({navigation}) => (
       }}
     />
     <Stack.Screen
-      name="EditStore"
-      component={EditStore}
+      name="AddStore"
+      component={AddStore}
       options={{
         headerShown: true,
         headerTitle: 'Add business Details',
