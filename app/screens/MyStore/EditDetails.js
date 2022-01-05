@@ -46,7 +46,7 @@ function EditDetails({navigation, route}) {
 
   const [userPost, setUserPosts] = useState([]);
 
-  const [discount, setdiscount] = useState('');
+  const [discount, setdiscount] = useState(0);
   const [discountText, setdiscountText] = useState('');
   const [address, setaddress] = useState('');
 
@@ -163,21 +163,23 @@ function EditDetails({navigation, route}) {
   };
 
   const AddDiscountdetails = () => {
-    setLoading(true);
-
-    firestore()
-      .collection('StoreName')
-      .doc(auth().currentUser.uid)
-      .update({
-        discount: discount.length === 0 ? mystore.Discountinfo : discount,
-        discountstatus:
-          discountText.length === 0 ? mystore.DiscountStatus : discountText,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        setLoading(false);
-      })
-      .catch(() => Alert.alert('about  not updated'));
+    if (discountText.length === 0 || discount === 0) {
+      Alert.alert('No Discount details added');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('StoreName')
+        .doc(auth().currentUser.uid)
+        .update({
+          discount: discount,
+          discountstatus: discountText,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          setLoading(false);
+        })
+        .catch(() => Alert.alert('about  not updated'));
+    }
   };
   const shopaddress = db => {
     Keyboard.dismiss();

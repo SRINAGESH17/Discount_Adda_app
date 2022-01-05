@@ -15,13 +15,6 @@ export const AuthProvider = ({children, navigation}) => {
       value={{
         user,
         setUser,
-        login: async (email, password) => {
-          try {
-            await auth().signInWithEmailAndPassword(email, password);
-          } catch (error) {
-            console.log(error);
-          }
-        },
         googleLogin: async () => {
           try {
             await GoogleSignin.hasPlayServices();
@@ -37,51 +30,15 @@ export const AuthProvider = ({children, navigation}) => {
           }
         },
 
-        register: async (email, password, name, last) => {
-          try {
-            await auth()
-              .createUserWithEmailAndPassword(email, password)
-              .then(() => {
-                firestore()
-                  .collection('users')
-                  .doc(auth().currentUser.uid)
-                  .set({
-                    fname: name,
-                    lname: last,
-                    email: email,
-                    createdAt: firestore.Timestamp.fromDate(new Date()),
-                    userImg: null,
-                  });
-              })
-              .catch(error => {
-                console.log(
-                  'Something went wrong with added user to firestore: ',
-                  error,
-                );
-              });
-          } catch (error) {
-            console.log(error);
-          }
-        },
-        phone: async phoneNumber => {
-          try {
-            const confirmation = await auth().signInWithPhoneNumber(
-              '+91' + phoneNumber,
-            );
-
-            setConfirm(confirmation);
-          } catch (error) {
-            console.log(error);
-          }
-        },
-        confirmCode: async (code, screen) => {
-          try {
-            await confirm.confirm(code).then(() => navigation.navigate(screen));
-          } catch (error) {
-            console.log('Invalid code.');
-          }
-        },
         logout: async () => {
+          try {
+            await GoogleSignin.signOut();
+            auth().signOut();
+          } catch (error) {
+            console.log(error);
+          }
+        },
+        signOut: async () => {
           try {
             await GoogleSignin.revokeAccess();
             await GoogleSignin.signOut();
@@ -90,13 +47,6 @@ export const AuthProvider = ({children, navigation}) => {
             // setuserInfo([]);
           } catch (error) {
             console.log(error);
-          }
-        },
-        reset: async email => {
-          try {
-            await auth().sendPasswordResetEmail(email);
-          } catch (e) {
-            console.log(e);
           }
         },
       }}>

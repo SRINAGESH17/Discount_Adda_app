@@ -127,7 +127,7 @@ export default function Mystore({navigation}) {
   const [about, setAbout] = useState('');
   const [contact, setContact] = useState('');
   const [address, setAddress] = useState('');
-  const [discount, setdiscount] = useState('');
+  const [discount, setdiscount] = useState(0);
   const [discountText, setdiscountText] = useState('');
 
   const [userPost, setUserPosts] = useState([]);
@@ -238,6 +238,8 @@ export default function Mystore({navigation}) {
   const {uid} = auth().currentUser;
   const isFocused = useIsFocused();
 
+  // let CategoryList = [];
+
   useEffect(() => {
     if (isFocused) {
       setLoading(true);
@@ -278,12 +280,10 @@ export default function Mystore({navigation}) {
       .doc(uid)
       .get()
       .then(documentSnapshot => {
-        console.log('User exists: ', documentSnapshot.exists);
         if (documentSnapshot.exists === false) {
           setName('Add Name');
         }
         if (documentSnapshot.exists) {
-          console.log('User data: ', documentSnapshot.data());
           setName(documentSnapshot.data().StoreName);
           setAddress(documentSnapshot.data().address);
           setdiscount(documentSnapshot.data().discount);
@@ -510,9 +510,28 @@ export default function Mystore({navigation}) {
           seteducation(documentSnapshot.data().education);
         }
       });
-    // if (discount === '' || address === '') {
-    //   Alert.alert('Please add discount and address in edit section');
-    // }
+  };
+
+  const CategoryData = () => {
+    firestore()
+      .collection('StoreName')
+      .doc(auth().currentUser.uid)
+      .update({
+        Category: [
+          resturants === null ? null : 'resturants',
+          clothesfootwear === null ? null : 'shopping',
+          personal === null ? null : 'grocery',
+          demand === null ? null : 'demand',
+          dailyNeed === null ? null : 'dailyneed',
+          medical === null ? null : 'medical',
+          repair === null ? null : 'repair',
+          wedding === null ? null : 'wedding',
+          travel === null ? null : 'travel',
+          fitness === null ? null : 'fitness',
+          shops === null ? null : 'generalshops',
+          education === null ? null : 'education',
+        ],
+      });
   };
 
   const callNumber = () => {
@@ -677,7 +696,8 @@ export default function Mystore({navigation}) {
             {resturants === null ? null : (
               <View style={styles.txtproducts}>
                 <Text style={styles.textCategory}>
-                  {resturants}({resturantsubcategory})
+                  {resturants}
+                  {resturantsubcategory}
                 </Text>
               </View>
             )}
@@ -740,6 +760,7 @@ export default function Mystore({navigation}) {
               </View>
             )}
           </View>
+          {CategoryData()}
           <Text style={styles.txt}>ADDRESS</Text>
           <View
             flexDirection="row"

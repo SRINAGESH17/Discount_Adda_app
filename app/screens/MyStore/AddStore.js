@@ -63,46 +63,6 @@ function AddStore({navigation}) {
     }, []),
   );
 
-  const SubmitDetails = async db => {
-    setLoading(true);
-    Keyboard.dismiss();
-    if (image === null) {
-      Alert.alert('Please select a photo to upload.');
-    } else {
-      const imageurl = await uploadImage();
-      console.log('imageurl: ' + imageurl);
-      firestore()
-        .collection('mystore')
-        .doc(auth().currentUser.uid)
-        .collection('userPosts')
-        .add({
-          imageurl,
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        })
-        .catch(() => Alert.alert('profile pics not updated'));
-
-      firestore()
-        .collection('StoreName')
-        .doc(auth().currentUser.uid)
-        .set({
-          StoreName: db.storename,
-          address: db.address,
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        })
-        .catch(() => Alert.alert('about  not updated'));
-      firestore()
-        .collection('about')
-        .doc(auth().currentUser.uid)
-        .set({
-          About: db.about,
-          createdAt: firestore.Timestamp.fromDate(new Date()),
-        })
-        .then(() => setcategory(true))
-        .then(() => setLoading(false))
-        .catch(() => Alert.alert('about  not updated'));
-    }
-  };
-
   //  camera and picker
   const Camera = () => {
     ImagePicker.openCamera({
@@ -177,7 +137,45 @@ function AddStore({navigation}) {
       return null;
     }
   };
+  const SubmitDetails = async db => {
+    setLoading(true);
+    Keyboard.dismiss();
+    if (image === null) {
+      Alert.alert('Please select a photo to upload.');
+    } else {
+      const imageurl = await uploadImage();
+      console.log('imageurl: ' + imageurl);
+      firestore()
+        .collection('mystore')
+        .doc(auth().currentUser.uid)
+        .collection('userPosts')
+        .add({
+          imageurl,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .catch(() => Alert.alert('profile pics not updated'));
 
+      firestore()
+        .collection('StoreName')
+        .doc(auth().currentUser.uid)
+        .set({
+          StoreName: db.storename,
+          address: db.address,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .catch(() => Alert.alert('about  not updated'));
+      firestore()
+        .collection('about')
+        .doc(auth().currentUser.uid)
+        .set({
+          About: db.about,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => setcategory(true))
+        .then(() => setLoading(false))
+        .catch(() => Alert.alert('about  not updated'));
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Headline>Please add the following Details</Headline>
@@ -256,14 +254,14 @@ function AddStore({navigation}) {
                     onBlur={() => setFieldTouched('storename')}
                     style={styles.txt}
                     placeholderTextColor="#aaa"
-                    maxLength={16}
+                    maxLength={40}
                   />
                   {touched.storename && errors.storename && (
                     <Text style={{fontSize: 12, color: '#FF0D10'}}>
                       {errors.storename}
                     </Text>
                   )}
-                  <Title>Add Addres of the business</Title>
+                  <Title>Add Address of the business</Title>
 
                   <TextInput
                     placeholder="Address of the business"
@@ -311,7 +309,7 @@ function AddStore({navigation}) {
 
       {/* adding photo modal */}
 
-      {category === true ? (
+      {category ? (
         <TouchableOpacity
           onPress={() => navigation.navigate('Category')}
           style={styles.categoryButton}>

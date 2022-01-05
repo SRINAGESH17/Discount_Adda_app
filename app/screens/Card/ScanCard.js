@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 import FormButton from '../../components/FormButton';
 import FormInput from '../../components/FormInput';
@@ -22,6 +23,8 @@ function ScanCard({navigation}) {
   const [isModalVisible, setModalVisible] = useState(false);
   const [card, setCard] = useState('');
   const [amount, setamount] = useState([]);
+  const [name, setName] = useState('');
+  const [last, setLast] = useState('');
 
   const {uid} = auth().currentUser;
 
@@ -62,6 +65,14 @@ function ScanCard({navigation}) {
       .catch(err => {
         console.log('Error: ', err);
       });
+    firestore()
+      .collection('users')
+      .doc(uid)
+      .onSnapshot(documentSnapshot => {
+        const userData = documentSnapshot.data();
+        setName(userData.fname);
+        setLast(userData.lname);
+      });
     // console.log(
     //   'amount',
     //   amount.reduce((a, b) => a + b, 0),
@@ -71,10 +82,13 @@ function ScanCard({navigation}) {
   return (
     <>
       <View style={styles.header}>
-        <Text style={styles.txt}>
-          Good Morning Harish !! I hope you get a lot of{'\n'}customers today.
-          All the best for today
-        </Text>
+        <View style={{width: windowWidth * 0.78}}>
+          <Text style={styles.txt}>
+            Good Morning {name} {last} !! I hope you get a lot of{'\n'}customers
+            today. All the best for today
+          </Text>
+        </View>
+
         <View style={styles.verticleLine} />
         <Text style={styles.textAmount}>
           Today's sell{'\n'}
@@ -167,12 +181,12 @@ const styles = StyleSheet.create({
   txt: {
     color: '#F6D4D3',
     fontSize: 13,
-    marginStart: 10,
+    marginStart: 15,
   },
   textAmount: {
     color: 'white',
     fontSize: 14,
-    marginEnd: 10,
+    marginEnd: 15,
   },
   verticleLine: {
     height: windowHeight / 10,
@@ -216,8 +230,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     backgroundColor: '#D02824',
-    height: windowHeight / 10,
-    width: windowWidth,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -230,6 +242,7 @@ const styles = StyleSheet.create({
   img: {
     width: 300,
     height: 200,
+    borderRadius: 10,
   },
   cardContainer: {
     width: '100%',

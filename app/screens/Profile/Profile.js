@@ -9,8 +9,11 @@ import {
   Button,
   TouchableOpacity,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import storage from '@react-native-firebase/storage';
+
 import firestore from '@react-native-firebase/firestore';
 import FormButton from '../../components/FormButton';
 import FormText from '../../components/FormText';
@@ -57,7 +60,57 @@ function Profile({navigation}) {
       });
   }, [uid]);
 
-  const {logout} = useContext(AuthContext);
+  const {signOut, logout} = useContext(AuthContext);
+
+  const DeleteDetails = () => {
+    firestore().collection('users').doc(uid).delete();
+    firestore().collection('mystore').doc(uid).delete();
+    firestore().collection('StoreName').doc(uid).delete();
+    firestore().collection('about').doc(uid).delete();
+    const storageRef = storage().ref(`post/${auth().currentUser.uid}`);
+    const profileref = storage().ref(`profile/${auth().currentUser.uid}`);
+    storageRef.delete();
+    profileref.delete().then(() => {
+      signOut();
+    });
+  };
+
+  const DeleteAccount = () => {
+    Alert.alert(
+      //title
+      'Delete Account',
+      //body
+      'Are you sure you want to delete the Account ?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => ConfirmDeleteAccount(),
+        },
+        {
+          text: 'No',
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+  const ConfirmDeleteAccount = () => {
+    Alert.alert(
+      //title
+      'Confirm Delete Account',
+      //body
+      'It will delete all ypur exisiting data from account?',
+      [
+        {
+          text: 'Yes',
+          onPress: () => DeleteDetails(),
+        },
+        {
+          text: 'No',
+        },
+      ],
+      {cancelable: true},
+    );
+  };
   return (
     <>
       <View
@@ -146,7 +199,11 @@ function Profile({navigation}) {
           </View>
         )}
 
-        <FormButton buttonTitle="Logout" onPress={() => logout()} />
+        <FormButton buttonTitle="LogOut" onPress={() => logout()} />
+        <FormButton
+          buttonTitle="Delete Account"
+          onPress={() => DeleteAccount()}
+        />
       </ScrollView>
     </>
   );
