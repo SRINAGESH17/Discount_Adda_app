@@ -102,23 +102,7 @@ const slideList = Array.from({length: 4}).map((_, i) => {
   };
 });
 
-const value = [
-  {
-    value: '20% off on all the products of the store.',
-  },
-  {
-    value: '30% off on all the products of the store.',
-  },
-  {
-    value: '50% off on all the products of the store.',
-  },
-  {
-    value: '10% off on all the products of the store.',
-  },
-  {
-    value: '40% off on all the products of the store.',
-  },
-];
+
 
 export default function Mystore({navigation}) {
   const [index, setIndex] = useState(0);

@@ -1,6 +1,7 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
+import RNBootSplash from 'react-native-bootsplash';
 
 import AuthNavigation from './AuthNavigation';
 import {AuthContext} from './AuthProvider';
@@ -29,7 +30,7 @@ const Routes = () => {
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer onReady={() => RNBootSplash.hide()}>
       {user ? <AppStack /> : <AuthNavigation />}
     </NavigationContainer>
   );

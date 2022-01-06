@@ -1,47 +1,31 @@
-import React, {useState, useContext} from 'react';
+import React, {useContext, useRef, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
-  ScrollView,
-  TouchableOpacity,
-  Platform,
-  StatusBar,
   SafeAreaView,
   View,
-  Button,
-  Alert,
-  ActivityIndicator,
   Image,
+  Animated,
   Dimensions,
 } from 'react-native';
 
-import * as yup from 'yup';
-import {Formik} from 'formik';
-
 import SocialButton from '../../components/SocialButton';
-import FormInput from '../../components/FormInput';
-import FormButton from '../../components/FormButton';
 import {AuthContext} from '../../navigation/AuthProvider';
 
 const windowHeight = Dimensions.get('window').height;
 const windowWidth = Dimensions.get('window').width;
 
 function SignUp({navigation}) {
-  // const [info, setInfo] = useState(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const {googleLogin} = useContext(AuthContext);
 
-  const [loading, setLoading] = useState(false);
-
-  const {phone, googleLogin} = useContext(AuthContext);
-
-  const startLoading = db => {
-    phone(db.contact);
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      navigation.replace('Verify');
-    }, 2000);
-    // console.log(db.contact, db.name, db.last, db.email);
-  };
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 5000,
+      useNativeDriver: true,
+    }).start();
+  }, []);
 
   return (
     <SafeAreaView style={styles.scrollView}>
@@ -60,10 +44,9 @@ function SignUp({navigation}) {
         />
       </View>
 
-      <View style={{marginTop: 30, marginBottom: 80}}>
+      <Animated.View style={[styles.header, {opacity: fadeAnim}]}>
         <Text style={styles.txt}>Welcome to DiscountsAdda-Merchant</Text>
-        {/* <Text style={styles.txt}>DiscountAdda</Text> */}
-      </View>
+      </Animated.View>
 
       <SocialButton
         buttonTitle="Login /Signup with Google"
@@ -72,97 +55,6 @@ function SignUp({navigation}) {
         backgroundColor="#EAEBEC"
         onPress={() => googleLogin()}
       />
-      {/* <SocialButton
-        buttonTitle="signup with Facebook"
-        src={require('../../assets/facebook.png')}
-        color="#707070"
-        backgroundColor="#EAEBEC"
-        onPress={() => fbLogin()}
-      /> */}
-      {/* <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          paddingVertical: 15,
-          marginTop: 10,
-        }}>
-        <View style={{flex: 1, height: 1, backgroundColor: '#FFFFFF'}} />
-        <View>
-          <Text
-            style={{
-              width: 50,
-              textAlign: 'center',
-              color: '#ccc',
-              fontSize: 22,
-            }}>
-            Or
-          </Text>
-        </View>
-        <View style={{flex: 1, height: 1, backgroundColor: '#E4E4E4'}} />
-      </View> */}
-      {/* {loading ? (
-        <ActivityIndicator
-          //visibility of Overlay Loading Spinner
-          visible={loading}
-          //Text with the Spinner
-          textContent={'Loading...'}
-          size="large"
-          color="#D02824"
-          //Text style of the Spinner Text
-          textStyle={styles.spinnerTextStyle}
-        />
-      ) : (
-        <Formik
-          initialValues={{
-            contact: '',
-          }}
-          onSubmit={values => startLoading(values)}
-          // onSubmit={values =>
-          //   register(values.email, values.contact, values.name, values.last)
-          // }
-          validationSchema={yup.object().shape({
-            contact: yup
-              .string()
-              .min(10)
-              .max(10, 'Contact no. should not excced 10 digits.')
-              .required(),
-          })}>
-          {({
-            values,
-            handleChange,
-            errors,
-            setFieldTouched,
-            touched,
-            isValid,
-            handleSubmit,
-          }) => (
-            <View>
-              <FormInput
-                title="Contact"
-                value={values.contact}
-                onChangeText={handleChange('contact')}
-                onBlur={() => setFieldTouched('contact')}
-                placeholderText="Enter your contact here"
-                keyboardType="phone-pad"
-              />
-              {touched.contact && errors.contact && (
-                <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                  {errors.contact}
-                </Text>
-              )}
-
-              <View style={{marginTop: 30}}>
-                <Button
-                  color="#D02824"
-                  title="Sign Up"
-                  disabled={!isValid}
-                  onPress={handleSubmit}
-                />
-              </View>
-            </View>
-          )}
-        </Formik>
-      )} */}
     </SafeAreaView>
   );
 }
@@ -174,21 +66,14 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
+  header: {
+    marginTop: 30,
+    marginBottom: 80,
+  },
   txt: {
     color: '#ccc',
     fontSize: 22,
     marginTop: 5,
-  },
-  forgotButton: {
-    marginVertical: 35,
-  },
-  navButtonText: {
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#ccc',
-  },
-  spinnerTextStyle: {
-    color: '#FFF',
   },
 });
 

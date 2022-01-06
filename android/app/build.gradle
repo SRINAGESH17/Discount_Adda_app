@@ -136,8 +136,8 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         missingDimensionStrategy 'react-native-camera', 'general'
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 14 // do not use decimal number here
-        versionName "New UI changes in Registering shop"
+        versionCode 15 // do not use decimal number here
+        versionName "1.0"
         multiDexEnabled true
     }
     splits {
@@ -215,6 +215,7 @@ dependencies {
     implementation project(':lottie-react-native')
     implementation project(':react-native-community-netinfo')
     implementation project(':react-native-svg')
+//    implementation 'com.google.android.play:core:1.10.2'
     addUnimodulesDependencies()
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'

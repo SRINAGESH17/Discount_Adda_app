@@ -63,16 +63,28 @@ function Profile({navigation}) {
   const {signOut, logout} = useContext(AuthContext);
 
   const DeleteDetails = () => {
-    firestore().collection('users').doc(uid).delete();
-    firestore().collection('mystore').doc(uid).delete();
-    firestore().collection('StoreName').doc(uid).delete();
-    firestore().collection('about').doc(uid).delete();
-    const storageRef = storage().ref(`post/${auth().currentUser.uid}`);
-    const profileref = storage().ref(`profile/${auth().currentUser.uid}`);
-    storageRef.delete();
-    profileref.delete().then(() => {
-      signOut();
-    });
+    firestore()
+      .collection('DeletedUsers')
+      .doc(uid)
+      .set({
+        Name: name + last,
+        Email: mail,
+        Contact: contact,
+        Address: address,
+        Joindate: date,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        firestore().collection('users').doc(uid).delete();
+        firestore().collection('mystore').doc(uid).delete();
+        firestore().collection('StoreName').doc(uid).delete();
+        firestore().collection('about').doc(uid).delete();
+        const storageRef = storage().ref(`post/${auth().currentUser.uid}`);
+        const profileref = storage().ref(`profile/${auth().currentUser.uid}`);
+        storageRef.delete();
+        profileref.delete();
+      })
+      .finally(() => signOut());
   };
 
   const DeleteAccount = () => {
