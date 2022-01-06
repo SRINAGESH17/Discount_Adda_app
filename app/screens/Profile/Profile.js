@@ -12,7 +12,7 @@ import {
   Alert,
 } from 'react-native';
 import auth from '@react-native-firebase/auth';
-import storage from '@react-native-firebase/storage';
+import {useIsFocused} from '@react-navigation/native';
 
 import firestore from '@react-native-firebase/firestore';
 import FormButton from '../../components/FormButton';
@@ -29,6 +29,7 @@ function Profile({navigation}) {
   const [img, setImg] = useState(null);
 
   const {uid} = auth().currentUser;
+  const isFocused = useIsFocused();
 
   const [date, setdate] = useState('');
   const [joindate, setjoindate] = useState();
@@ -36,54 +37,57 @@ function Profile({navigation}) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    firestore()
-      .collection('users')
-      .doc(uid)
-      .onSnapshot(documentSnapshot => {
-        const userData = documentSnapshot.data();
-        setName(userData.fname);
-        setLast(userData.lname);
-        setEmail(userData.email);
-        setAddress(userData.address);
-        setContact(userData.contact);
-        setImg(userData.userImg);
-        setdate(userData.dob);
-        setjoindate(
-          new Date(userData.createdAt.toDate())
-            .toDateString()
-            .split(' ')
-            .slice(1)
-            .join(' '),
-        );
+    if (isFocused) {
+      firestore()
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => {
+          const userData = documentSnapshot.data();
+          setName(userData.fname);
+          setLast(userData.lname);
+          setEmail(userData.email);
+          setAddress(userData.address);
+          setContact(userData.contact);
+          setImg(userData.userImg);
+          setdate(userData.dob);
+          setjoindate(
+            new Date(userData.createdAt.toDate())
+              .toDateString()
+              .split(' ')
+              .slice(1)
+              .join(' '),
+          );
 
-        setLoading(false);
-      });
-  }, [uid]);
+          setLoading(false);
+        });
+    }
+  }, [isFocused]);
 
-  const {signOut, logout} = useContext(AuthContext);
+  const {signOut, setUser, logout} = useContext(AuthContext);
+
+  const logoutUser = async () => {
+    setUser(false);
+    logout();
+  };
 
   const DeleteDetails = () => {
+    const data = {
+      Name: name + ' ' + last,
+      Email: mail,
+      Contact: contact,
+      Address: address,
+      Joindate: joindate,
+      DeletedAt: new Date().toLocaleString(),
+    };
+    console.log(
+      '🚀😄 ~ file: Profile.js ~ line 74 ~ DeleteDetails ~ data',
+      data,
+    );
     firestore()
       .collection('DeletedUsers')
       .doc(uid)
-      .set({
-        Name: name + last,
-        Email: mail,
-        Contact: contact,
-        Address: address,
-        Joindate: date,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        firestore().collection('users').doc(uid).delete();
-        firestore().collection('mystore').doc(uid).delete();
-        firestore().collection('StoreName').doc(uid).delete();
-        firestore().collection('about').doc(uid).delete();
-        const storageRef = storage().ref(`post/${auth().currentUser.uid}`);
-        const profileref = storage().ref(`profile/${auth().currentUser.uid}`);
-        storageRef.delete();
-        profileref.delete();
-      })
+      .set(data)
       .finally(() => signOut());
   };
 
@@ -211,7 +215,7 @@ function Profile({navigation}) {
           </View>
         )}
 
-        <FormButton buttonTitle="LogOut" onPress={() => logout()} />
+        <FormButton buttonTitle="Log Out" onPress={() => logoutUser()} />
         <FormButton
           buttonTitle="Delete Account"
           onPress={() => DeleteAccount()}

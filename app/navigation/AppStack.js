@@ -1,8 +1,7 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {Image, View, TouchableOpacity, Text} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 import MerchantHome from '../screens/MerchantHome';
 import ScanCard from '../screens/Card/ScanCard';
@@ -208,15 +207,6 @@ const MainStack = ({navigation}) => (
 );
 
 const AppStack = () => {
-  useEffect(() => {
-    GoogleSignin.configure({
-      scopes: ['email'], // what API you want to access on behalf of the user, default is email and profile
-      webClientId:
-        '432625471246-v0t28iarr07k24amatg4v2r51cbpqmfe.apps.googleusercontent.com', // client ID of type WEB for your server (needed to verify user ID and offline access)
-      offlineAccess: true, // if you want to access Google API on behalf of the user FROM YOUR SERVER
-    });
-  }, []);
-
   return (
     <Drawer.Navigator drawerContent={props => <DrawerContent {...props} />}>
       <Drawer.Screen name="Home" component={MainStack} />

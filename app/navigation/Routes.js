@@ -1,26 +1,29 @@
 import React, {useContext, useState, useEffect} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
 import auth from '@react-native-firebase/auth';
 import RNBootSplash from 'react-native-bootsplash';
 
-import AuthNavigation from './AuthNavigation';
 import {AuthContext} from './AuthProvider';
+
 import AppStack from './AppStack';
+import AuthNavigation from './AuthNavigation';
 
 const Routes = () => {
-  const [user, setUser] = useState(AuthContext);
+  const {user, setUser} = useContext(AuthContext);
   const [initializing, setInitializing] = useState(true);
 
-  // Handle user state changes
-  function onAuthStateChanged(user) {
+  const onAuthStateChanged = user => {
     setUser(user);
-    if (initializing) {
-      setInitializing(false);
-    }
-  }
+    if (initializing) setInitializing(false);
+  };
 
   useEffect(() => {
-    console.log('routes');
+    GoogleSignin.configure({
+      webClientId:
+        '432625471246-v0t28iarr07k24amatg4v2r51cbpqmfe.apps.googleusercontent.com',
+    });
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     return subscriber; // unsubscribe on unmount
   }, []);

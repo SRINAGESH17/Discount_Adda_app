@@ -22,10 +22,10 @@ function SignUp({navigation}) {
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 5000,
+      duration: 3000,
       useNativeDriver: true,
     }).start();
-  }, []);
+  }, [fadeAnim]);
 
   return (
     <SafeAreaView style={styles.scrollView}>

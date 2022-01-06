@@ -1,6 +1,6 @@
 import React, {useEffect} from 'react';
 // import {Alert, Linking, BackHandler} from 'react-native';
-
+import InAppUpdate from './InAppUpdate';
 import Providers from './app/navigation';
 
 // const CODE_PUSH_Options = {
@@ -16,6 +16,9 @@ const App = () => {
   //     null,
   //   );
   // }, []);
+  useEffect(() => {
+    InAppUpdate.checkUpdate();
+  }, []);
 
   // const syncwithCodePush = status => {
   //   console.log(status);

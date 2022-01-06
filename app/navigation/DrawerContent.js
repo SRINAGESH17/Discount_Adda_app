@@ -1,13 +1,15 @@
 import React, {useState, useEffect, useContext} from 'react';
 import {View, StyleSheet, Image} from 'react-native';
-import {Avatar, Title, Caption, Drawer} from 'react-native-paper';
+import {useIsFocused} from '@react-navigation/native';
+
+import {Avatar, Title, Drawer} from 'react-native-paper';
 import {DrawerContentScrollView, DrawerItem} from '@react-navigation/drawer';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 
 import {AuthContext} from './AuthProvider';
 
-function DrawerContent(props) {
+function DrawerContent({props, navigation}) {
   const [name, setName] = useState('');
   const [last, setLast] = useState('');
   const [img, setImg] = useState(null);
@@ -17,23 +19,16 @@ function DrawerContent(props) {
   const {logout} = useContext(AuthContext);
 
   useEffect(() => {
-    // async function subscriber() {
-    //   const userinfo = await firestore().collection('users').doc(uid).get();
-    //   const userData = userinfo.data();
-    //   // console.log('value of user', userData);
-
-    // }
-    const subscriber = firestore()
+    firestore()
       .collection('users')
       .doc(uid)
-      .onSnapshot(documentSnapshot => {
+      .get()
+      .then(documentSnapshot => {
         if (documentSnapshot.exists === false) {
           null;
         }
-        console.log('User exists: ', documentSnapshot.exists);
 
         if (documentSnapshot.exists === true) {
-          // console.log('User data: ', documentSnapshot.data());
           const userData = documentSnapshot.data();
           setName(userData.fname);
           setLast(userData.lname);
@@ -41,11 +36,7 @@ function DrawerContent(props) {
           setImg(userData.userImg);
         }
       });
-
-    // Stop listening for updates when no longer required
-
-    return () => subscriber();
-  }, [uid]);
+  }, []);
 
   return (
     <View style={{flex: 1}}>
@@ -84,7 +75,7 @@ function DrawerContent(props) {
               )}
               label="Home"
               onPress={() => {
-                props.navigation.navigate('Home');
+                navigation.navigate('Home');
               }}
             />
             <DrawerItem
@@ -96,7 +87,7 @@ function DrawerContent(props) {
               )}
               label="Profile"
               onPress={() => {
-                props.navigation.navigate('Profile');
+                navigation.navigate('Profile');
               }}
             />
             {/* <DrawerItem

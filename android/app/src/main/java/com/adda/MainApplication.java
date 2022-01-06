@@ -43,6 +43,7 @@ public class MainApplication extends MultiDexApplication implements ReactApplica
             new ModuleRegistryAdapter(mModuleRegistryProvider)
           );
           packages.addAll(unimodules);
+          packages.add(new InAppUpdatePackage());
           return packages;
         }
 

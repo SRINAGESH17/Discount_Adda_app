@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   StyleSheet,
   Text,
-  Button,
+  Animated,
   SafeAreaView,
   Image,
   TouchableOpacity,
@@ -25,6 +25,16 @@ function MerchantHome({navigation}) {
   const isFocused = useIsFocused();
 
   const [amount, setamount] = useState([]);
+
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 3000,
+      useNativeDriver: true,
+    }).start();
+  }, [fadeAnim]);
 
   const netInfo = useNetInfo();
 
@@ -141,7 +151,8 @@ function MerchantHome({navigation}) {
 
         <Text style={styles.name}>Welcome {name} Stores !!</Text>
 
-        <View style={{marginEnd: 5, marginStart: 10}}>
+        <Animated.View
+          style={{marginEnd: 5, marginStart: 10, opacity: fadeAnim}}>
           <View style={styles.cardContainer}>
             <TouchableOpacity
               style={styles.card}
@@ -183,7 +194,7 @@ function MerchantHome({navigation}) {
               <Text style={styles.txtcard}>Profile</Text>
             </TouchableOpacity>
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </>
   );

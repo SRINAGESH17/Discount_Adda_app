@@ -33,7 +33,7 @@ function Register({navigation}) {
   const [email, setemail] = useState('');
   const [img, setImg] = useState(null);
 
-  const {logout, phone} = useContext(AuthContext);
+  const {logout} = useContext(AuthContext);
   useFocusEffect(
     React.useCallback(() => {
       const onBackPress = () => {
@@ -209,6 +209,7 @@ function Register({navigation}) {
                 onBlur={() => setFieldTouched('contact')}
                 placeholderText="Enter your Phone Number here"
                 keyboardType="phone-pad"
+                maxLength={10}
               />
               {touched.contact && errors.contact && (
                 <Text style={{fontSize: 12, color: '#FF0D10'}}>
@@ -244,7 +245,7 @@ function Register({navigation}) {
         }}>
         <View style={{flex: 1, height: 1, backgroundColor: '#E4E4E4'}} />
       </View>
-      <FormButton buttonTitle="Log Out" onPress={() => logout()} />
+      <FormButton buttonTitle="Sign Out" onPress={() => logout()} />
     </ScrollView>
   );
 }
