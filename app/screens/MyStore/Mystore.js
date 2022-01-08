@@ -102,8 +102,6 @@ const slideList = Array.from({length: 4}).map((_, i) => {
   };
 });
 
-
-
 export default function Mystore({navigation}) {
   const [index, setIndex] = useState(0);
 
@@ -233,12 +231,10 @@ export default function Mystore({navigation}) {
         .doc(uid)
         .get()
         .then(documentSnapshot => {
-          console.log('User exists: ', documentSnapshot.exists);
           if (documentSnapshot.exists === false) {
             navigation.replace('AddStore');
           }
-          if (documentSnapshot.exists) {
-            console.log('User data: ', documentSnapshot.data());
+          if (documentSnapshot.exists === true) {
             setAbout(documentSnapshot.data().About);
             Post();
           }
@@ -265,7 +261,7 @@ export default function Mystore({navigation}) {
       .get()
       .then(documentSnapshot => {
         if (documentSnapshot.exists === false) {
-          setName('Add Name');
+          setName('');
         }
         if (documentSnapshot.exists) {
           setName(documentSnapshot.data().StoreName);
@@ -519,22 +515,9 @@ export default function Mystore({navigation}) {
   };
 
   const callNumber = () => {
-    console.log('callNumber ----> ', contact);
-    let phoneNumber = contact;
-    if (Platform.OS !== 'android') {
-      phoneNumber = `telprompt:${contact}`;
-    } else {
-      phoneNumber = `tel:${contact}`;
-    }
-    Linking.canOpenURL(phoneNumber)
-      .then(supported => {
-        if (!supported) {
-          Alert.alert('Phone number is not available');
-        } else {
-          return Linking.openURL(phoneNumber);
-        }
-      })
-      .catch(err => console.log(err));
+    let phoneNumber = `tel:${contact}`;
+
+    Linking.openURL(phoneNumber);
   };
 
   return (
@@ -547,8 +530,6 @@ export default function Mystore({navigation}) {
               AboutStore: about,
               NameStore: name,
               StatusStore: StatusValue,
-              Discountinfo: discount,
-              DiscountStatus: discountText,
               contact: contact,
             })
           }>

@@ -32,6 +32,7 @@ function Register({navigation}) {
   const [loading, setLoading] = useState(false);
   const [email, setemail] = useState('');
   const [img, setImg] = useState(null);
+  const [refer, setrefer] = useState('');
 
   const {logout} = useContext(AuthContext);
   useFocusEffect(
@@ -98,6 +99,7 @@ function Register({navigation}) {
         contact: db.contact,
         createdAt: firestore.Timestamp.fromDate(new Date()),
         userImg: img,
+        ReferealCode: refer,
       })
       .then(() => {
         setLoading(false);
@@ -207,7 +209,7 @@ function Register({navigation}) {
                 value={values.contact}
                 onChangeText={handleChange('contact')}
                 onBlur={() => setFieldTouched('contact')}
-                placeholderText="Enter your Phone Number here"
+                placeholderText="Enter 10 digit Contact Number"
                 keyboardType="phone-pad"
                 maxLength={10}
               />
@@ -216,7 +218,13 @@ function Register({navigation}) {
                   {errors.contact}
                 </Text>
               )}
-
+              <FormInput
+                title="Referral Code (Optional)"
+                value={refer}
+                onChangeText={txt => setrefer(txt)}
+                placeholderText="Enter your 5 number refer code"
+                maxLength={5}
+              />
               <View style={{marginTop: 30}}>
                 <Button
                   color="#D02824"

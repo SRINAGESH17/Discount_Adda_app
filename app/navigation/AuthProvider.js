@@ -1,6 +1,8 @@
 import React, {createContext, useState} from 'react';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 
 export const AuthContext = createContext();
@@ -44,6 +46,26 @@ export const AuthProvider = ({children}) => {
 
             firestore()
               .collection('users')
+              .doc(auth().currentUser.uid)
+              .delete();
+
+            firestore()
+              .collection('StoreName')
+              .doc(auth().currentUser.uid)
+              .delete();
+
+            firestore()
+              .collection('mystore')
+              .doc(auth().currentUser.uid)
+              .delete();
+            const storageRef = storage().ref(
+              `profile/${auth().currentUser.uid}`,
+            );
+            storageRef.delete();
+            const Postref = storage().ref(`post/${auth().currentUser.uid}/`);
+            Postref.delete();
+            firestore()
+              .collection('mycategory')
               .doc(auth().currentUser.uid)
               .delete()
               .then(() => {

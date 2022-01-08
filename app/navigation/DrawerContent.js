@@ -36,7 +36,7 @@ function DrawerContent({props, navigation}) {
           setImg(userData.userImg);
         }
       });
-  }, []);
+  }, [uid]);
 
   return (
     <View style={{flex: 1}}>

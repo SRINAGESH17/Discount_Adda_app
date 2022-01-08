@@ -138,13 +138,13 @@ function AddStore({navigation}) {
     }
   };
   const SubmitDetails = async db => {
-    setLoading(true);
     Keyboard.dismiss();
     if (image === null) {
-      Alert.alert('Please select a photo to upload.');
+      Alert.alert('Please select a photo to upload for Submitting the Details');
     } else {
+      setLoading(true);
       const imageurl = await uploadImage();
-      console.log('imageurl: ' + imageurl);
+      // console.log('imageurl: ' + imageurl);
       firestore()
         .collection('mystore')
         .doc(auth().currentUser.uid)
@@ -163,7 +163,8 @@ function AddStore({navigation}) {
           address: db.address,
           createdAt: firestore.Timestamp.fromDate(new Date()),
         })
-        .catch(() => Alert.alert('about  not updated'));
+        .catch(() => Alert.alert('StoreName not updated'));
+
       firestore()
         .collection('about')
         .doc(auth().currentUser.uid)
@@ -172,7 +173,11 @@ function AddStore({navigation}) {
           createdAt: firestore.Timestamp.fromDate(new Date()),
         })
         .then(() => setcategory(true))
-        .then(() => setLoading(false))
+        .then(() => {
+          setLoading(false);
+          Alert.alert('Store Successfully created');
+          navigation.goBack();
+        })
         .catch(() => Alert.alert('about  not updated'));
     }
   };
@@ -191,7 +196,17 @@ function AddStore({navigation}) {
 
       <View style={styles.imageContainer}>
         {image !== null ? (
-          <Image source={{uri: image}} style={styles.imageBox} />
+          <View>
+            <Image source={{uri: image}} style={styles.imageBox} />
+            <TouchableOpacity
+              style={[
+                styles.selectButton,
+                {alignSelf: 'center', marginTop: 10},
+              ]}
+              onPress={() => setImage(null)}>
+              <Text style={styles.buttonText}>Remove Image</Text>
+            </TouchableOpacity>
+          </View>
         ) : null}
         {uploading ? (
           <View style={styles.progressBarContainer}>
@@ -373,9 +388,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#D02824',
     marginTop: 20,
     width: 250,
+    height: 50,
     marginBottom: 10,
     borderRadius: 20,
     alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   categoryButton: {
     backgroundColor: '#D02824',

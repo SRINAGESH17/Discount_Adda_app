@@ -31,7 +31,7 @@ function MerchantHome({navigation}) {
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
-      duration: 3000,
+      duration: 2000,
       useNativeDriver: true,
     }).start();
   }, [fadeAnim]);
