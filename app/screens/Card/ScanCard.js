@@ -138,7 +138,6 @@ function ScanCard({navigation}) {
                   keyboardType="numeric"
                   maxLength={14}
                 />
-
                 <TouchableOpacity
                   style={{
                     backgroundColor: '#D02824',
