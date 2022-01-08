@@ -84,7 +84,7 @@ function ScanCard({navigation}) {
       <View style={styles.header}>
         <View style={{width: windowWidth * 0.78}}>
           <Text style={styles.txt}>
-            Good Morning {name} {last} !! I hope you get a lot of{'\n'}customers
+            Good Morning {name} {last} !! I hope you get a lot of customers
             today. All the best for today
           </Text>
         </View>
