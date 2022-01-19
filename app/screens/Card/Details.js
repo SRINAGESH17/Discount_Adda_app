@@ -97,6 +97,7 @@ function Details({navigation, route}) {
                 navigation.navigate('Bill', {
                   cardNumber: cardno,
                   username: Name + last,
+                  userImage: img,
                 })
               }
             />

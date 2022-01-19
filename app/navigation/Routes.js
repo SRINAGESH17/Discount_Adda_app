@@ -25,7 +25,7 @@ const Routes = () => {
 
   const getToken = async () => {
     const token = await messaging().getToken();
-    console.log('.........................: ', token);
+    // console.log('.........................: ', token);
   };
 
   const onAuthStateChanged = user => {

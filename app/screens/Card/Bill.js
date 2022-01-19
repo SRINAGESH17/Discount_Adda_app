@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   StyleSheet,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 import FormButton from '../../components/FormButton';
 import Modal from 'react-native-modal';
@@ -22,6 +23,8 @@ function Bill({navigation, route}) {
   const [discount, setDiscount] = useState('');
   const [amount, setAmount] = useState('');
   const [isModalVisible, setModalVisible] = useState(false);
+  const [shopName, setShopName] = useState('');
+
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
@@ -32,10 +35,37 @@ function Bill({navigation, route}) {
   const presentdate =
     new Date().toDateString() + ' ' + new Date().toLocaleTimeString();
 
+  useEffect(() => {
+    firestore()
+      .collection('StoreName')
+      .doc(uid)
+      .get()
+      .then(documentSnapshot => {
+        setShopName(documentSnapshot.data().StoreName);
+      });
+  }, []);
+
   const Info = () => {
     if (discount.length === 0) {
       Alert.alert('Please enter the discount');
     } else {
+      const socialfeed = 'https://usercard.herokuapp.com/api/v1/addsocialfeed';
+      fetch(socialfeed, {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          merchantId: uid,
+          name: details.username,
+          userImage: details.userImage,
+          amount: amount,
+          amountsaved: (amount * discount) / 100,
+          shopName: shopName,
+          dateCreated: presentdate,
+        }),
+      });
       const discountdetails = 'https://usercard.herokuapp.com/api/v1/discount';
       fetch(discountdetails, {
         method: 'POST',
@@ -53,7 +83,7 @@ function Bill({navigation, route}) {
         }),
       })
         .then(() => {
-          Alert.alert('Discount details updated');
+          Alert.alert('Discount Successfully Applied');
           navigation.navigate('Home');
         })
         .catch(error => Alert.alert(error));
