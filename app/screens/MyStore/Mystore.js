@@ -620,16 +620,7 @@ export default function Mystore({navigation}) {
           {/* About the store */}
           <View style={{marginTop: 5}}>
             <Text style={styles.txt}>About The Store</Text>
-            {/* <Text
-              style={{
-                borderWidth: 1,
-                padding: 10,
-                width: windowWidth * 0.92,
-                borderColor: '#ccc',
-                borderRadius: 5,
-              }}>
-              {about}
-            </Text> */}
+
             <TextLessMoreView text={about} targetLines={2} />
           </View>
           {/* Discount on products */}
@@ -689,7 +680,8 @@ export default function Mystore({navigation}) {
             {medical === null ? null : (
               <View style={styles.txtproducts}>
                 <Text style={styles.textCategory}>
-                  {medical}({medicalSubcategory})
+                  {medical}
+                  {medicalSubcategory}
                 </Text>
               </View>
             )}
