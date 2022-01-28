@@ -500,7 +500,7 @@ export default function Mystore({navigation}) {
         Category: [
           resturants === null ? null : 'resturants',
           clothesfootwear === null ? null : 'shopping',
-          personal === null ? null : 'grocery',
+          personal === null ? null : 'personalcare',
           demand === null ? null : 'demand',
           dailyNeed === null ? null : 'dailyneed',
           medical === null ? null : 'medical',
