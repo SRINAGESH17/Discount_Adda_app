@@ -19,7 +19,7 @@ import Modal from 'react-native-modal';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
-
+import MapView, {PROVIDER_GOOGLE} from 'react-native-maps';
 import storage from '@react-native-firebase/storage';
 import * as Progress from 'react-native-progress';
 import * as yup from 'yup';
@@ -64,14 +64,14 @@ function EditDetails({navigation, route}) {
         value: isEnabled ? 'false' : 'true',
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
-      .catch(() => Alert.alert('about  not updated'));
+      .catch(() => console.log('line 67 Status of shop could not be updated'));
     firestore()
       .collection('StoreName')
       .doc(auth().currentUser.uid)
       .update({
         status: isEnabled ? 'Close' : 'Open',
       })
-      .catch(() => Alert.alert('about  not updated'));
+      .catch(() => console.log('line 74 Status of shop could not updated'));
   };
 
   const mystore = route.params;
@@ -116,13 +116,6 @@ function EditDetails({navigation, route}) {
 
         setUserPosts(posts);
       });
-    firestore()
-      .collection('StoreName')
-      .doc(uid)
-      .update({
-        contactNumber: mystore.contact,
-      })
-      .catch(() => Alert.alert('about  not updated'));
 
     if (Status === 'true') {
       setIsEnabled(true);
@@ -142,7 +135,7 @@ function EditDetails({navigation, route}) {
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => setLoading(false))
-      .catch(() => Alert.alert('about  not updated'));
+      .catch(() => console.log('line 145 about  not updated'));
   };
 
   const aboutstorename = db => {
@@ -159,7 +152,7 @@ function EditDetails({navigation, route}) {
       .then(() => {
         setLoading(false);
       })
-      .catch(() => Alert.alert('about  not updated'));
+      .catch(() => console.log('line 162 storename  not updated'));
   };
 
   const AddDiscountdetails = () => {
@@ -178,7 +171,7 @@ function EditDetails({navigation, route}) {
         .then(() => {
           setLoading(false);
         })
-        .catch(() => Alert.alert('about  not updated'));
+        .catch(() => console.log('line 181 discount details not added'));
     }
   };
   const shopaddress = db => {
@@ -194,7 +187,7 @@ function EditDetails({navigation, route}) {
       .then(() => {
         Alert.alert('Successfully updated address');
       })
-      .catch(() => Alert.alert('about  not updated'));
+      .catch(() => console.log('line 197 address not updated'));
   };
   //  image save
   const Camera = () => {
@@ -708,6 +701,15 @@ function EditDetails({navigation, route}) {
             borderRadius: 10,
           }}>
           <Text>Edit Address</Text>
+          <MapView
+            provider={PROVIDER_GOOGLE} // remove if not using Google Maps
+            style={styles.map}
+            region={{
+              latitude: 37.78825,
+              longitude: -122.4324,
+              latitudeDelta: 0.015,
+              longitudeDelta: 0.0121,
+            }}></MapView>
           <TextInput
             placeholder={'Add address'}
             value={address}
@@ -740,7 +742,7 @@ function EditDetails({navigation, route}) {
         </View>
       </Modal>
       <TouchableOpacity
-        onPress={addAddress}
+        onPress={() => navigation.navigate('addAddress')}
         style={{
           backgroundColor: '#D02824',
           padding: 15,
@@ -889,6 +891,9 @@ const styles = StyleSheet.create({
   imageBox: {
     width: windowWidth * 0.89,
     height: windowHeight * 0.4,
+  },
+  map: {
+    ...StyleSheet.absoluteFillObject,
   },
 });
 

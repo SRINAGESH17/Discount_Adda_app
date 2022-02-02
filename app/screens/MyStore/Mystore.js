@@ -254,6 +254,13 @@ export default function Mystore({navigation}) {
       .then(documentSnapshot => {
         const userData = documentSnapshot.data();
         setContact(userData.contact);
+        firestore()
+          .collection('StoreName')
+          .doc(uid)
+          .update({
+            contactNumber: userData.contact,
+          })
+          .catch(() => console.log('line 125 Contact not updated'));
       });
     firestore()
       .collection('StoreName')
@@ -290,7 +297,8 @@ export default function Mystore({navigation}) {
           .update({
             shopimage: posts[0].imageurl,
           })
-          .catch(() => alert('about  not updated'));
+          .catch(() => alert('Store image could not be updated'));
+        console.log('shop image', posts[0].imageurl);
         setUserPosts(posts);
       });
 
@@ -530,7 +538,6 @@ export default function Mystore({navigation}) {
               AboutStore: about,
               NameStore: name,
               StatusStore: StatusValue,
-              contact: contact,
             })
           }>
           <Image source={require('../../assets/edit.png')} />
@@ -542,7 +549,9 @@ export default function Mystore({navigation}) {
           <Image source={require('../../assets/back.png')} />
         </TouchableOpacity>
         <View style={styles.slideTitle}>
-          <Text style={{fontSize: 16, color: '#000'}}>{name} </Text>
+          <Text style={{fontSize: name.length > 20 ? 15 : 19, color: '#000'}}>
+            {name}
+          </Text>
         </View>
         {userPost.length === 0 ? (
           <View>

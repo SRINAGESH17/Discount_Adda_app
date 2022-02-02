@@ -21,6 +21,7 @@ import Settings from '../screens/Settings/Settings';
 import EditDetails from '../screens/MyStore/EditDetails';
 import AppTop from './AppTop';
 import ViewImage from '../screens/MyStore/ViewImage';
+import Address from '../screens/MyStore/Address';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -192,6 +193,14 @@ const MainStack = ({navigation}) => (
       options={{
         headerShown: true,
         headerTitle: '',
+      }}
+    />
+    <Stack.Screen
+      name="addAddress"
+      component={Address}
+      options={{
+        headerShown: true,
+        headerTitle: 'Add Address',
       }}
     />
     {/* Setting section */}

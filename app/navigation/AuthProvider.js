@@ -50,7 +50,17 @@ export const AuthProvider = ({children}) => {
               .delete();
 
             firestore()
+              .collection('about')
+              .doc(auth().currentUser.uid)
+              .delete();
+
+            firestore()
               .collection('StoreName')
+              .doc(auth().currentUser.uid)
+              .delete();
+
+            firestore()
+              .collection('mycategory')
               .doc(auth().currentUser.uid)
               .delete();
 
@@ -58,19 +68,13 @@ export const AuthProvider = ({children}) => {
               .collection('mystore')
               .doc(auth().currentUser.uid)
               .delete();
+
+            auth().currentUser.delete();
             const storageRef = storage().ref(
               `profile/${auth().currentUser.uid}`,
             );
             storageRef.delete();
-            const Postref = storage().ref(`post/${auth().currentUser.uid}/`);
-            Postref.delete();
-            firestore()
-              .collection('mycategory')
-              .doc(auth().currentUser.uid)
-              .delete()
-              .then(() => {
-                auth().currentUser.delete();
-              });
+
             setUser(false);
           } catch (error) {
             console.error(error);
