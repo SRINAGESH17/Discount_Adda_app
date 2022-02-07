@@ -29,7 +29,6 @@ import {Button, Headline, Title} from 'react-native-paper';
 import ImagePicker from 'react-native-image-crop-picker';
 
 import {useIsFocused} from '@react-navigation/native';
-import {useCallback} from 'react/cjs/react.development';
 
 const {width: windowWidth, height: windowHeight} = Dimensions.get('window');
 
