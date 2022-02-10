@@ -747,17 +747,17 @@ function EditDetails({navigation, route}) {
           padding: 15,
           marginTop: 10,
           borderRadius: 10,
-          width: windowWidth * 0.3,
+          width: 150,
           alignItems: 'center',
         }}>
-        <Text style={{color: 'white'}}>Edit Address</Text>
+        <Text style={{color: 'white'}}>Edit Shop Address</Text>
       </TouchableOpacity>
       <TouchableOpacity
         onPress={() => navigation.navigate('Category')}
         style={{
           backgroundColor: '#D02824',
           padding: 10,
-          marginTop: 50,
+          marginTop: 40,
           alignItems: 'center',
           borderRadius: 20,
         }}>

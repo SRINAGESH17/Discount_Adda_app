@@ -146,7 +146,7 @@ function MedicneCategory({navigation}) {
 
   // render items for flatlist
 
-  const renderItemMen = ({item, index}) => {
+  const rendeItemMedical = ({item, index}) => {
     return (
       <View>
         <RadioButton.Item
@@ -210,7 +210,7 @@ function MedicneCategory({navigation}) {
                 <FlatList
                   data={data}
                   style={{height: windowHeight * 0.5}}
-                  renderItem={renderItemMen}
+                  renderItem={rendeItemMedical}
                   keyExtractor={item => `key-${item.id}`}
                 />
               )}

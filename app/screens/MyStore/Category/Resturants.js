@@ -4,9 +4,7 @@ import {
   List,
   RadioButton,
   ActivityIndicator,
-  Headline,
-  Title,
-  Banner,
+  Checkbox,
 } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -23,11 +21,23 @@ const infoResturants = [
   },
   {
     id: '2',
-    item: 'Non-Veg Resturant',
+    item: 'Hotels',
   },
   {
     id: '3',
-    item: 'Veg & Non-Veg Resturant',
+    item: 'Bakeries',
+  },
+  {
+    id: '4',
+    item: 'Beverages',
+  },
+  {
+    id: '5',
+    item: 'Takeways',
+  },
+  {
+    id: '6',
+    item: 'Milk & Milk Products',
   },
 ];
 
@@ -187,7 +197,7 @@ function Resturants({navigation}) {
 
       <List.Section>
         <List.Accordion
-          title="Restaurant Type"
+          title="Food"
           id="1"
           accessibilityLabel="Select a category"
           expanded={expanded}
@@ -244,7 +254,7 @@ function Resturants({navigation}) {
             }}
           />
           <Text style={{fontSize: 20, paddingBottom: 10}}>
-            Add subcategory for Resturants
+            Add subcategory for Resturants if needed
           </Text>
           {isLoading ? (
             <ActivityIndicator animating={true} color="#D02824" size="large" />

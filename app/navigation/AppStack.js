@@ -17,11 +17,11 @@ import Mystore from '../screens/MyStore/Mystore';
 import AddStore from '../screens/MyStore/AddStore';
 import Success from '../screens/Profile/Success';
 import DrawerContent from './DrawerContent';
-import Settings from '../screens/Settings/Settings';
 import EditDetails from '../screens/MyStore/EditDetails';
 import AppTop from './AppTop';
 import ViewImage from '../screens/MyStore/ViewImage';
 import Address from '../screens/MyStore/Address';
+import {ContactUs, Feedback} from '../screens/DrawerSection';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -204,12 +204,28 @@ const MainStack = ({navigation}) => (
       }}
     />
     {/* Setting section */}
-    <Stack.Screen
+    {/* <Stack.Screen
       name="Settings"
       component={Settings}
       options={{
         headerShown: true,
         headerTitle: 'Settings',
+      }}
+    /> */}
+    <Stack.Screen
+      name="ContactUs"
+      component={ContactUs}
+      options={{
+        headerShown: true,
+        headerTitle: 'Contact Us',
+      }}
+    />
+    <Stack.Screen
+      name="Feedback"
+      component={Feedback}
+      options={{
+        headerShown: true,
+        headerTitle: 'Feedback',
       }}
     />
   </Stack.Navigator>

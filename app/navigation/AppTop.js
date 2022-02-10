@@ -25,7 +25,7 @@ function AppTop(props) {
         activeTintColor: '#D02824',
         inactiveTintColor: '#000',
       }}>
-      <Tab.Screen name="Restaurants " component={Resturants} />
+      <Tab.Screen name="Food" component={Resturants} />
       <Tab.Screen name="Shops" component={GeneralCategory} />
       <Tab.Screen name="Shopping & Personal Care" component={FashionCategory} />
       <Tab.Screen name="Education" component={EducationCategory} />

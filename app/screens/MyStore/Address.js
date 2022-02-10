@@ -8,6 +8,7 @@ import {
   TextInput,
   Keyboard,
   Text,
+  ScrollView,
 } from 'react-native';
 import {Button} from 'react-native-paper';
 import firestore from '@react-native-firebase/firestore';
@@ -116,79 +117,81 @@ function Address({navigation}) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      {address === null ? (
-        <ActivityIndicator
-          //visibility of Overlay Loading Spinner
-          size="large"
-          color="#D02824"
-        />
-      ) : (
-        <MapView
-          provider={PROVIDER_GOOGLE}
-          initialRegion={{
-            latitude: address.latitude,
-            longitude: address.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421,
-          }}
-          style={styles.map}
-          onRegionChangeComplete={region => Address(region)}>
-          <Marker
-            draggable
-            coordinate={address}
-            title="Address"
-            description="Shop"
-            image={require('../../assets/map_marker.png')}
-            onDragEnd={e => setaddress(e.nativeEvent.coordinate)}
+    <ScrollView contentContainerStyle={{flexGrow: 1}}>
+      <SafeAreaView style={styles.container}>
+        {address === null ? (
+          <ActivityIndicator
+            //visibility of Overlay Loading Spinner
+            size="large"
+            color="#D02824"
           />
-        </MapView>
-      )}
+        ) : (
+          <MapView
+            provider={PROVIDER_GOOGLE}
+            initialRegion={{
+              latitude: address.latitude,
+              longitude: address.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421,
+            }}
+            style={styles.map}
+            onRegionChangeComplete={region => Address(region)}>
+            <Marker
+              draggable
+              coordinate={address}
+              title="Address"
+              description="Shop"
+              image={require('../../assets/map_marker.png')}
+              onDragEnd={e => setaddress(e.nativeEvent.coordinate)}
+            />
+          </MapView>
+        )}
 
-      <Button
-        onPress={() => GetCurrentLocation()}
-        mode="contained"
-        style={{
-          backgroundColor: '#D02824',
-          marginTop: 10,
-          width: 250,
-          borderRadius: 20,
-        }}>
-        Tap to Current Location
-      </Button>
-      <View
-        style={{
-          backgroundColor: '#ccc',
-          marginTop: 40,
-          width: '90%',
-          justifyContent: 'center',
-          borderRadius: 20,
-        }}>
-        <TextInput
-          placeholder={'Add address'}
-          value={displayCurrentAddress}
-          onChangeText={txt => setDisplayCurrentAddress(txt)}
+        <Button
+          onPress={() => GetCurrentLocation()}
+          mode="contained"
           style={{
-            width: '100%',
-            color: '#000',
-            marginStart: 10,
-          }}
-          placeholderTextColor="#aaa"
-        />
-      </View>
-      <Button
-        onPress={shopaddress}
-        mode="contained"
-        style={{
-          backgroundColor: '#D02824',
-          marginTop: 10,
-          width: 150,
-          marginBottom: 30,
-          borderRadius: 20,
-        }}>
-        Submit
-      </Button>
-    </SafeAreaView>
+            backgroundColor: '#D02824',
+            marginTop: 10,
+            width: 250,
+            borderRadius: 20,
+          }}>
+          Tap to Current Location
+        </Button>
+        <View
+          style={{
+            backgroundColor: '#ccc',
+            marginTop: 40,
+            width: '90%',
+            justifyContent: 'center',
+            borderRadius: 20,
+          }}>
+          <TextInput
+            placeholder={'Add address'}
+            value={displayCurrentAddress}
+            onChangeText={txt => setDisplayCurrentAddress(txt)}
+            style={{
+              width: '100%',
+              color: '#000',
+              marginStart: 10,
+            }}
+            placeholderTextColor="#aaa"
+          />
+        </View>
+        <Button
+          onPress={shopaddress}
+          mode="contained"
+          style={{
+            backgroundColor: '#D02824',
+            marginTop: 10,
+            width: 150,
+            marginBottom: 30,
+            borderRadius: 20,
+          }}>
+          Submit
+        </Button>
+      </SafeAreaView>
+    </ScrollView>
   );
 }
 

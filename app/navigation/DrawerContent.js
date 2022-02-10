@@ -90,18 +90,30 @@ function DrawerContent({props, navigation}) {
                 navigation.navigate('Profile');
               }}
             />
-            {/* <DrawerItem
+            <DrawerItem
               icon={() => (
                 <Image
                   source={require('../assets/settings.png')}
                   style={{width: 15, height: 15}}
                 />
               )}
-              label="Settings"
+              label="FeedBack"
               onPress={() => {
-                props.navigation.navigate('Settings');
+                navigation.navigate('Feedback');
               }}
-            /> */}
+            />
+            <DrawerItem
+              icon={() => (
+                <Image
+                  source={require('../assets/settings.png')}
+                  style={{width: 15, height: 15}}
+                />
+              )}
+              label="Contact Us"
+              onPress={() => {
+                navigation.navigate('ContactUs');
+              }}
+            />
           </Drawer.Section>
         </View>
       </DrawerContentScrollView>

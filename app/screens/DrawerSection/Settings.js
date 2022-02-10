@@ -69,7 +69,10 @@ const Settings = ({navigation}) => {
       {/* <View style={styles.contentContainer}>
         <Text style={styles.title}>Your Current address</Text>
       </View> */}
-      <Text style={styles.text}>{displayCurrentAddress}</Text>
+      <Text style={styles.text}>
+        +918447726766 Discountsadda.com@gamil.com Opposite :- Gateway Hotel,
+        Beside Woodland Showroom, Bander Road , Vijayawada
+      </Text>
     </View>
   );
 };
