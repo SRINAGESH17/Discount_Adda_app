@@ -1,5 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, Image, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  Image,
+  Button,
+  ScrollView,
+  Alert,
+} from 'react-native';
 import {
   List,
   RadioButton,
@@ -8,8 +17,6 @@ import {
 } from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import SelectBox from 'react-native-multi-selectbox';
-import {xorBy} from 'lodash';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
 import {API_URL, endPoints} from '../../../Config/Config';
@@ -42,23 +49,14 @@ const infoResturants = [
 ];
 
 function Resturants({navigation}) {
-  const [selectedTeams, setSelectedTeams] = useState([]);
   const [rest, setRest] = useState([]);
   const [data, setdata] = useState([]);
-  const [sub, setsub] = useState(false);
-  const [subtext, setsubtext] = useState('');
 
   const [list, setlist] = useState('');
-  const [sublist, setSublist] = useState('');
 
   const [isLoading, setisLoading] = useState(true);
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = React.useState(false);
-
-  const [expanded, setExpanded] = React.useState(false);
-  const handlePress = () => {
-    setExpanded(!expanded);
-  };
 
   useEffect(() => {
     getResturant();
@@ -87,11 +85,9 @@ function Resturants({navigation}) {
       .then(documentSnapshot => {
         if (documentSnapshot.exists === false) {
           setlist('Empty list');
-          setSublist('Empty subcategory list');
         }
         if (documentSnapshot.exists) {
           setlist(documentSnapshot.data().restauranttype);
-          setSublist(documentSnapshot.data().resturantcategory);
         }
       });
   };
@@ -125,169 +121,84 @@ function Resturants({navigation}) {
     console.log('value of category', contentAlert);
     if (contentAlert.length === 0) {
       setVisible(true);
+      Alert.alert('Selection is empty');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('mycategory')
+        .doc(auth().currentUser.uid)
+        .collection('Resturants')
+        .doc(auth().currentUser.uid)
+        .set({
+          restauranttype: contentAlert,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          setLoading(false);
+          getResturant();
+        })
+        .catch(() => alert('category   not updated'));
     }
-
-    setLoading(true);
+  };
+  const EmptyList = () => {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
       .collection('Resturants')
       .doc(auth().currentUser.uid)
       .set({
-        restauranttype: contentAlert.length === 0 ? null : contentAlert,
+        restauranttype: null,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
-        setLoading(false);
-        contentAlert.length === 0 ? setsub(false) : setsub(true);
         getResturant();
+        Alert.alert('List is empty');
       })
       .catch(() => alert('category   not updated'));
   };
-  const Submitcategory = () => {
-    onMultiChange();
-    let content = '';
-    selectedTeams.forEach(item => {
-      content = content + item.item + ',';
-    });
-    console.log('value from subcategory', content);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('Resturants')
-      .doc(auth().currentUser.uid)
-      .update({
-        resturantcategory: content.length === 0 ? null : content,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        setsub(false);
-        setsubtext(
-          'Details Submitted for subcategory\nSelect category again to select subcategory ',
-        );
-        getResturant();
-      })
-      .catch(() => alert('category   not updated'));
-  };
-
-  // render items for flatlist
-
-  const renderItemMen = ({item, index}) => {
-    return (
-      <View>
-        <RadioButton.Item
-          label={item.item}
-          value={item.selected}
-          status={item.selected ? 'checked' : 'unchecked'}
-          onPress={() => onChangeValue(item, index)}
-          style={{}}
-        />
-      </View>
-    );
-  };
-  function onMultiChange() {
-    return item => setSelectedTeams(xorBy(selectedTeams, [item], 'id'));
-  }
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       {visible && (
         <HeaderAlert text="Selected categories are empty" value={true} />
       )}
 
-      <List.Section>
-        <List.Accordion
-          title="Food"
-          id="1"
-          accessibilityLabel="Select a category"
-          expanded={expanded}
-          onPress={handlePress}
-          right={props =>
-            expanded ? (
-              <Image
-                style={{width: 20, height: 20}}
-                source={require('../../../assets/withdraw.png')}
-                {...props}
-              />
-            ) : (
-              <Image
-                style={{width: 20, height: 20}}
-                source={require('../../../assets/up-arrow.png')}
-                {...props}
-              />
-            )
-          }>
-          {loading ? (
-            <View style={{alignItems: 'center'}}>
-              <Text style={{fontSize: 18}}>Details submitted</Text>
-              <ActivityIndicator
-                animating={true}
-                color="#D02824"
-                size="large"
-              />
-            </View>
-          ) : (
-            <View>
-              {isLoading ? (
-                <ActivityIndicator
-                  animating={true}
-                  color="#D02824"
-                  size="large"
-                />
-              ) : (
-                <FlatList
-                  data={data}
-                  renderItem={renderItemMen}
-                  keyExtractor={item => `key-${item.id}`}
-                />
-              )}
-              <Button color="#D02824" title="submit" onPress={submit} />
-            </View>
-          )}
-        </List.Accordion>
-      </List.Section>
-      {sub ? (
+      {loading ? (
+        <View style={{alignItems: 'center'}}>
+          <Text style={{fontSize: 18}}>Details submitted</Text>
+          <ActivityIndicator animating={true} color="#D02824" size="large" />
+        </View>
+      ) : (
         <View>
-          <View
-            style={{
-              height: 40,
-            }}
-          />
-          <Text style={{fontSize: 20, paddingBottom: 10}}>
-            Add subcategory for Resturants if needed
-          </Text>
           {isLoading ? (
             <ActivityIndicator animating={true} color="#D02824" size="large" />
           ) : (
-            <SelectBox
-              label="Select Resturant types"
-              options={rest}
-              selectedValues={selectedTeams}
-              onMultiSelect={onMultiChange()}
-              onTapClose={onMultiChange()}
-              isMulti
-              inputPlaceholder="Type Here to search"
-              toggleIconColor="#D02824"
-              searchIconColor="#D02824"
-              arrowIconColor="#D02824"
-            />
+            data.map((item, index) => {
+              return (
+                <View key={index}>
+                  <RadioButton.Item
+                    label={item.item}
+                    value={item.selected}
+                    status={item.selected ? 'checked' : 'unchecked'}
+                    onPress={() => onChangeValue(item, index)}
+                    style={{}}
+                  />
+                </View>
+              );
+            })
           )}
-
-          <View style={{marginTop: 10, width: 120}}>
-            <Button color="#D02824" title="submit" onPress={Submitcategory} />
-          </View>
+          <Button color="#D02824" title="submit" onPress={submit} />
         </View>
-      ) : (
-        <Text>{subtext}</Text>
       )}
-      <ListView list={list} sublist={sublist} styletitle={{marginTop: 200}} />
-    </View>
+
+      <ListView list={list} styletitle={{marginTop: 20}} onPress={EmptyList} />
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     backgroundColor: '#fff',
   },
   Accordion: {

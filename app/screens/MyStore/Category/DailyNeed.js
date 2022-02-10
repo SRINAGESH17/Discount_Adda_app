@@ -1,11 +1,20 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, Alert, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  Alert,
+  Button,
+  TextInput,
+  Image,
+} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import ListView from '../../../components/ListView';
 import HeaderAlert from '../../../components/HeaderAlert';
-import {windowHeight} from '../../../utils/Dimentions';
+import {windowHeight, windowWidth} from '../../../utils/Dimentions';
 import {API_URL, endPoints} from '../../../Config/Config';
 
 function HomeCategory({navigation}) {
@@ -20,6 +29,25 @@ function HomeCategory({navigation}) {
   const [dailyNeed, setDailyNeed] = useState('');
 
   const [visible, setVisible] = React.useState(false);
+
+  const [filterdData, setfilterdData] = useState([]);
+
+  const [search, setsearch] = useState('');
+
+  const searchFilter = text => {
+    if (text) {
+      const newData = data.filter(item => {
+        const itemData = item.item ? item.item.toUpperCase() : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setdata(newData);
+      setsearch(text);
+    } else {
+      setdata(filterdData);
+      setsearch(text);
+    }
+  };
 
   useEffect(() => {
     gethome();
@@ -41,6 +69,7 @@ function HomeCategory({navigation}) {
       .then(res => res.json())
       .then(resJson => {
         setOnDemand(resJson);
+        setfilterdData(resJson);
       })
       .catch(err => {
         console.log('Error: ', err);
@@ -118,27 +147,26 @@ function HomeCategory({navigation}) {
     listSelected.forEach(item => {
       contentAlert = contentAlert + item.item + ', ';
     });
-    // Alert.alert(contentAlert);
-    // console.log(contentAlert);
     if (contentAlert.length === 0) {
       setVisible(true);
+      Alert.alert('Selection is empty');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('mycategory')
+        .doc(auth().currentUser.uid)
+        .collection('DailyNeed')
+        .doc(auth().currentUser.uid)
+        .set({
+          DailyNeed: contentAlert,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          setLoading(false);
+          gethome();
+        })
+        .catch(() => alert('category   not updated'));
     }
-
-    setLoading(true);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('DailyNeed')
-      .doc(auth().currentUser.uid)
-      .set({
-        DailyNeed: contentAlert.length === 0 ? null : contentAlert,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        setLoading(false);
-        gethome();
-      })
-      .catch(() => alert('category   not updated'));
   };
 
   const submitDemand = () => {
@@ -147,25 +175,54 @@ function HomeCategory({navigation}) {
     listSelected.forEach(item => {
       contentAlert = contentAlert + item.item + ', ';
     });
-    // Alert.alert(contentAlert);
-    console.log(contentAlert);
     if (contentAlert.length === 0) {
       setVisible(true);
+      Alert.alert('Selection is empty');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('mycategory')
+        .doc(auth().currentUser.uid)
+        .collection('ondemand')
+        .doc(auth().currentUser.uid)
+        .set({
+          Demand: contentAlert,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          setLoading(false);
+          gethome();
+        })
+        .catch(() => alert('category   not updated'));
     }
+  };
 
-    setLoading(true);
+  const EmptyList = () => {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
       .collection('ondemand')
       .doc(auth().currentUser.uid)
       .set({
-        Demand: contentAlert.length === 0 ? null : contentAlert,
+        Demand: null,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
-        setLoading(false);
         gethome();
+      })
+      .catch(() => alert('category   not updated'));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('DailyNeed')
+      .doc(auth().currentUser.uid)
+      .set({
+        DailyNeed: null,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        gethome();
+        Alert.alert('List is empty');
       })
       .catch(() => alert('category   not updated'));
   };
@@ -201,50 +258,15 @@ function HomeCategory({navigation}) {
   };
 
   return (
-    <View style={styles.container}>
-      {visible && (
-        <HeaderAlert text="Selected categories are empty" value={true} />
-      )}
-      <List.AccordionGroup>
-        <List.Accordion
-          title="Home Essentials"
-          id="1"
-          right={props => <Text {...props}>+</Text>}>
-          {loading ? (
-            <View style={{alignItems: 'center'}}>
-              <Text style={{fontSize: 18}}>Details submitted</Text>
-              <ActivityIndicator
-                animating={true}
-                color="#D02824"
-                size="large"
-              />
-            </View>
-          ) : (
-            <View>
-              <View style={{marginBottom: 10}}>
-                <Button color="#D02824" title="submit" onPress={submit} />
-              </View>
-              {isLoading ? (
-                <ActivityIndicator
-                  animating={true}
-                  color="#D02824"
-                  size="large"
-                />
-              ) : (
-                <FlatList
-                  data={data}
-                  style={{height: windowHeight * 0.5}}
-                  renderItem={renderItemDaily}
-                  keyExtractor={item => `key-${item.id}`}
-                />
-              )}
-            </View>
-          )}
-        </List.Accordion>
-        <View style={{marginTop: 10, flex: 0.8}}>
+    <>
+      <View style={styles.container}>
+        {visible && (
+          <HeaderAlert text="Selected categories are empty" value={true} />
+        )}
+        <List.AccordionGroup>
           <List.Accordion
-            title="On Demand Service"
-            id="2"
+            title="Home Essentials"
+            id="1"
             right={props => <Text {...props}>+</Text>}>
             {loading ? (
               <View style={{alignItems: 'center'}}>
@@ -258,11 +280,7 @@ function HomeCategory({navigation}) {
             ) : (
               <View>
                 <View style={{marginBottom: 10}}>
-                  <Button
-                    color="#D02824"
-                    title="submit"
-                    onPress={submitDemand}
-                  />
+                  <Button color="#D02824" title="submit" onPress={submit} />
                 </View>
                 {isLoading ? (
                   <ActivityIndicator
@@ -272,19 +290,79 @@ function HomeCategory({navigation}) {
                   />
                 ) : (
                   <FlatList
-                    data={ondemand}
+                    data={data}
                     style={{height: windowHeight * 0.5}}
-                    renderItem={renderItemDemand}
+                    renderItem={renderItemDaily}
                     keyExtractor={item => `key-${item.id}`}
                   />
                 )}
               </View>
             )}
           </List.Accordion>
-        </View>
-      </List.AccordionGroup>
-      <ListView list={dailyNeed} sublist={demand} />
-    </View>
+          <View style={{marginTop: 10}}>
+            <List.Accordion
+              title="On Demand Service"
+              id="2"
+              right={props => <Text {...props}>+</Text>}>
+              {loading ? (
+                <View style={{alignItems: 'center'}}>
+                  <Text style={{fontSize: 18}}>Details submitted</Text>
+                  <ActivityIndicator
+                    animating={true}
+                    color="#D02824"
+                    size="large"
+                  />
+                </View>
+              ) : (
+                <View>
+                  <View style={styles.searchbox}>
+                    <TextInput
+                      value={search}
+                      placeholder="Search for categories here..."
+                      placeholderTextColor="#ccc"
+                      style={{
+                        color: '#000',
+                      }}
+                      onChangeText={txt => searchFilter(txt)}
+                    />
+
+                    <Image
+                      source={require('../../../assets/search.png')}
+                      style={{width: 20, height: 20, tintColor: '#000'}}
+                    />
+                  </View>
+                  {isLoading ? (
+                    <ActivityIndicator
+                      animating={true}
+                      color="#D02824"
+                      size="large"
+                    />
+                  ) : (
+                    <FlatList
+                      data={ondemand}
+                      style={{height: windowHeight * 0.3}}
+                      renderItem={renderItemDemand}
+                      keyExtractor={item => `key-${item.id}`}
+                    />
+                  )}
+                  <Button
+                    color="#D02824"
+                    title="submit"
+                    onPress={submitDemand}
+                  />
+                </View>
+              )}
+            </List.Accordion>
+          </View>
+        </List.AccordionGroup>
+        <ListView
+          list={dailyNeed}
+          sublist={demand}
+          styletitle={{marginTop: 100}}
+          onPress={EmptyList}
+        />
+      </View>
+    </>
   );
 }
 
@@ -296,17 +374,17 @@ const styles = StyleSheet.create({
   Accordion: {
     marginTop: 10,
   },
-  // box: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   paddingStart: 20,
-  //   paddingEnd: 20,
-  //   paddingVertical: 5,
-  // },
-  // check: {
-  //   width: 20,
-  //   height: 20,
-  // },
+  searchbox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    borderRadius: 20,
+    borderWidth: 0.8,
+    borderColor: '#ccc',
+    width: windowWidth * 0.9,
+    height: 40,
+    margin: 10,
+  },
 });
 
 export default HomeCategory;

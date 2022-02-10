@@ -22,4 +22,5 @@ export const endPoints = {
   fitness: 'fit',
   shops: 'shopslist',
   education: 'education',
+  emergency: 'emergency',
 };

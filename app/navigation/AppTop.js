@@ -11,6 +11,7 @@ import Travel from '../screens/MyStore/Category/Travel';
 import Fitness from '../screens/MyStore/Category/Fitness';
 import GeneralCategory from '../screens/MyStore/Category/GeneralCategory';
 import EducationCategory from '../screens/MyStore/Category/EducationCategory';
+import Emergency from '../screens/MyStore/Category/Emergency';
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -29,12 +30,13 @@ function AppTop(props) {
       <Tab.Screen name="Shops" component={GeneralCategory} />
       <Tab.Screen name="Shopping & Personal Care" component={FashionCategory} />
       <Tab.Screen name="Education" component={EducationCategory} />
-      <Tab.Screen name="Daily Needs" component={HomeCategory} />
+      <Tab.Screen name="Daily Needs & Services" component={HomeCategory} />
       <Tab.Screen name="Medical" component={MedicneCategory} />
       <Tab.Screen name="Repair" component={Repair} />
       <Tab.Screen name="Wedding" component={Wedding} />
       <Tab.Screen name="Travel" component={Travel} />
       <Tab.Screen name="Fitness" component={Fitness} />
+      <Tab.Screen name="Emergency" component={Emergency} />
     </Tab.Navigator>
   );
 }

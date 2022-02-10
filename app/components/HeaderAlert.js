@@ -2,7 +2,7 @@ import * as React from 'react';
 import {Image} from 'react-native';
 import {Banner} from 'react-native-paper';
 
-const HeaderAlert = ({value, text}) => {
+const HeaderAlert = ({value, text, Status}) => {
   const [visible, setVisible] = React.useState({value});
 
   return (
@@ -11,11 +11,17 @@ const HeaderAlert = ({value, text}) => {
       actions={[
         {
           label: 'Add Again',
-          onPress: () => setVisible(false),
+          onPress: () => {
+            setVisible(false);
+            Status;
+          },
         },
         {
           label: 'Leave it',
-          onPress: () => setVisible(false),
+          onPress: () => {
+            setVisible(false);
+            Status;
+          },
         },
       ]}>
       {text}

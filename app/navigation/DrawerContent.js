@@ -70,7 +70,7 @@ function DrawerContent({props, navigation}) {
               icon={() => (
                 <Image
                   source={require('../assets/home.png')}
-                  style={{width: 15, height: 15}}
+                  style={{width: 20, height: 20}}
                 />
               )}
               label="Home"
@@ -82,7 +82,7 @@ function DrawerContent({props, navigation}) {
               icon={() => (
                 <Image
                   source={require('../assets/user.png')}
-                  style={{width: 15, height: 15}}
+                  style={{width: 20, height: 20}}
                 />
               )}
               label="Profile"
@@ -93,8 +93,8 @@ function DrawerContent({props, navigation}) {
             <DrawerItem
               icon={() => (
                 <Image
-                  source={require('../assets/settings.png')}
-                  style={{width: 15, height: 15}}
+                  source={require('../assets/opinion.png')}
+                  style={{width: 20, height: 20}}
                 />
               )}
               label="FeedBack"
@@ -105,8 +105,8 @@ function DrawerContent({props, navigation}) {
             <DrawerItem
               icon={() => (
                 <Image
-                  source={require('../assets/settings.png')}
-                  style={{width: 15, height: 15}}
+                  source={require('../assets/call-center.png')}
+                  style={{width: 20, height: 20}}
                 />
               )}
               label="Contact Us"
@@ -123,7 +123,7 @@ function DrawerContent({props, navigation}) {
           icon={() => (
             <Image
               source={require('../assets/logout.png')}
-              style={{width: 15, height: 15}}
+              style={{width: 20, height: 20}}
             />
           )}
           label="Log Out"

@@ -1,5 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {View, StyleSheet, Text, FlatList, Image, Button} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  FlatList,
+  Image,
+  Button,
+  Alert,
+} from 'react-native';
 import {List, RadioButton, ActivityIndicator} from 'react-native-paper';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
@@ -131,23 +139,24 @@ function FashionCategory({navigation}) {
     console.log(contentAlert);
     if (contentAlert.length === 0) {
       setVisible(true);
+      Alert.alert('Selection is empty');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('mycategory')
+        .doc(auth().currentUser.uid)
+        .collection('clothesfootwear')
+        .doc(auth().currentUser.uid)
+        .set({
+          clothesfootwear: contentAlert,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          getfashion();
+          setLoading(false);
+        })
+        .catch(() => alert('category   not updated'));
     }
-
-    setLoading(true);
-    firestore()
-      .collection('mycategory')
-      .doc(auth().currentUser.uid)
-      .collection('clothesfootwear')
-      .doc(auth().currentUser.uid)
-      .set({
-        clothesfootwear: contentAlert.length === 0 ? null : contentAlert,
-        createdAt: firestore.Timestamp.fromDate(new Date()),
-      })
-      .then(() => {
-        getfashion();
-        setLoading(false);
-      })
-      .catch(() => alert('category   not updated'));
   };
 
   const submitBeauty = () => {
@@ -160,20 +169,52 @@ function FashionCategory({navigation}) {
     console.log('vlue', contentAlert.length);
     if (contentAlert.length === 0) {
       setVisible(true);
+      Alert.alert('Selection is empty');
+    } else {
+      setLoading(true);
+      firestore()
+        .collection('mycategory')
+        .doc(auth().currentUser.uid)
+        .collection('PersonalCare')
+        .doc(auth().currentUser.uid)
+        .set({
+          beauty: contentAlert,
+          createdAt: firestore.Timestamp.fromDate(new Date()),
+        })
+        .then(() => {
+          getfashion();
+          setLoading(false);
+        })
+        .catch(() => alert('category   not updated'));
     }
-    setLoading(true);
+  };
+
+  const EmptyList = () => {
     firestore()
       .collection('mycategory')
       .doc(auth().currentUser.uid)
       .collection('PersonalCare')
       .doc(auth().currentUser.uid)
       .set({
-        beauty: contentAlert.length === 0 ? null : contentAlert,
+        beauty: null,
         createdAt: firestore.Timestamp.fromDate(new Date()),
       })
       .then(() => {
         getfashion();
-        setLoading(false);
+      })
+      .catch(() => alert('category  not updated'));
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('clothesfootwear')
+      .doc(auth().currentUser.uid)
+      .set({
+        clothesfootwear: null,
+        createdAt: firestore.Timestamp.fromDate(new Date()),
+      })
+      .then(() => {
+        getfashion();
+        Alert.alert('List is empty');
       })
       .catch(() => alert('category   not updated'));
   };
@@ -303,6 +344,7 @@ function FashionCategory({navigation}) {
                 ) : (
                   <FlatList
                     data={beauty}
+                    style={{height: windowHeight * 0.4}}
                     renderItem={renderItemBeauty}
                     keyExtractor={item => `key-${item.id}`}
                   />
@@ -317,7 +359,8 @@ function FashionCategory({navigation}) {
       <ListView
         list={clothesfootwear}
         sublist={personal}
-        styletitle={{marginTop: 200}}
+        styletitle={{marginTop: 20}}
+        onPress={EmptyList}
       />
     </View>
   );
@@ -331,17 +374,6 @@ const styles = StyleSheet.create({
   Accordion: {
     marginTop: 10,
   },
-  // box: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-between',
-  //   paddingStart: 20,
-  //   paddingEnd: 20,
-  //   paddingVertical: 5,
-  // },
-  // check: {
-  //   width: 20,
-  //   height: 20,
-  // },
 });
 
 export default FashionCategory;
