@@ -121,14 +121,12 @@ export default function Mystore({navigation}) {
 
   // category
   const [resturants, setResturants] = useState('');
-  const [resturantsubcategory, setRestursetSubcategory] = useState('');
   const [clothesfootwear, setClothesFootwear] = useState('');
   const [personal, setPersonalCare] = useState('');
   const [demand, setdemand] = useState('');
   // daily Need
   const [dailyNeed, setDailyNeed] = useState('');
   const [medical, setMedical] = useState('');
-  const [medicalSubcategory, setmedicalSubcategory] = useState('');
   // home category
   const [repair, setRepair] = useState('');
   // medical category
@@ -139,6 +137,7 @@ export default function Mystore({navigation}) {
   const [shops, setshops] = useState('');
 
   const [education, seteducation] = useState('');
+  const [emergency, setEmergency] = useState('');
 
   const [loading, setLoading] = useState(null);
   const [isModalVisible, setModalVisible] = useState(true);
@@ -334,7 +333,6 @@ export default function Mystore({navigation}) {
         }
         if (documentSnapshot.exists) {
           setResturants(documentSnapshot.data().restauranttype);
-          setRestursetSubcategory(documentSnapshot.data().resturantcategory);
         }
       });
     firestore()
@@ -406,7 +404,6 @@ export default function Mystore({navigation}) {
         }
         if (documentSnapshot.exists) {
           setMedical(documentSnapshot.data().medical);
-          setmedicalSubcategory(documentSnapshot.data().hospitalcategory);
         }
       });
     // home sectionTitle
@@ -498,6 +495,20 @@ export default function Mystore({navigation}) {
           seteducation(documentSnapshot.data().education);
         }
       });
+    firestore()
+      .collection('mycategory')
+      .doc(auth().currentUser.uid)
+      .collection('Emergency')
+      .doc(auth().currentUser.uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists === false) {
+          setEmergency(null);
+        }
+        if (documentSnapshot.exists) {
+          setEmergency(documentSnapshot.data().emergency);
+        }
+      });
   };
 
   const CategoryData = () => {
@@ -518,6 +529,7 @@ export default function Mystore({navigation}) {
           fitness === null ? null : 'fitness',
           shops === null ? null : 'generalshops',
           education === null ? null : 'education',
+          emergency === null ? null : 'emergency',
         ],
       });
   };
@@ -660,10 +672,7 @@ export default function Mystore({navigation}) {
             }}>
             {resturants === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>
-                  {resturants}
-                  {resturantsubcategory}
-                </Text>
+                <Text style={styles.textCategory}>{resturants}</Text>
               </View>
             )}
             {clothesfootwear === null ? null : (
@@ -688,10 +697,7 @@ export default function Mystore({navigation}) {
             )}
             {medical === null ? null : (
               <View style={styles.txtproducts}>
-                <Text style={styles.textCategory}>
-                  {medical}
-                  {medicalSubcategory}
-                </Text>
+                <Text style={styles.textCategory}>{medical}</Text>
               </View>
             )}
             {repair === null ? null : (
@@ -725,14 +731,20 @@ export default function Mystore({navigation}) {
                 <Text style={styles.textCategory}>{education}</Text>
               </View>
             )}
+            {emergency === null ? null : (
+              <View style={styles.txtproducts}>
+                <Text style={styles.textCategory}>{emergency}</Text>
+              </View>
+            )}
           </View>
-          {CategoryData()}
+          <CategoryData />
           <Text style={styles.txt}>ADDRESS</Text>
           <View
             flexDirection="row"
             style={{marginTop: 10, alignItems: 'center'}}>
             <Image source={require('../../assets/map.png')} />
-            <Text
+            <TouchableOpacity
+              activeOpacity={0.5}
               style={{
                 borderWidth: 1,
                 padding: 10,
@@ -741,8 +753,8 @@ export default function Mystore({navigation}) {
                 borderColor: '#ccc',
                 borderRadius: 5,
               }}>
-              {address}
-            </Text>
+              <Text style={{fontWeight: '500'}}>{address}</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </View>

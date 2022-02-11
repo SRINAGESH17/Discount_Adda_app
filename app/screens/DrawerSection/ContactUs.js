@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, Text, SafeAreaView, Linking} from 'react-native';
+import {createOpenLink, createMapLink} from 'react-native-open-maps';
 
 function ContactUs() {
   const callNumber = () => {
@@ -11,36 +12,20 @@ function ContactUs() {
     Linking.openURL('mailto:Discountsadda.com@gmail.com');
   };
 
-  const latitude = '16.502628';
-  const longitude = '80.640869';
+  const lat = '16.502628';
+  const long = '80.640869';
+  const coords = {latitude: lat, longitude: long};
   const label =
     'Opposite :- Gateway Hotel,Beside Woodland Showroom, Bander Road , Vijayawada';
 
-  // const url = Platform.select({
-  //   ios: 'maps:' + latitude + ',' + longitude + '?q=' + label,
-  //   android: 'geo:' + latitude + ',' + longitude + '?q=' + label,
-  // });
   const scheme = Platform.select({ios: 'maps:0,0?q=', android: 'geo:0,0?q='});
-  const latLng = `${latitude},${longitude}`;
+  const latLng = `${lat},${long}`;
   const url = Platform.select({
     ios: `${scheme}${label}@${latLng}`,
     android: `${scheme}${latLng}(${label})`,
   });
   const Maps = () => {
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) {
-        return Linking.openURL(url);
-      } else {
-        const browser_url =
-          'https://www.google.de/maps/@' +
-          latitude +
-          ',' +
-          longitude +
-          '?q=' +
-          label;
-        return Linking.openURL(browser_url);
-      }
-    });
+    return Linking.openURL(url);
   };
 
   return (

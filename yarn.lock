@@ -7142,7 +7142,7 @@
   "resolved" "https://registry.npmjs.org/punycode/-/punycode-2.1.1.tgz"
   "version" "2.1.1"
 
-"query-string@^6.13.6":
+"query-string@^6.1.0", "query-string@^6.13.6":
   "integrity" "sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw=="
   "resolved" "https://registry.npmjs.org/query-string/-/query-string-6.14.1.tgz"
   "version" "6.14.1"
@@ -7286,6 +7286,13 @@
   "version" "1.1.4"
   dependencies:
     "tinycolor2" "^1.4.1"
+
+"react-native-open-maps@^0.4.0":
+  "integrity" "sha512-8YkRZRSN/p7W5qiBd5Ucie4I/BmYwCQQ6fYTH3C7+mgZxOY8CkNl1czpt8v8GltEluJT6wmdfQsC4xImnRyVVA=="
+  "resolved" "https://registry.npmjs.org/react-native-open-maps/-/react-native-open-maps-0.4.0.tgz"
+  "version" "0.4.0"
+  dependencies:
+    "query-string" "^6.1.0"
 
 "react-native-paper@^4.9.2":
   "integrity" "sha512-J7FRsd0YblQawtuj9I46F//apZHadsCKk6jWpc6njFTYdgUeCdkR8KgEto7cp2WxbcGNELx7KGwPQ4zAgX746A=="
