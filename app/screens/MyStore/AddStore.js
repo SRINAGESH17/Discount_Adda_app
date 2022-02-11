@@ -160,7 +160,7 @@ function AddStore({navigation}) {
         .doc(auth().currentUser.uid)
         .set({
           StoreName: db.storename,
-          address: db.address,
+          address: null,
           createdAt: firestore.Timestamp.fromDate(new Date()),
         })
         .catch(() => Alert.alert('StoreName not updated'));
@@ -176,7 +176,7 @@ function AddStore({navigation}) {
         .then(() => {
           setLoading(false);
           Alert.alert('Store Successfully created');
-          navigation.goBack();
+          navigation.navigate('addAddress');
         })
         .catch(() => Alert.alert('about  not updated'));
     }
@@ -230,7 +230,6 @@ function AddStore({navigation}) {
           <Formik
             initialValues={{
               storename: '',
-              address: '',
               about: '',
             }}
             onSubmit={values => SubmitDetails(values)}
@@ -239,10 +238,6 @@ function AddStore({navigation}) {
                 .string()
                 .min(4)
                 .required('Please, provide name of your business!'),
-              address: yup
-                .string()
-                .min(4)
-                .required('Please, provide address of your business!'),
               about: yup
                 .string()
                 .min(10)
@@ -274,22 +269,6 @@ function AddStore({navigation}) {
                   {touched.storename && errors.storename && (
                     <Text style={{fontSize: 12, color: '#FF0D10'}}>
                       {errors.storename}
-                    </Text>
-                  )}
-                  <Title>Add Address of the business</Title>
-
-                  <TextInput
-                    placeholder="Address of the business"
-                    multiline={true}
-                    value={values.address}
-                    onChangeText={handleChange('address')}
-                    onBlur={() => setFieldTouched('address')}
-                    style={styles.txt}
-                    placeholderTextColor="#aaa"
-                  />
-                  {touched.address && errors.address && (
-                    <Text style={{fontSize: 12, color: '#FF0D10'}}>
-                      {errors.address}
                     </Text>
                   )}
                 </View>

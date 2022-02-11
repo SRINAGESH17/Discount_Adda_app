@@ -274,6 +274,9 @@ export default function Mystore({navigation}) {
           setAddress(documentSnapshot.data().address);
           setdiscount(documentSnapshot.data().discount);
           setdiscountText(documentSnapshot.data().discountstatus);
+          documentSnapshot.data().address === null
+            ? Alert.alert('Please add address')
+            : null;
         }
       });
 
@@ -737,7 +740,7 @@ export default function Mystore({navigation}) {
               </View>
             )}
           </View>
-          <CategoryData />
+          {CategoryData()}
           <Text style={styles.txt}>ADDRESS</Text>
           <View
             flexDirection="row"
