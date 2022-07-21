@@ -8,7 +8,7 @@
 
 ## Steps to run the app
 
-> 1. Clone the project directory https://github.com/AbhavThakur/Discount_Adda_app.git
+> 1. Clone the project directory https://github.com/SRINAGESH17/Discount_Adda_app
 
 > 2. Go inside the project directory :- cd Discount_Adda_app
 
